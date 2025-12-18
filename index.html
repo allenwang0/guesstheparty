@@ -3,220 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Political Affiliation Trainer v2.5</title>
+    <title>Political Blitz</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0b0e14; color: white; }
+        .card-container { height: 60vh; width: 90vw; max-width: 400px; }
+        .progress-bar { transition: width 0.3s ease; }
+        .timer-shimmer { animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    </style>
 </head>
-<body class="bg-[#020617] text-slate-100 font-sans antialiased overflow-hidden">
-    <div id="root"></div>
+<body class="flex flex-col items-center justify-between min-h-screen p-6 overflow-hidden">
 
-    <script type="text/babel">
-        const { useState, useEffect, useMemo } = React;
+    <div class="w-full flex justify-between items-center max-w-md pt-4">
+        <button class="text-gray-400 hover:text-white">←</button>
+        <div class="flex flex-col items-center">
+            <div id="progress-dots" class="flex gap-1 mb-2">
+                </div>
+            <div class="text-sm font-semibold tracking-widest text-gray-500 uppercase">
+                Session: <span id="current-score" class="text-white">0</span> / <span id="total-cards">0</span>
+            </div>
+        </div>
+        <div class="text-right">
+            <div class="text-[10px] text-gray-500 uppercase font-bold">Lifetime Score</div>
+            <div id="cumulative-score" class="text-xl font-bold text-blue-400">0</div>
+        </div>
+    </div>
 
-        /**
-         * UPDATED 2025 BANK: 
-         * Includes 119th Congress fresh faces and confirmed 2025 Governors.
-         */
-        const MASTER_BANK = [
-            // SENATE (119th Congress)
-            { name: "John Fetterman", state: "PA", party: "Democrat", id: "F000474", type: "Senate" },
-            { name: "Dave McCormick", state: "PA", party: "Republican", id: "M001230", type: "Senate" },
-            { name: "Adam Schiff", state: "CA", party: "Democrat", id: "S001150", type: "Senate" },
-            { name: "Bernie Moreno", state: "OH", party: "Republican", id: "M001234", type: "Senate" },
-            { name: "Angela Alsobrooks", state: "MD", party: "Democrat", id: "A000382", type: "Senate" },
-            { name: "Jim Justice", state: "WV", party: "Republican", id: "J000311", type: "Senate" },
-            { name: "Ruben Gallego", state: "AZ", party: "Democrat", id: "G000574", type: "Senate" },
-            { name: "Katie Britt", state: "AL", party: "Republican", id: "B001319", type: "Senate" },
-            { name: "John Hoeven", state: "ND", party: "Republican", id: "H001061", type: "Senate" },
-            { name: "Catherine Cortez Masto", state: "NV", party: "Democrat", id: "C001113", type: "Senate" },
+    <div class="flex flex-col items-center gap-2">
+        <div class="flex items-center gap-3 bg-gray-900/50 p-2 rounded-full px-4 border border-white/10">
+            <span class="text-xs font-bold uppercase tracking-wider text-orange-400">Blitz Round</span>
+            <button id="blitz-toggle" onclick="toggleBlitz()" class="w-10 h-5 bg-gray-700 rounded-full relative transition-colors">
+                <div id="toggle-knob" class="absolute top-1 left-1 w-3 h-3 bg-white rounded-full transition-all"></div>
+            </button>
+        </div>
+        <div id="timer-display" class="h-1 w-32 bg-gray-800 rounded-full overflow-hidden hidden">
+            <div id="timer-fill" class="h-full bg-orange-500 w-full transition-all linear"></div>
+        </div>
+    </div>
 
-            // HOUSE (Toss-ups/Key Members)
-            { name: "Marie Perez", state: "WA", party: "Democrat", id: "G000600", type: "House" },
-            { name: "Lori Chavez-DeRemer", state: "OR", party: "Republican", id: "C001129", type: "House" },
-            { name: "Don Davis", state: "NC", party: "Democrat", id: "D000230", type: "House" },
-            { name: "Juan Ciscomani", state: "AZ", party: "Republican", id: "C001133", type: "House" },
-            { name: "Yadira Caraveo", state: "CO", party: "Democrat", id: "C001117", type: "House" },
-            { name: "Jen Kiggans", state: "VA", party: "Republican", id: "K000399", type: "House" },
-            { name: "Mary Peltola", state: "AK", party: "Democrat", id: "P000619", type: "House" },
-            { name: "Marc Molinaro", state: "NY", party: "Republican", id: "M001221", type: "House" },
+    <div id="card-stage" class="card-container bg-[#161b22] rounded-[40px] border border-white/10 shadow-2xl flex items-center justify-center relative p-8 text-center mt-4">
+        <div id="loading-spinner" class="absolute inset-0 flex items-center justify-center bg-[#161b22] rounded-[40px] z-10">
+            <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        
+        <div id="card-content" class="opacity-0 transition-opacity duration-500">
+            <h2 id="question-text" class="text-2xl font-semibold leading-tight"></h2>
+        </div>
+    </div>
 
-            // GOVERNORS (2025 Active)
-            { name: "Josh Stein", state: "NC", party: "Democrat", id: "stein_josh", type: "Gov" },
-            { name: "Kelly Ayotte", state: "NH", party: "Republican", id: "ayotte_kelly", type: "Gov" },
-            { name: "Matt Meyer", state: "DE", party: "Democrat", id: "meyer_matt", type: "Gov" },
-            { name: "Mike Braun", state: "IN", party: "Republican", id: "braun_mike", type: "Gov" },
-            { name: "Josh Shapiro", state: "PA", party: "Democrat", id: "shapiro_josh", type: "Gov" },
-            { name: "Glenn Youngkin", state: "VA", party: "Republican", id: "youngkin_glenn", type: "Gov" },
-            { name: "Gretchen Whitmer", state: "MI", party: "Democrat", id: "whitmer_gretchen", type: "Gov" },
-            { name: "Ron DeSantis", state: "FL", party: "Republican", id: "desantis_ron", type: "Gov" }
+    <div class="w-full max-w-md flex gap-4 pb-8">
+        <button onclick="handleAnswer('democrat')" class="flex-1 py-6 rounded-3xl bg-[#0d1526] border border-blue-900/50 text-blue-400 font-bold uppercase tracking-widest hover:bg-blue-900/20 transition-all active:scale-95">
+            Democrat
+        </button>
+        <button onclick="handleAnswer('republican')" class="flex-1 py-6 rounded-3xl bg-[#1a0f12] border border-red-900/50 text-red-400 font-bold uppercase tracking-widest hover:bg-red-900/20 transition-all active:scale-95">
+            Republican
+        </button>
+    </div>
+
+    <script>
+        // Sample Data - Replace with your API fetch
+        const cardData = [
+            { id: 1, text: "Supports expanding the Affordable Care Act.", answer: "democrat" },
+            { id: 2, text: "Advocates for lower corporate tax rates.", answer: "republican" },
+            { id: 3, text: "Prioritizes renewable energy subsidies.", answer: "democrat" },
+            { id: 4, text: "Favors deregulation of the energy sector.", answer: "republican" }
         ];
 
-        const App = () => {
-            const [gameState, setGameState] = useState('menu'); // menu, playing, finished
-            const [deck, setDeck] = useState([]);
-            const [idx, setIdx] = useState(0);
-            const [revealed, setRevealed] = useState(false);
-            const [isCorrect, setIsCorrect] = useState(null);
-            const [isLoading, setIsLoading] = useState(true);
-            const [stats, setStats] = useState({ score: 0, streak: 0, total: 0 });
+        let currentIndex = 0;
+        let sessionScore = 0;
+        let isBlitzMode = false;
+        let blitzTimer = null;
+        let timeLeft = 10;
 
-            // Initialize Icons
-            useEffect(() => { if (window.lucide) lucide.createIcons(); }, [gameState, revealed]);
+        // Initialize
+        function init() {
+            updateCumulativeDisplay();
+            document.getElementById('total-cards').innerText = cardData.length;
+            renderDots();
+            loadCard();
+        }
 
-            const startMode = (type) => {
-                let filtered = type === 'Mixed' ? [...MASTER_BANK] : MASTER_BANK.filter(p => p.type === type);
-                // Randomize & Take 10
-                const shuffled = filtered.sort(() => Math.random() - 0.5).slice(0, 10);
-                setDeck(shuffled);
-                setIdx(0);
-                setStats({ score: 0, streak: 0, total: 10 });
-                setGameState('playing');
-                setRevealed(false);
-                setIsLoading(true);
-            };
+        function renderDots() {
+            const container = document.getElementById('progress-dots');
+            container.innerHTML = cardData.map((_, i) => `
+                <div class="h-1 w-6 rounded-full ${i === currentIndex ? 'bg-blue-500' : 'bg-gray-700'} transition-colors"></div>
+            `).join('');
+        }
 
-            const handleGuess = (guess) => {
-                if (revealed || isLoading) return;
-                const correct = deck[idx].party === guess;
-                setIsCorrect(correct);
-                if (correct) setStats(s => ({ ...s, score: s.score + 1, streak: s.streak + 1 }));
-                else setStats(s => ({ ...s, streak: 0 }));
-                setRevealed(true);
-            };
+        function loadCard() {
+            const spinner = document.getElementById('loading-spinner');
+            const content = document.getElementById('card-content');
+            const textEl = document.getElementById('question-text');
 
-            const next = () => {
-                if (idx + 1 < deck.length) {
-                    setIsLoading(true);
-                    setRevealed(false);
-                    setIsCorrect(null);
-                    setIdx(i => i + 1);
-                } else {
-                    setGameState('finished');
+            // Reset UI
+            spinner.classList.remove('hidden');
+            content.classList.add('opacity-0');
+
+            if (currentIndex < cardData.length) {
+                setTimeout(() => { // Simulating network lag
+                    textEl.innerText = cardData[currentIndex].text;
+                    spinner.classList.add('hidden');
+                    content.classList.remove('opacity-0');
+                    if (isBlitzMode) startTimer();
+                }, 500);
+            } else {
+                showResults();
+            }
+        }
+
+        function handleAnswer(choice) {
+            clearInterval(blitzTimer);
+            const correct = cardData[currentIndex].answer === choice;
+            
+            if (correct) {
+                sessionScore++;
+                updateCumulativeScore(1);
+            }
+
+            currentIndex++;
+            document.getElementById('current-score').innerText = sessionScore;
+            renderDots();
+            loadCard();
+        }
+
+        function toggleBlitz() {
+            isBlitzMode = !isBlitzMode;
+            const knob = document.getElementById('toggle-knob');
+            const toggle = document.getElementById('blitz-toggle');
+            const timerBar = document.getElementById('timer-display');
+            
+            if (isBlitzMode) {
+                knob.style.left = '24px';
+                toggle.classList.replace('bg-gray-700', 'bg-orange-600');
+                timerBar.classList.remove('hidden');
+                startTimer();
+            } else {
+                knob.style.left = '4px';
+                toggle.classList.replace('bg-orange-600', 'bg-gray-700');
+                timerBar.classList.add('hidden');
+                clearInterval(blitzTimer);
+            }
+        }
+
+        function startTimer() {
+            clearInterval(blitzTimer);
+            timeLeft = 10;
+            const fill = document.getElementById('timer-fill');
+            
+            blitzTimer = setInterval(() => {
+                timeLeft -= 0.1;
+                fill.style.width = `${(timeLeft / 10) * 100}%`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(blitzTimer);
+                    handleAnswer('timeout'); // Counts as wrong
                 }
-            };
+            }, 100);
+        }
 
-            if (gameState === 'menu') return (
-                <div className="min-h-screen flex flex-col items-center justify-center p-6 space-y-8 bg-gradient-to-b from-[#020617] to-[#0f172a]">
-                    <div className="text-center space-y-2">
-                        <h1 className="text-5xl font-black tracking-tighter text-white uppercase italic">Party Guesser</h1>
-                        <p className="text-blue-400 font-mono text-xs tracking-widest uppercase">119th Congress Training Module</p>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 gap-3 w-full max-w-xs">
-                        {['Mixed', 'Senate', 'House', 'Gov'].map(mode => (
-                            <button key={mode} onClick={() => startMode(mode)} className="group flex justify-between items-center px-6 py-5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white hover:text-black transition-all active:scale-95">
-                                <span className="font-black text-sm uppercase tracking-widest">{mode} Bank</span>
-                                <i data-lucide="chevron-right" className="w-4 h-4 opacity-30 group-hover:opacity-100"></i>
-                            </button>
-                        ))}
-                    </div>
+        function updateCumulativeScore(points) {
+            let total = parseInt(localStorage.getItem('lifetimeScore') || 0);
+            total += points;
+            localStorage.setItem('lifetimeScore', total);
+            updateCumulativeDisplay();
+        }
+
+        function updateCumulativeDisplay() {
+            document.getElementById('cumulative-score').innerText = localStorage.getItem('lifetimeScore') || 0;
+        }
+
+        function showResults() {
+            document.getElementById('card-stage').innerHTML = `
+                <div class="flex flex-col items-center">
+                    <h2 class="text-3xl font-bold mb-2">Round Over!</h2>
+                    <p class="text-gray-400 mb-6">You got ${sessionScore} correct this round.</p>
+                    <button onclick="location.reload()" class="px-8 py-3 bg-blue-600 rounded-full font-bold">Play Again</button>
                 </div>
-            );
+            `;
+        }
 
-            if (gameState === 'finished') return (
-                <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center space-y-6">
-                    <h2 className="text-xs font-black tracking-[0.4em] text-blue-500 uppercase">Debriefing Complete</h2>
-                    <div className="space-y-1">
-                        <p className="text-8xl font-black text-white">{Math.round((stats.score/deck.length)*100)}%</p>
-                        <p className="text-slate-500 font-mono text-sm uppercase">Accuracy Across {deck.length} Targets</p>
-                    </div>
-                    <button onClick={() => setGameState('menu')} className="px-12 py-4 bg-blue-600 text-white rounded-full font-black uppercase tracking-widest hover:bg-blue-500 transition-all shadow-xl shadow-blue-500/20">
-                        New Session
-                    </button>
-                </div>
-            );
-
-            const current = deck[idx];
-            // High-res Image Strategy
-            const imgUrl = current.type === 'Gov' 
-                ? `https://www.nga.org/wp-content/uploads/2023/01/Governor-${current.name.replace(' ', '-')}-Portrait.jpg` // Approximation for NGA
-                : `https://unitedstates.github.io/images/congress/450x550/${current.id.toUpperCase()}.jpg`;
-
-            return (
-                <div className="min-h-screen flex flex-col items-center justify-center p-4">
-                    <div className="w-full max-w-sm space-y-6">
-                        
-                        {/* Game Header */}
-                        <div className="flex justify-between items-center px-2">
-                            <button onClick={() => setGameState('menu')} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                                <i data-lucide="arrow-left" className="w-5 h-5 text-slate-400"></i>
-                            </button>
-                            <div className="flex gap-2">
-                                {deck.map((_, i) => (
-                                    <div key={i} className={`h-1.5 w-3 rounded-full transition-all duration-300 ${i === idx ? 'bg-blue-500 w-8' : i < idx ? 'bg-slate-700' : 'bg-slate-800'}`} />
-                                ))}
-                            </div>
-                            <div className="text-right">
-                                <span className="text-xl font-mono font-bold">{stats.score}</span>
-                                <span className="text-slate-600 font-bold ml-1 text-xs">/ {idx + (revealed ? 1 : 0)}</span>
-                            </div>
-                        </div>
-
-                        {/* Identification Card */}
-                        <div className="relative aspect-[3/4] rounded-[48px] overflow-hidden bg-slate-900 border border-white/10 shadow-2xl group">
-                            {isLoading && (
-                                <div className="absolute inset-0 flex items-center justify-center bg-slate-900 z-10">
-                                    <div className="w-8 h-8 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
-                                </div>
-                            )}
-                            <img 
-                                src={imgUrl} 
-                                onLoad={() => setIsLoading(false)}
-                                className={`w-full h-full object-cover transition-all duration-700 ${revealed ? 'scale-110 blur-xl brightness-50' : 'scale-100'}`} 
-                                alt="Subject" 
-                            />
-                            
-                            {/* Hidden Identity Details */}
-                            <div className={`absolute inset-0 flex flex-col justify-end p-10 transition-all duration-500 ${revealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12 pointer-events-none'}`}>
-                                <div className="space-y-3">
-                                    <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${current.party === 'Democrat' ? 'bg-blue-600' : 'bg-red-600'}`}>
-                                        {current.party}
-                                    </span>
-                                    <h2 className="text-4xl font-bold leading-tight tracking-tight">{current.name}</h2>
-                                    <div className="flex items-center gap-2 text-slate-400 text-[11px] font-black uppercase tracking-widest">
-                                        <span>{current.type}</span>
-                                        <span className="opacity-20">•</span>
-                                        <span>{current.state}</span>
-                                    </div>
-                                    <button onClick={next} className="mt-6 w-full py-4 bg-white text-black rounded-3xl font-black uppercase tracking-[0.2em] text-xs hover:bg-slate-200 active:scale-95 transition-all">
-                                        Identify Next
-                                    </button>
-                                </div>
-                            </div>
-
-                            {revealed && (
-                                <div className="absolute top-10 right-10 animate-in zoom-in duration-300">
-                                    {isCorrect ? 
-                                        <div className="p-4 bg-green-500/20 border border-green-500/50 rounded-full text-green-500 shadow-lg shadow-green-500/20"><i data-lucide="check" className="w-8 h-8"></i></div> : 
-                                        <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-full text-red-500 shadow-lg shadow-red-500/20"><i data-lucide="x" className="w-8 h-8"></i></div>
-                                    }
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Analysis Trigger Buttons */}
-                        {!revealed ? (
-                            <div className="grid grid-cols-2 gap-4">
-                                <button onClick={() => handleGuess('Democrat')} className="py-6 rounded-[32px] bg-blue-600/10 border border-blue-500/20 text-blue-400 font-black text-xs tracking-widest hover:bg-blue-600 hover:text-white transition-all active:scale-90 uppercase">
-                                    Democrat
-                                </button>
-                                <button onClick={() => handleGuess('Republican')} className="py-6 rounded-[32px] bg-red-600/10 border border-red-500/30 text-red-400 font-black text-xs tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-90 uppercase">
-                                    Republican
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="h-[76px]" />
-                        )}
-                    </div>
-                </div>
-            );
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        init();
     </script>
 </body>
 </html>
