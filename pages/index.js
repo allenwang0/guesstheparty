@@ -4,34 +4,34 @@ import Head from 'next/head';
 export default function Home() {
   const [allPoliticians, setAllPoliticians] = useState([]);
   const [current, setCurrent] = useState(null);
-  const [score, setScore] = useState(0);
-  const [feedback, setFeedback] = useState(null);
+  const [stats, setStats] = useState({ correct: 0, incorrect: 0, streak: 0, bestStreak: 0 });
+  const [feedback, setFeedback] = useState(null); // 'success' | 'error' | null
+  const [gameState, setGameState] = useState('guessing'); // 'guessing' | 'revealed'
   const [loading, setLoading] = useState(true);
   const [imgLoading, setImgLoading] = useState(true);
-
-  // Filtering state
   const [activeCategories, setActiveCategories] = useState(['senate', 'house', 'governor']);
 
   useEffect(() => {
     fetch('/politicians.json')
       .then(res => res.json())
       .then(data => {
-        // Normalize keys here so UI logic is cleaner
         const normalized = data.map(p => ({
           ...p,
-          imageUrl: p.img || p.image_url // handles both naming conventions
+          imageUrl: p.img || p.image_url
         }));
         setAllPoliticians(normalized);
         setLoading(false);
       });
+
+    // Load high score
+    const saved = localStorage.getItem('bestStreak');
+    if (saved) setStats(prev => ({ ...prev, bestStreak: parseInt(saved) }));
   }, []);
 
-  // Filter the pool based on user selection
   const filteredPool = useMemo(() => {
     return allPoliticians.filter(p => activeCategories.includes(p.category.toLowerCase()));
   }, [allPoliticians, activeCategories]);
 
-  // Select a new question whenever the pool changes or game resets
   useEffect(() => {
     if (filteredPool.length > 0 && !current && !loading) {
       newQuestion();
@@ -41,126 +41,152 @@ export default function Home() {
   const newQuestion = () => {
     const random = filteredPool[Math.floor(Math.random() * filteredPool.length)];
     setCurrent(random);
-    setImgLoading(true); // Reset loader for new image
+    setImgLoading(true);
+    setGameState('guessing');
+    setFeedback(null);
   };
 
   const handleGuess = (party) => {
-    const isCorrect = party === current.party;
-    if (isCorrect) setScore(s => s + 1);
+    if (gameState !== 'guessing') return;
 
-    setFeedback({
-      type: isCorrect ? 'success' : 'error',
-      correctParty: current.party
-    });
+    const isCorrect = party === current.party;
+    setGameState('revealed');
+
+    if (isCorrect) {
+      const newStreak = stats.streak + 1;
+      const newBest = Math.max(newStreak, stats.bestStreak);
+      setStats(s => ({ ...s, correct: s.correct + 1, streak: newStreak, bestStreak: newBest }));
+      setFeedback('success');
+      localStorage.setItem('bestStreak', newBest.toString());
+    } else {
+      setStats(s => ({ ...s, incorrect: s.incorrect + 1, streak: 0 }));
+      setFeedback('error');
+    }
 
     setTimeout(() => {
-      setFeedback(null);
-      setCurrent(null); // Triggers the useEffect to pick a new one
-    }, 1800);
+      newQuestion();
+    }, 2200);
+  };
+
+  const resetGame = () => {
+    setStats({ correct: 0, incorrect: 0, streak: 0, bestStreak: stats.bestStreak });
+    newQuestion();
   };
 
   const toggleCategory = (cat) => {
-    setActiveCategories(prev =>
-      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
-    );
-    setCurrent(null); // Refresh current card if filters change
+    setActiveCategories(prev => {
+      const next = prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat];
+      return next.length === 0 ? prev : next; // Prevent selecting zero
+    });
   };
 
   if (loading) return <LoadingScreen />;
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] font-sans selection:bg-blue-100">
+    <div className="h-screen w-screen overflow-hidden bg-[#F5F5F7] text-[#1D1D1F] flex flex-col font-sans">
       <Head><title>Guess The Party</title></Head>
 
-      <main className="max-w-xl mx-auto pt-12 px-6">
-        {/* Top Navigation / Filters */}
-        <div className="flex flex-col gap-6 mb-8">
-          <div className="flex justify-between items-end">
-            <h1 className="text-4xl font-bold tracking-tight">Guess The Party</h1>
-            <div className="text-right">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Score</p>
-              <p className="text-3xl font-black text-blue-600 leading-none">{score}</p>
-            </div>
-          </div>
+      {/* Header - Fixed Height */}
+      <header className="p-4 md:p-6 flex justify-between items-center shrink-0">
+        <div className="flex flex-col">
+          <h1 className="text-xl font-bold tracking-tight">Guess The Party</h1>
+          <button onClick={resetGame} className="text-[10px] font-bold text-gray-400 uppercase tracking-widest hover:text-red-500 transition-colors text-left">
+            Reset Stats
+          </button>
+        </div>
 
-          <div className="flex gap-2 p-1 bg-gray-200/50 rounded-xl w-fit">
-            {['Senate', 'House', 'Governor'].map(cat => (
-              <button
-                key={cat}
-                onClick={() => toggleCategory(cat.toLowerCase())}
-                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  activeCategories.includes(cat.toLowerCase())
-                    ? 'bg-white shadow-sm text-black'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+        {/* Categories as Checkboxes */}
+        <div className="flex gap-1 bg-gray-200/50 p-1 rounded-xl shrink-0 scale-90 md:scale-100">
+          {['Senate', 'House', 'Governor'].map(cat => (
+            <button
+              key={cat}
+              onClick={() => toggleCategory(cat.toLowerCase())}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                activeCategories.includes(cat.toLowerCase())
+                  ? 'bg-white shadow-sm text-blue-600'
+                  : 'text-gray-400 opacity-60'
+              }`}
+            >
+              <div className={`w-3 h-3 rounded-sm border flex items-center justify-center ${activeCategories.includes(cat.toLowerCase()) ? 'bg-blue-600 border-blue-600' : 'border-gray-400'}`}>
+                {activeCategories.includes(cat.toLowerCase()) && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+              </div>
+              {cat}
+            </button>
+          ))}
+        </div>
+      </header>
+
+      {/* Main Game Area - Flex Grow to fill space */}
+      <main className="flex-grow flex flex-col items-center justify-center px-4 pb-8 min-h-0">
+
+        {/* Stats Row */}
+        <div className="flex gap-8 mb-4 text-center">
+          <div>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Streak</p>
+            <p className="text-2xl font-black text-blue-600 leading-none">{stats.streak}</p>
+          </div>
+          <div className="w-px h-8 bg-gray-200 self-center" />
+          <div>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Best</p>
+            <p className="text-2xl font-black text-gray-400 leading-none">{stats.bestStreak}</p>
+          </div>
+          <div className="w-px h-8 bg-gray-200 self-center" />
+          <div>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">W/L</p>
+            <p className="text-2xl font-black text-gray-800 leading-none">{stats.correct}/{stats.incorrect}</p>
           </div>
         </div>
 
-        {/* Game Card */}
+        {/* The Card */}
         {current && (
-          <div className="relative group">
-            <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden border border-white transition-transform duration-500 hover:scale-[1.01]">
+          <div className="relative w-full max-w-[380px] h-full max-h-[580px] flex flex-col bg-white rounded-[2rem] shadow-2xl border border-white overflow-hidden shrink min-h-0">
 
-              {/* Image Section */}
-              <div className="aspect-[4/5] relative bg-gray-100 overflow-hidden">
-                {imgLoading && (
-                  <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200" />
-                )}
-                <img
-                  src={current.imageUrl}
-                  alt={current.name}
-                  className={`w-full h-full object-cover transition-opacity duration-500 ${imgLoading ? 'opacity-0' : 'opacity-100'}`}
-                  onLoad={() => setImgLoading(false)}
-                />
+            {/* Blind Image Container */}
+            <div className="relative flex-grow bg-gray-100 overflow-hidden min-h-0">
+              {imgLoading && (
+                <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200" />
+              )}
+              <img
+                src={current.imageUrl}
+                alt="Politician"
+                className={`w-full h-full object-cover transition-all duration-700 ${imgLoading ? 'opacity-0' : 'opacity-100'} ${gameState === 'revealed' ? 'scale-105' : 'scale-100'}`}
+                onLoad={() => setImgLoading(false)}
+              />
 
-                {/* Feedback Overlay */}
-                {feedback && (
-                  <div className={`absolute inset-0 flex flex-col items-center justify-center backdrop-blur-xl transition-all duration-300 ${
-                    feedback.type === 'success' ? 'bg-green-500/20' : 'bg-red-500/20'
-                  }`}>
-                    <div className={`rounded-full p-4 mb-4 ${feedback.type === 'success' ? 'bg-green-500' : 'bg-red-500'} shadow-xl`}>
-                      {feedback.type === 'success' ? <CheckIcon /> : <XIcon />}
-                    </div>
-                    <p className="text-2xl font-bold text-white drop-shadow-md">
-                      {feedback.type === 'success' ? 'Brilliant' : `Incorrect`}
-                    </p>
-                    {feedback.type === 'error' && (
-                      <p className="text-white/90 font-medium">They are a {feedback.correctParty}</p>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Info & Buttons */}
-              <div className="p-8 pb-10">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold mb-1 tracking-tight">{current.name}</h2>
-                  <span className="inline-block px-3 py-1 bg-gray-100 rounded-full text-[10px] font-bold uppercase tracking-wider text-gray-500">
-                    {current.state} • {current.category}
-                  </span>
+              {/* Reveal Info Overlay (Bottom-aligned) */}
+              {gameState === 'revealed' && (
+                <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-white pt-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <h2 className="text-2xl font-black leading-tight">{current.name}</h2>
+                  <p className="text-sm font-bold text-white/80 uppercase tracking-widest">
+                    {current.party} • {current.state}
+                  </p>
                 </div>
+              )}
 
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() => handleGuess('Democrat')}
-                    disabled={!!feedback}
-                    className="h-16 rounded-2xl bg-[#00AEF3] text-white font-bold text-lg hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
-                  >
-                    Democrat
-                  </button>
-                  <button
-                    onClick={() => handleGuess('Republican')}
-                    disabled={!!feedback}
-                    className="h-16 rounded-2xl bg-[#E81B23] text-white font-bold text-lg hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
-                  >
-                    Republican
-                  </button>
+              {/* Feedback Status Indicator */}
+              {feedback && (
+                <div className={`absolute top-6 right-6 px-4 py-2 rounded-full font-black text-white shadow-lg animate-bounce ${feedback === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
+                  {feedback === 'success' ? '+1' : 'WRONG'}
                 </div>
-              </div>
+              )}
+            </div>
+
+            {/* Buttons Area - Fixed size */}
+            <div className="p-6 grid grid-cols-2 gap-4 bg-white shrink-0">
+              <button
+                onClick={() => handleGuess('Democrat')}
+                disabled={gameState === 'revealed'}
+                className="h-14 rounded-xl bg-[#00AEF3] text-white font-black text-sm uppercase tracking-widest hover:brightness-105 active:scale-95 transition-all disabled:grayscale disabled:opacity-20"
+              >
+                Democrat
+              </button>
+              <button
+                onClick={() => handleGuess('Republican')}
+                disabled={gameState === 'revealed'}
+                className="h-14 rounded-xl bg-[#E81B23] text-white font-black text-sm uppercase tracking-widest hover:brightness-105 active:scale-95 transition-all disabled:grayscale disabled:opacity-20"
+              >
+                Republican
+              </button>
             </div>
           </div>
         )}
@@ -169,19 +195,11 @@ export default function Home() {
   );
 }
 
-// Sub-components for cleaner code
 function LoadingScreen() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F5F5F7]">
-      <div className="w-12 h-12 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
+    <div className="h-screen flex flex-col items-center justify-center bg-[#F5F5F7] gap-4">
+      <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
+      <p className="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">Loading Congress...</p>
     </div>
   );
-}
-
-function CheckIcon() {
-  return <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>;
-}
-
-function XIcon() {
-  return <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>;
 }
