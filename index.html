@@ -1,204 +1,151 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Description" content="Portfolio of Allen Wang - Software Engineer at Apple. Ex-Millennium.">
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.2">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000; min-height: 14.0px}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
-    span.s1 {font-kerning: none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>119th Congress - Blind Guess</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p2"><span class="s1">&lt;html lang="en"&gt;</span></p>
-<p class="p2"><span class="s1">&lt;head&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;119th Congress - Blind Guess&lt;/title&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script src="https://unpkg.com/react@18/umd/react.development.js"&gt;&lt;/script&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"&gt;&lt;/script&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script src="https://unpkg.com/@babel/standalone/babel.min.js"&gt;&lt;/script&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script src="https://unpkg.com/lucide@latest"&gt;&lt;/script&gt;</span></p>
-<p class="p2"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p2"><span class="s1">&lt;body class="bg-[#050505] text-white font-sans antialiased overflow-hidden"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div id="root"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script type="text/babel"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>const { useState, useEffect, useMemo } = React;</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>const POLITICIANS = [</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Yadira Caraveo", pos: "U.S. Rep", state: "Colorado", party: "Democrat", id: "C001117" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Lori Chavez-DeRemer", pos: "U.S. Rep", state: "Oregon", party: "Republican", id: "C001129" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Don Davis", pos: "U.S. Rep", state: "NC", party: "Democrat", id: "D000230" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Juan Ciscomani", pos: "U.S. Rep", state: "Arizona", party: "Republican", id: "C001133" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Marie Perez", pos: "U.S. Rep", state: "Washington", party: "Democrat", id: "G000600" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Jen Kiggans", pos: "U.S. Rep", state: "Virginia", party: "Republican", id: "K000399" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Mary Peltola", pos: "U.S. Rep", state: "Alaska", party: "Democrat", id: "P000619" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Marc Molinaro", pos: "U.S. Rep", state: "New York", party: "Republican", id: "M001221" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Gabe Vasquez", pos: "U.S. Rep", state: "New Mexico", party: "Democrat", id: "V000135" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Anna Paulina Luna", pos: "U.S. Rep", state: "Florida", party: "Republican", id: "L000596" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Brittany Pettersen", pos: "U.S. Rep", state: "Colorado", party: "Democrat", id: "P000620" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Mike Lawler", pos: "U.S. Rep", state: "New York", party: "Republican", id: "L000599" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Hillary Scholten", pos: "U.S. Rep", state: "Michigan", party: "Democrat", id: "S001221" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Zach Nunn", pos: "U.S. Rep", state: "Iowa", party: "Republican", id: "N000193" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Val Hoyle", pos: "U.S. Rep", state: "Oregon", party: "Democrat", id: "H001094" },</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "John Duarte", pos: "U.S. Rep", state: "California", party: "Republican", id: "D000633" }</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>];</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>const App = () =&gt; {</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>const [deck, setDeck] = useState([]);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>const [idx, setIdx] = useState(0);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>const [score, setScore] = useState(0);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>const [revealed, setRevealed] = useState(false);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>const [isCorrect, setIsCorrect] = useState(null);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>const [gameOver, setGameOver] = useState(false);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>const [isTransitioning, setIsTransitioning] = useState(false);</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>useEffect(() =&gt; {</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>setDeck([...POLITICIANS].sort(() =&gt; Math.random() - 0.5));</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>}, []);</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>const handleGuess = (guess) =&gt; {</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>if (revealed || isTransitioning) return;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>const correct = deck[idx].party === guess;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>setIsCorrect(correct);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>if (correct) setScore(s =&gt; s + 1);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>setRevealed(true);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>};</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>const nextMember = () =&gt; {</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>// 1. Start transition (fades out the whole card immediately)</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>setIsTransitioning(true);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>// 2. Short timeout to allow fade-out before data swap</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>setTimeout(() =&gt; {</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span>if (idx + 1 &lt; deck.length) {</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>setRevealed(false);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>setIsCorrect(null);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>setIdx(prev =&gt; prev + 1);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>setIsTransitioning(false);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span>} else {</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>setGameOver(true);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span>}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>}, 300);<span class="Apple-converted-space"> </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>};</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>if (deck.length === 0) return null;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>const current = deck[idx];</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>const imgUrl = `https://www.congress.gov/img/member/${current.id.toLowerCase()}_200.jpg`;</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>return (</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div className="min-h-screen flex items-center justify-center p-4"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div className="w-full max-w-sm flex flex-col gap-6"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>{/* Header Stats */}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div className="flex justify-between items-center px-1"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div className="space-y-1"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;h1 className="text-[10px] font-black tracking-[0.3em] text-blue-500 uppercase"&gt;119th Congress&lt;/h1&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;div className="flex gap-1"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>{deck.map((_, i) =&gt; (</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;div key={i} className={`h-1 w-2 rounded-full transition-all duration-300 ${i === idx ? 'bg-blue-500 w-6' : i &lt; idx ? 'bg-slate-700' : 'bg-slate-900'}`} /&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>))}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div className="text-right"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span className="text-2xl font-mono font-bold"&gt;{score}&lt;/span&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;span className="text-slate-600 font-bold ml-1"&gt;/{idx + (revealed ? 1 : 0)}&lt;/span&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>{/* Card Container with unique key to force reset */}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div<span class="Apple-converted-space"> </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>key={idx}<span class="Apple-converted-space"> </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>className={`relative aspect-[3/4] rounded-[48px] overflow-hidden bg-slate-900 border border-white/10 shadow-2xl transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;img<span class="Apple-converted-space"> </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>src={imgUrl}<span class="Apple-converted-space"> </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>className={`w-full h-full object-cover transition-all duration-500 ${revealed ? 'scale-110 blur-xl brightness-50' : 'scale-100'}`}<span class="Apple-converted-space"> </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>alt="Politician"<span class="Apple-converted-space"> </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>/&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>{/* Hidden Details (Reveals strictly on Guess) */}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div className={`absolute inset-0 flex flex-col justify-end p-10 transition-all duration-500 ${revealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;div className="space-y-3"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;span className={`inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${current.party === 'Democrat' ? 'bg-blue-600' : 'bg-red-600'}`}&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                        </span>{current.party}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;/span&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;h2 className="text-4xl font-bold leading-tight"&gt;{current.name}&lt;/h2&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;div className="flex items-center gap-4 text-slate-400 text-xs font-semibold"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;span&gt;{current.pos}&lt;/span&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;span&gt;•&lt;/span&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;span&gt;{current.state}&lt;/span&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;button<span class="Apple-converted-space"> </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                        </span>onClick={nextMember}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                        </span>className="mt-6 w-full py-4 bg-white text-black rounded-3xl font-bold flex items-center justify-center gap-2 hover:bg-slate-200 active:scale-95 transition-all"</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                        </span>Next Member</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;/button&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>{/* Feedback Indicators */}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>{revealed &amp;&amp; (</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;div className="absolute top-10 right-10"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>{isCorrect ?<span class="Apple-converted-space"> </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;span className="text-green-500 text-6xl drop-shadow-lg"&gt;✓&lt;/span&gt; :<span class="Apple-converted-space"> </span></span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                        </span>&lt;span className="text-red-500 text-6xl drop-shadow-lg"&gt;✕&lt;/span&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>)}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>{/* Interaction Buttons */}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>{!revealed ? (</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div className="grid grid-cols-2 gap-4"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;button onClick={() =&gt; handleGuess('Democrat')} className="py-6 rounded-[32px] bg-blue-600/10 border border-blue-500/30 text-blue-400 font-black text-xs tracking-widest hover:bg-blue-600 hover:text-white transition-all active:scale-90 uppercase"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>Democrat</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/button&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;button onClick={() =&gt; handleGuess('Republican')} className="py-6 rounded-[32px] bg-red-600/10 border border-red-500/30 text-red-400 font-black text-xs tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-90 uppercase"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                    </span>Republican</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/button&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>) : (</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div className="h-[76px]" /&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>)}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span>{/* Result Screen */}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span>{gameOver &amp;&amp; (</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex flex-col items-center justify-center p-8 text-center"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h2 className="text-5xl font-black mb-2 uppercase"&gt;Score&lt;/h2&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;p className="text-8xl font-black text-blue-500 mb-10"&gt;{Math.round((score/deck.length)*100)}%&lt;/p&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;button onClick={() =&gt; window.location.reload()} className="px-12 py-5 bg-white text-black rounded-full font-black tracking-widest hover:bg-slate-200 active:scale-95 transition-all"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                                </span>PLAY AGAIN</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/button&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                    </span>)}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>};</span></p>
-<p class="p1"><span class="s1"></span><br></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>const root = ReactDOM.createRoot(document.getElementById('root'));</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>root.render(&lt;App /&gt;);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</span></p>
-<p class="p2"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p2"><span class="s1">&lt;/html&gt;</span></p>
+<body class="bg-[#050505] text-white font-sans antialiased overflow-hidden">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const POLITICIANS = [
+            { name: "Yadira Caraveo", pos: "U.S. Rep", state: "Colorado", party: "Democrat", id: "C001117" },
+            { name: "Lori Chavez-DeRemer", pos: "U.S. Rep", state: "Oregon", party: "Republican", id: "C001129" },
+            { name: "Don Davis", pos: "U.S. Rep", state: "NC", party: "Democrat", id: "D000230" },
+            { name: "Juan Ciscomani", pos: "U.S. Rep", state: "Arizona", party: "Republican", id: "C001133" },
+            { name: "Marie Perez", pos: "U.S. Rep", state: "Washington", party: "Democrat", id: "G000600" },
+            { name: "Jen Kiggans", pos: "U.S. Rep", state: "Virginia", party: "Republican", id: "K000399" },
+            { name: "Mary Peltola", pos: "U.S. Rep", state: "Alaska", party: "Democrat", id: "P000619" },
+            { name: "Marc Molinaro", pos: "U.S. Rep", state: "New York", party: "Republican", id: "M001221" },
+            { name: "Gabe Vasquez", pos: "U.S. Rep", state: "New Mexico", party: "Democrat", id: "V000135" },
+            { name: "Anna Paulina Luna", pos: "U.S. Rep", state: "Florida", party: "Republican", id: "L000596" },
+            { name: "Brittany Pettersen", pos: "U.S. Rep", state: "Colorado", party: "Democrat", id: "P000620" },
+            { name: "Mike Lawler", pos: "U.S. Rep", state: "New York", party: "Republican", id: "L000599" },
+            { name: "Hillary Scholten", pos: "U.S. Rep", state: "Michigan", party: "Democrat", id: "S001221" },
+            { name: "Zach Nunn", pos: "U.S. Rep", state: "Iowa", party: "Republican", id: "N000193" },
+            { name: "Val Hoyle", pos: "U.S. Rep", state: "Oregon", party: "Democrat", id: "H001094" },
+            { name: "John Duarte", pos: "U.S. Rep", state: "California", party: "Republican", id: "D000633" }
+        ];
+
+        const App = () => {
+            const [deck, setDeck] = useState([]);
+            const [idx, setIdx] = useState(0);
+            const [score, setScore] = useState(0);
+            const [revealed, setRevealed] = useState(false);
+            const [isCorrect, setIsCorrect] = useState(null);
+            const [gameOver, setGameOver] = useState(false);
+            const [isTransitioning, setIsTransitioning] = useState(false);
+
+            useEffect(() => {
+                setDeck([...POLITICIANS].sort(() => Math.random() - 0.5));
+            }, []);
+
+            const handleGuess = (guess) => {
+                if (revealed || isTransitioning) return;
+                const correct = deck[idx].party === guess;
+                setIsCorrect(correct);
+                if (correct) setScore(s => s + 1);
+                setRevealed(true);
+            };
+
+            const nextMember = () => {
+                setIsTransitioning(true);
+                setTimeout(() => {
+                    if (idx + 1 < deck.length) {
+                        setRevealed(false);
+                        setIsCorrect(null);
+                        setIdx(prev => prev + 1);
+                        setIsTransitioning(false);
+                    } else {
+                        setGameOver(true);
+                    }
+                }, 300);
+            };
+
+            if (deck.length === 0) return null;
+            const current = deck[idx];
+            const imgUrl = `https://www.congress.gov/img/member/${current.id.toLowerCase()}_200.jpg`;
+
+            return (
+                <div className="min-h-screen flex items-center justify-center p-4">
+                    <div className="w-full max-w-sm flex flex-col gap-6">
+                        <div className="flex justify-between items-center px-1">
+                            <div className="space-y-1">
+                                <h1 className="text-[10px] font-black tracking-[0.3em] text-blue-500 uppercase">119th Congress</h1>
+                                <div className="flex gap-1">
+                                    {deck.map((_, i) => (
+                                        <div key={i} className={`h-1 w-2 rounded-full transition-all duration-300 ${i === idx ? 'bg-blue-500 w-6' : i < idx ? 'bg-slate-700' : 'bg-slate-900'}`} />
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <span className="text-2xl font-mono font-bold">{score}</span>
+                                <span className="text-slate-600 font-bold ml-1">/{idx + (revealed ? 1 : 0)}</span>
+                            </div>
+                        </div>
+
+                        <div key={idx} className={`relative aspect-[3/4] rounded-[48px] overflow-hidden bg-slate-900 border border-white/10 shadow-2xl transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+                            <img src={imgUrl} className={`w-full h-full object-cover transition-all duration-500 ${revealed ? 'scale-110 blur-xl brightness-50' : 'scale-100'}`} alt="Politician" />
+                            <div className={`absolute inset-0 flex flex-col justify-end p-10 transition-all duration-500 ${revealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
+                                <div className="space-y-3">
+                                    <span className={`inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${current.party === 'Democrat' ? 'bg-blue-600' : 'bg-red-600'}`}>
+                                        {current.party}
+                                    </span>
+                                    <h2 className="text-4xl font-bold leading-tight">{current.name}</h2>
+                                    <div className="flex items-center gap-4 text-slate-400 text-xs font-semibold">
+                                        <span>{current.pos}</span>
+                                        <span>•</span>
+                                        <span>{current.state}</span>
+                                    </div>
+                                    <button onClick={nextMember} className="mt-6 w-full py-4 bg-white text-black rounded-3xl font-bold flex items-center justify-center gap-2 hover:bg-slate-200 active:scale-95 transition-all">
+                                        Next Member
+                                    </button>
+                                </div>
+                            </div>
+                            {revealed && (
+                                <div className="absolute top-10 right-10">
+                                    {isCorrect ? <span className="text-green-500 text-6xl drop-shadow-lg">✓</span> : <span className="text-red-500 text-6xl drop-shadow-lg">✕</span>}
+                                </div>
+                            )}
+                        </div>
+
+                        {!revealed ? (
+                            <div className="grid grid-cols-2 gap-4">
+                                <button onClick={() => handleGuess('Democrat')} className="py-6 rounded-[32px] bg-blue-600/10 border border-blue-500/30 text-blue-400 font-black text-xs tracking-widest hover:bg-blue-600 hover:text-white transition-all active:scale-90 uppercase">
+                                    Democrat
+                                </button>
+                                <button onClick={() => handleGuess('Republican')} className="py-6 rounded-[32px] bg-red-600/10 border border-red-500/30 text-red-400 font-black text-xs tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-90 uppercase">
+                                    Republican
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="h-[76px]" />
+                        )}
+                    </div>
+
+                    {gameOver && (
+                        <div className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex flex-col items-center justify-center p-8 text-center">
+                            <h2 className="text-5xl font-black mb-2 uppercase">Score</h2>
+                            <p className="text-8xl font-black text-blue-500 mb-10">{Math.round((score/deck.length)*100)}%</p>
+                            <button onClick={() => window.location.reload()} className="px-12 py-5 bg-white text-black rounded-full font-black tracking-widest hover:bg-slate-200 active:scale-95 transition-all">
+                                PLAY AGAIN
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
