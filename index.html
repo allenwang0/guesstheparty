@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>119th Congress - Blind Guess</title>
+    <title>Party Guesser Pro - 119th Congress</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -14,46 +14,92 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useMemo } = React;
 
-        const POLITICIANS = [
-            { name: "Yadira Caraveo", pos: "U.S. Rep", state: "Colorado", party: "Democrat", id: "C001117" },
-            { name: "Lori Chavez-DeRemer", pos: "U.S. Rep", state: "Oregon", party: "Republican", id: "C001129" },
-            { name: "Don Davis", pos: "U.S. Rep", state: "NC", party: "Democrat", id: "D000230" },
-            { name: "Juan Ciscomani", pos: "U.S. Rep", state: "Arizona", party: "Republican", id: "C001133" },
-            { name: "Marie Perez", pos: "U.S. Rep", state: "Washington", party: "Democrat", id: "G000600" },
-            { name: "Jen Kiggans", pos: "U.S. Rep", state: "Virginia", party: "Republican", id: "K000399" },
-            { name: "Mary Peltola", pos: "U.S. Rep", state: "Alaska", party: "Democrat", id: "P000619" },
-            { name: "Marc Molinaro", pos: "U.S. Rep", state: "New York", party: "Republican", id: "M001221" },
-            { name: "Gabe Vasquez", pos: "U.S. Rep", state: "New Mexico", party: "Democrat", id: "V000135" },
-            { name: "Anna Paulina Luna", pos: "U.S. Rep", state: "Florida", party: "Republican", id: "L000596" },
-            { name: "Brittany Pettersen", pos: "U.S. Rep", state: "Colorado", party: "Democrat", id: "P000620" },
-            { name: "Mike Lawler", pos: "U.S. Rep", state: "New York", party: "Republican", id: "L000599" },
-            { name: "Hillary Scholten", pos: "U.S. Rep", state: "Michigan", party: "Democrat", id: "S001221" },
-            { name: "Zach Nunn", pos: "U.S. Rep", state: "Iowa", party: "Republican", id: "N000193" },
-            { name: "Val Hoyle", pos: "U.S. Rep", state: "Oregon", party: "Democrat", id: "H001094" },
-            { name: "John Duarte", pos: "U.S. Rep", state: "California", party: "Republican", id: "D000633" }
+        // Expanded dataset for the 119th Congress & Current Governors
+        const MASTER_POOL = [
+            // Senators
+            { name: "John Fetterman", pos: "U.S. Senator", state: "PA", party: "Democrat", id: "F000474", type: "Senate" },
+            { name: "Pete Ricketts", pos: "U.S. Senator", state: "NE", party: "Republican", id: "R000618", type: "Senate" },
+            { name: "Catherine Cortez Masto", pos: "U.S. Senator", state: "NV", party: "Democrat", id: "C001113", type: "Senate" },
+            { name: "Katie Britt", pos: "U.S. Senator", state: "AL", party: "Republican", id: "B001319", type: "Senate" },
+            { name: "Mark Kelly", pos: "U.S. Senator", state: "AZ", party: "Democrat", id: "K000377", type: "Senate" },
+            { name: "J.D. Vance", pos: "U.S. Senator", state: "OH", party: "Republican", id: "V000137", type: "Senate" },
+            
+            // House (Battleground/Freshmen)
+            { name: "Yadira Caraveo", pos: "U.S. Rep", state: "CO", party: "Democrat", id: "C001117", type: "House" },
+            { name: "Lori Chavez-DeRemer", pos: "U.S. Rep", state: "OR", party: "Republican", id: "C001129", type: "House" },
+            { name: "Marie Perez", pos: "U.S. Rep", state: "WA", party: "Democrat", id: "G000600", type: "House" },
+            { name: "Juan Ciscomani", pos: "U.S. Rep", state: "AZ", party: "Republican", id: "C001133", type: "House" },
+            { name: "Don Davis", pos: "U.S. Rep", state: "NC", party: "Democrat", id: "D000230", type: "House" },
+            { name: "Jen Kiggans", pos: "U.S. Rep", state: "VA", party: "Republican", id: "K000399", type: "House" },
+            { name: "Mary Peltola", pos: "U.S. Rep", state: "AK", party: "Democrat", id: "P000619", type: "House" },
+            { name: "Marc Molinaro", pos: "U.S. Rep", state: "NY", party: "Republican", id: "M001221", type: "House" },
+            { name: "Gabe Vasquez", pos: "U.S. Rep", state: "NM", party: "Democrat", id: "V000135", type: "House" },
+            { name: "Anna Paulina Luna", pos: "U.S. Rep", state: "FL", party: "Republican", id: "L000596", type: "House" },
+            { name: "Mike Lawler", pos: "U.S. Rep", state: "NY", party: "Republican", id: "L000599", type: "House" },
+            { name: "John Duarte", pos: "U.S. Rep", state: "CA", party: "Republican", id: "D000633", type: "House" },
+            
+            // Governors (Hardcoded IDs based on standard sets)
+            { name: "Josh Shapiro", pos: "Governor", state: "PA", party: "Democrat", id: "shapiro_josh", type: "Gov" },
+            { name: "Glenn Youngkin", pos: "Governor", state: "VA", party: "Republican", id: "youngkin_glenn", type: "Gov" },
+            { name: "Gretchen Whitmer", pos: "Governor", state: "MI", party: "Democrat", id: "whitmer_gretchen", type: "Gov" },
+            { name: "Brian Kemp", pos: "Governor", state: "GA", party: "Republican", id: "kemp_brian", type: "Gov" }
         ];
 
         const App = () => {
+            const [gameState, setGameState] = useState('menu'); // menu, playing, finished
             const [deck, setDeck] = useState([]);
             const [idx, setIdx] = useState(0);
-            const [score, setScore] = useState(0);
             const [revealed, setRevealed] = useState(false);
             const [isCorrect, setIsCorrect] = useState(null);
-            const [gameOver, setGameOver] = useState(false);
             const [isTransitioning, setIsTransitioning] = useState(false);
+            
+            const [stats, setStats] = useState({
+                score: 0,
+                streak: 0,
+                maxStreak: 0,
+                byType: { House: { c: 0, t: 0 }, Senate: { c: 0, t: 0 }, Gov: { c: 0, t: 0 } }
+            });
 
-            useEffect(() => {
-                setDeck([...POLITICIANS].sort(() => Math.random() - 0.5));
-            }, []);
+            const startMode = (modeType) => {
+                let filtered = modeType === 'Mixed' 
+                    ? [...MASTER_POOL] 
+                    : MASTER_POOL.filter(p => p.type === modeType);
+                
+                // Shuffle logic
+                const shuffled = filtered.sort(() => Math.random() - 0.5).slice(0, 10);
+                setDeck(shuffled);
+                setIdx(0);
+                setStats({ score: 0, streak: 0, maxStreak: 0, byType: { House: { c: 0, t: 0 }, Senate: { c: 0, t: 0 }, Gov: { c: 0, t: 0 } } });
+                setGameState('playing');
+                setRevealed(false);
+            };
 
             const handleGuess = (party) => {
                 if (revealed || isTransitioning) return;
-                const correct = deck[idx].party === party;
+                const current = deck[idx];
+                const correct = current.party === party;
+                
                 setIsCorrect(correct);
-                if (correct) setScore(s => s + 1);
                 setRevealed(true);
+                
+                setStats(prev => {
+                    const newStreak = correct ? prev.streak + 1 : 0;
+                    return {
+                        ...prev,
+                        score: prev.score + (correct ? 1 : 0),
+                        streak: newStreak,
+                        maxStreak: Math.max(prev.maxStreak, newStreak),
+                        byType: {
+                            ...prev.byType,
+                            [current.type]: {
+                                c: prev.byType[current.type].c + (correct ? 1 : 0),
+                                t: prev.byType[current.type].t + 1
+                            }
+                        }
+                    };
+                });
             };
 
             const nextMember = () => {
@@ -65,23 +111,57 @@
                         setIdx(prev => prev + 1);
                         setIsTransitioning(false);
                     } else {
-                        setGameOver(true);
+                        setGameState('finished');
                     }
                 }, 300);
             };
 
-            if (deck.length === 0) return null;
+            if (gameState === 'menu') return (
+                <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center bg-[#050505]">
+                    <h1 className="text-[12px] font-black tracking-[0.5em] text-blue-500 uppercase mb-4">Tactical Trainer</h1>
+                    <h2 className="text-5xl font-black text-white mb-12 tracking-tighter">SELECT SET</h2>
+                    <div className="grid grid-cols-1 gap-4 w-full max-w-xs">
+                        {['Mixed', 'House', 'Senate', 'Gov'].map(m => (
+                            <button key={m} onClick={() => startMode(m)} className="py-5 bg-white/5 border border-white/10 rounded-3xl font-black text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all active:scale-95">
+                                {m} Pool
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            if (gameState === 'finished') return (
+                <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[#050505] text-center">
+                    <h2 className="text-xs font-black tracking-[0.4em] text-blue-500 mb-2 uppercase">Session Report</h2>
+                    <p className="text-8xl font-black text-white mb-8">{Math.round((stats.score/deck.length)*100)}%</p>
+                    
+                    <div className="grid grid-cols-3 gap-8 mb-12 w-full max-w-sm">
+                        {Object.entries(stats.byType).map(([key, val]) => val.t > 0 && (
+                            <div key={key}>
+                                <p className="text-[10px] text-slate-500 font-black uppercase mb-1">{key}</p>
+                                <p className="text-xl font-mono font-bold">{Math.round((val.c/val.t)*100)}%</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <button onClick={() => setGameState('menu')} className="px-12 py-5 bg-white text-black rounded-full font-black text-xs tracking-widest hover:bg-slate-200 transition-all">
+                        RESTART
+                    </button>
+                </div>
+            );
+
             const current = deck[idx];
-            // High-resolution source
-            const imgUrl = `https://unitedstates.github.io/images/congress/450x550/${current.id.toUpperCase()}.jpg`;
+            // High-res imagery logic
+            const imgUrl = current.type === 'Gov' 
+                ? `https://www.nga.org/wp-content/uploads/${current.id}.jpg`
+                : `https://unitedstates.github.io/images/congress/450x550/${current.id.toUpperCase()}.jpg`;
 
             return (
                 <div className="min-h-screen flex items-center justify-center p-4">
                     <div className="w-full max-w-sm flex flex-col gap-6">
-                        
                         <div className="flex justify-between items-center px-1">
                             <div className="space-y-1">
-                                <h1 className="text-[10px] font-black tracking-[0.3em] text-blue-500 uppercase leading-none">119th Congress</h1>
+                                <h1 className="text-[10px] font-black tracking-[0.3em] text-blue-500 uppercase leading-none">Scanning Pool</h1>
                                 <div className="flex gap-1">
                                     {deck.map((_, i) => (
                                         <div key={i} className={`h-1 w-1.5 rounded-full transition-all duration-300 ${i === idx ? 'bg-blue-500 w-5' : i < idx ? 'bg-slate-700' : 'bg-slate-900'}`} />
@@ -89,69 +169,53 @@
                                 </div>
                             </div>
                             <div className="text-right leading-none">
-                                <span className="text-2xl font-mono font-bold">{score}</span>
+                                <span className="text-2xl font-mono font-bold text-white">{stats.score}</span>
                                 <span className="text-slate-600 font-bold ml-1 text-sm">/{idx + (revealed ? 1 : 0)}</span>
                             </div>
                         </div>
 
-                        {/* Card with Key to force full refresh */}
                         <div key={idx} className={`relative aspect-[3/4] rounded-[40px] overflow-hidden bg-slate-900 border border-white/5 shadow-2xl transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-                            <img 
-                                src={imgUrl} 
-                                className={`w-full h-full object-cover transition-all duration-700 ${revealed ? 'scale-110 blur-xl brightness-[0.2]' : 'scale-100'}`} 
-                                alt="Official Portrait" 
-                            />
+                            <img src={imgUrl} className={`w-full h-full object-cover transition-all duration-700 ${revealed ? 'scale-110 blur-2xl brightness-[0.15]' : 'scale-100'}`} alt="Visual ID" />
                             
                             <div className={`absolute inset-0 flex flex-col justify-end p-8 transition-all duration-500 ${revealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
                                 <div className="space-y-2">
                                     <span className={`inline-block px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${current.party === 'Democrat' ? 'bg-blue-600' : 'bg-red-600'}`}>
                                         {current.party}
                                     </span>
-                                    <h2 className="text-3xl font-bold leading-tight tracking-tight">{current.name}</h2>
-                                    <div className="flex items-center gap-3 text-slate-400 text-[11px] font-bold">
+                                    <h2 className="text-3xl font-bold leading-tight tracking-tight text-white">{current.name}</h2>
+                                    <div className="flex items-center gap-3 text-slate-400 text-[11px] font-bold uppercase tracking-tighter">
                                         <span>{current.pos}</span>
                                         <span className="opacity-30">•</span>
                                         <span>{current.state}</span>
                                     </div>
-                                    <button 
-                                        onClick={nextMember}
-                                        className="mt-6 w-full py-4 bg-white text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 active:scale-95 transition-all"
-                                    >
-                                        Next Mission
+                                    <button onClick={nextMember} className="mt-6 w-full py-4 bg-white text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all">
+                                        Identify Next
                                     </button>
                                 </div>
                             </div>
 
                             {revealed && (
-                                <div className="absolute top-8 right-8 animate-in zoom-in duration-300">
-                                    {isCorrect ? <span className="text-green-500 text-6xl">✓</span> : <span className="text-red-500 text-6xl">✕</span>}
+                                <div className="absolute top-8 right-8">
+                                    {isCorrect ? <span className="text-green-500 text-6xl drop-shadow-2xl">✓</span> : <span className="text-red-500 text-6xl drop-shadow-2xl">✕</span>}
                                 </div>
                             )}
                         </div>
 
                         {!revealed ? (
                             <div className="grid grid-cols-2 gap-3">
-                                <button onClick={() => handleGuess('Democrat')} className="py-5 rounded-[24px] bg-blue-600/10 border border-blue-500/20 text-blue-400 font-black text-[10px] tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all active:scale-90 uppercase">
+                                <button onClick={() => handleGuess('Democrat')} className="py-5 rounded-[24px] bg-blue-600/10 border border-blue-500/20 text-blue-400 font-black text-[10px] tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all active:scale-95 uppercase">
                                     Democrat
                                 </button>
-                                <button onClick={() => handleGuess('Republican')} className="py-5 rounded-[24px] bg-red-600/10 border border-red-500/20 text-red-400 font-black text-[10px] tracking-[0.2em] hover:bg-red-600 hover:text-white transition-all active:scale-90 uppercase">
+                                <button onClick={() => handleGuess('Republican')} className="py-5 rounded-[24px] bg-red-600/10 border border-red-500/20 text-red-400 font-black text-[10px] tracking-[0.2em] hover:bg-red-600 hover:text-white transition-all active:scale-95 uppercase">
                                     Republican
                                 </button>
                             </div>
                         ) : (
-                            <div className="h-[66px]" />
+                            <div className="h-[66px] flex items-center justify-center">
+                                <span className="text-[10px] font-bold text-slate-700 uppercase tracking-widest animate-pulse">Analyzing Result...</span>
+                            </div>
                         )}
                     </div>
-
-                    {gameOver && (
-                        <div className="fixed inset-0 bg-[#050505]/95 backdrop-blur-xl z-50 flex flex-col items-center justify-center p-8 text-center">
-                            <h2 className="text-xs font-black tracking-[0.5em] text-blue-500 mb-2 uppercase">Analysis Complete</h2>
-                            <p className="text-8xl font-black text-white mb-10">{Math.round((score/deck.length)*100)}%</p>
-                            <button onClick={() => window.location.reload()} className="px-12 py-5 bg-white text-black rounded-full font-black text-xs tracking-widest hover:bg-slate-200 active:scale-95 transition-all">
-                                RESTART SESSION
-                            </button>
-                        </div>
-                    )}
                 </div>
             );
         };
