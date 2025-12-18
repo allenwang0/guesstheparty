@@ -3,183 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Political Blitz</title>
+    <title>Political Blitz v2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0b0e14; color: white; }
-        .card-container { height: 60vh; width: 90vw; max-width: 400px; }
-        .progress-bar { transition: width 0.3s ease; }
-        .timer-shimmer { animation: pulse 1s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        /* Card & Image Styles */
+        .portrait-container { 
+            height: 65vh; 
+            width: 100%; 
+            max-width: 420px; 
+            position: relative;
+            overflow: hidden;
+            border-radius: 40px;
+        }
+        .portrait-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        /* Timer Animation */
+        @keyframes danger-pulse {
+            0%, 100% { background-color: #ef4444; }
+            50% { background-color: #7f1d1d; }
+        }
+        .timer-danger { animation: danger-pulse 0.5s infinite; }
     </style>
 </head>
-<body class="flex flex-col items-center justify-between min-h-screen p-6 overflow-hidden">
+<body class="flex flex-col items-center justify-between min-h-screen p-4 overflow-hidden">
 
-    <div class="w-full flex justify-between items-center max-w-md pt-4">
-        <button class="text-gray-400 hover:text-white">←</button>
+    <div class="w-full flex justify-between items-center max-w-md mt-2">
+        <button class="text-gray-500 hover:text-white text-xl">←</button>
         <div class="flex flex-col items-center">
-            <div id="progress-dots" class="flex gap-1 mb-2">
-                </div>
-            <div class="text-sm font-semibold tracking-widest text-gray-500 uppercase">
-                Session: <span id="current-score" class="text-white">0</span> / <span id="total-cards">0</span>
+            <div id="dot-indicator" class="flex gap-1.5 mb-2"></div>
+            <div class="text-[10px] font-bold tracking-[0.2em] text-gray-500 uppercase">
+                Round: <span id="session-count" class="text-white">0</span> / <span id="total-count">0</span>
             </div>
         </div>
         <div class="text-right">
-            <div class="text-[10px] text-gray-500 uppercase font-bold">Lifetime Score</div>
-            <div id="cumulative-score" class="text-xl font-bold text-blue-400">0</div>
+            <div class="text-[9px] text-gray-500 uppercase font-black">Lifetime XP</div>
+            <div id="lifetime-score" class="text-xl font-bold text-blue-500">0</div>
         </div>
     </div>
 
-    <div class="flex flex-col items-center gap-2">
-        <div class="flex items-center gap-3 bg-gray-900/50 p-2 rounded-full px-4 border border-white/10">
-            <span class="text-xs font-bold uppercase tracking-wider text-orange-400">Blitz Round</span>
-            <button id="blitz-toggle" onclick="toggleBlitz()" class="w-10 h-5 bg-gray-700 rounded-full relative transition-colors">
-                <div id="toggle-knob" class="absolute top-1 left-1 w-3 h-3 bg-white rounded-full transition-all"></div>
+    <div class="flex flex-col items-center gap-3 mt-4">
+        <div class="flex items-center gap-3 bg-white/5 py-1.5 px-4 rounded-full border border-white/10">
+            <span class="text-[10px] font-black uppercase text-orange-500">Blitz Mode</span>
+            <button id="blitz-btn" onclick="toggleBlitz()" class="w-9 h-5 bg-gray-700 rounded-full relative transition-all duration-300">
+                <div id="knob" class="absolute top-1 left-1 w-3 h-3 bg-white rounded-full transition-all"></div>
             </button>
         </div>
-        <div id="timer-display" class="h-1 w-32 bg-gray-800 rounded-full overflow-hidden hidden">
-            <div id="timer-fill" class="h-full bg-orange-500 w-full transition-all linear"></div>
+        <div id="timer-box" class="w-48 h-1 bg-gray-800 rounded-full overflow-hidden opacity-0 transition-opacity">
+            <div id="timer-bar" class="h-full bg-blue-500 w-full"></div>
         </div>
     </div>
 
-    <div id="card-stage" class="card-container bg-[#161b22] rounded-[40px] border border-white/10 shadow-2xl flex items-center justify-center relative p-8 text-center mt-4">
-        <div id="loading-spinner" class="absolute inset-0 flex items-center justify-center bg-[#161b22] rounded-[40px] z-10">
-            <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <div id="stage" class="portrait-container bg-[#161b22] border border-white/10 shadow-2xl mt-4">
+        <div id="spinner" class="absolute inset-0 flex items-center justify-center z-20 bg-[#161b22]">
+            <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
+
+        <img id="portrait" src="" alt="Candidate" class="portrait-img opacity-0">
         
-        <div id="card-content" class="opacity-0 transition-opacity duration-500">
-            <h2 id="question-text" class="text-2xl font-semibold leading-tight"></h2>
+        <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+            <h2 id="candidate-name" class="text-2xl font-bold mb-1"></h2>
+            <p id="candidate-desc" class="text-sm text-gray-300 leading-relaxed"></p>
         </div>
     </div>
 
-    <div class="w-full max-w-md flex gap-4 pb-8">
-        <button onclick="handleAnswer('democrat')" class="flex-1 py-6 rounded-3xl bg-[#0d1526] border border-blue-900/50 text-blue-400 font-bold uppercase tracking-widest hover:bg-blue-900/20 transition-all active:scale-95">
+    <div class="w-full max-w-md flex gap-4 mb-6 mt-6">
+        <button onclick="submitAnswer('democrat')" class="flex-1 py-5 rounded-[2rem] bg-[#0d1526] border border-blue-600/30 text-blue-400 font-black uppercase tracking-widest hover:bg-blue-600/20 active:scale-95 transition-all">
             Democrat
         </button>
-        <button onclick="handleAnswer('republican')" class="flex-1 py-6 rounded-3xl bg-[#1a0f12] border border-red-900/50 text-red-400 font-bold uppercase tracking-widest hover:bg-red-900/20 transition-all active:scale-95">
+        <button onclick="submitAnswer('republican')" class="flex-1 py-5 rounded-[2rem] bg-[#1a0f12] border border-red-600/30 text-red-400 font-black uppercase tracking-widest hover:bg-red-600/20 active:scale-95 transition-all">
             Republican
         </button>
     </div>
 
     <script>
-        // Sample Data - Replace with your API fetch
-        const cardData = [
-            { id: 1, text: "Supports expanding the Affordable Care Act.", answer: "democrat" },
-            { id: 2, text: "Advocates for lower corporate tax rates.", answer: "republican" },
-            { id: 3, text: "Prioritizes renewable energy subsidies.", answer: "democrat" },
-            { id: 4, text: "Favors deregulation of the energy sector.", answer: "republican" }
+        // DATASET: Replace 'img' with your actual hosted image URLs
+        const politicians = [
+            { name: "John Doe", desc: "Advocates for universal healthcare and green energy.", party: "democrat", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80" },
+            { name: "Jane Smith", desc: "Supports school choice and fiscal conservatism.", party: "republican", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" },
+            { name: "Alex Rivera", desc: "Focuses on strengthening labor unions.", party: "democrat", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=800&q=80" }
         ];
 
-        let currentIndex = 0;
-        let sessionScore = 0;
-        let isBlitzMode = false;
-        let blitzTimer = null;
-        let timeLeft = 10;
+        let index = 0;
+        let correctCount = 0;
+        let isBlitz = false;
+        let timerId = null;
+        let timeRemaining = 10;
 
-        // Initialize
         function init() {
-            updateCumulativeDisplay();
-            document.getElementById('total-cards').innerText = cardData.length;
+            document.getElementById('total-count').innerText = politicians.length;
+            updateXPDisplay();
             renderDots();
             loadCard();
         }
 
+        function updateXPDisplay() {
+            const xp = localStorage.getItem('total_political_xp') || 0;
+            document.getElementById('lifetime-score').innerText = xp;
+        }
+
         function renderDots() {
-            const container = document.getElementById('progress-dots');
-            container.innerHTML = cardData.map((_, i) => `
-                <div class="h-1 w-6 rounded-full ${i === currentIndex ? 'bg-blue-500' : 'bg-gray-700'} transition-colors"></div>
+            const container = document.getElementById('dot-indicator');
+            container.innerHTML = politicians.map((_, i) => `
+                <div class="h-1 w-5 rounded-full ${i === index ? 'bg-blue-500' : 'bg-gray-700'} transition-all"></div>
             `).join('');
         }
 
         function loadCard() {
-            const spinner = document.getElementById('loading-spinner');
-            const content = document.getElementById('card-content');
-            const textEl = document.getElementById('question-text');
+            if (index >= politicians.length) return finishGame();
 
-            // Reset UI
+            const p = politicians[index];
+            const imgEl = document.getElementById('portrait');
+            const spinner = document.getElementById('spinner');
+            
+            // Start Loading Logic
             spinner.classList.remove('hidden');
-            content.classList.add('opacity-0');
-
-            if (currentIndex < cardData.length) {
-                setTimeout(() => { // Simulating network lag
-                    textEl.innerText = cardData[currentIndex].text;
-                    spinner.classList.add('hidden');
-                    content.classList.remove('opacity-0');
-                    if (isBlitzMode) startTimer();
-                }, 500);
-            } else {
-                showResults();
-            }
+            imgEl.classList.add('opacity-0');
+            
+            // Image Preloader
+            const preloader = new Image();
+            preloader.src = p.img;
+            preloader.onload = () => {
+                imgEl.src = p.img;
+                imgEl.classList.remove('opacity-0');
+                spinner.classList.add('hidden');
+                document.getElementById('candidate-name').innerText = p.name;
+                document.getElementById('candidate-desc').innerText = p.desc;
+                if (isBlitz) startTimer();
+            };
+            preloader.onerror = () => {
+                // Fallback if image fails
+                spinner.classList.add('hidden');
+                document.getElementById('candidate-name').innerText = p.name;
+                document.getElementById('candidate-desc').innerText = "Portrait unavailable. " + p.desc;
+                if (isBlitz) startTimer();
+            };
         }
 
-        function handleAnswer(choice) {
-            clearInterval(blitzTimer);
-            const correct = cardData[currentIndex].answer === choice;
+        function submitAnswer(choice) {
+            clearInterval(timerId);
+            const correct = politicians[index].party === choice;
             
             if (correct) {
-                sessionScore++;
-                updateCumulativeScore(1);
+                correctCount++;
+                let currentXP = parseInt(localStorage.getItem('total_political_xp') || 0);
+                localStorage.setItem('total_political_xp', currentXP + 10);
+                updateXPDisplay();
             }
 
-            currentIndex++;
-            document.getElementById('current-score').innerText = sessionScore;
+            index++;
+            document.getElementById('session-count').innerText = correctCount;
             renderDots();
             loadCard();
         }
 
         function toggleBlitz() {
-            isBlitzMode = !isBlitzMode;
-            const knob = document.getElementById('toggle-knob');
-            const toggle = document.getElementById('blitz-toggle');
-            const timerBar = document.getElementById('timer-display');
-            
-            if (isBlitzMode) {
-                knob.style.left = '24px';
-                toggle.classList.replace('bg-gray-700', 'bg-orange-600');
-                timerBar.classList.remove('hidden');
+            isBlitz = !isBlitz;
+            const knob = document.getElementById('knob');
+            const btn = document.getElementById('blitz-btn');
+            const bar = document.getElementById('timer-box');
+
+            if (isBlitz) {
+                knob.style.transform = 'translateX(16px)';
+                btn.classList.add('bg-orange-600');
+                bar.classList.remove('opacity-0');
                 startTimer();
             } else {
-                knob.style.left = '4px';
-                toggle.classList.replace('bg-orange-600', 'bg-gray-700');
-                timerBar.classList.add('hidden');
-                clearInterval(blitzTimer);
+                knob.style.transform = 'translateX(0px)';
+                btn.classList.remove('bg-orange-600');
+                bar.classList.add('opacity-0');
+                clearInterval(timerId);
             }
         }
 
         function startTimer() {
-            clearInterval(blitzTimer);
-            timeLeft = 10;
-            const fill = document.getElementById('timer-fill');
+            clearInterval(timerId);
+            timeRemaining = 10;
+            const bar = document.getElementById('timer-bar');
             
-            blitzTimer = setInterval(() => {
-                timeLeft -= 0.1;
-                fill.style.width = `${(timeLeft / 10) * 100}%`;
-                
-                if (timeLeft <= 0) {
-                    clearInterval(blitzTimer);
-                    handleAnswer('timeout'); // Counts as wrong
+            timerId = setInterval(() => {
+                timeRemaining -= 0.05;
+                const percent = (timeRemaining / 10) * 100;
+                bar.style.width = percent + "%";
+
+                if (timeRemaining < 3) {
+                    bar.classList.add('timer-danger');
+                } else {
+                    bar.classList.remove('timer-danger');
                 }
-            }, 100);
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerId);
+                    submitAnswer('timeout');
+                }
+            }, 50);
         }
 
-        function updateCumulativeScore(points) {
-            let total = parseInt(localStorage.getItem('lifetimeScore') || 0);
-            total += points;
-            localStorage.setItem('lifetimeScore', total);
-            updateCumulativeDisplay();
-        }
-
-        function updateCumulativeDisplay() {
-            document.getElementById('cumulative-score').innerText = localStorage.getItem('lifetimeScore') || 0;
-        }
-
-        function showResults() {
-            document.getElementById('card-stage').innerHTML = `
-                <div class="flex flex-col items-center">
-                    <h2 class="text-3xl font-bold mb-2">Round Over!</h2>
-                    <p class="text-gray-400 mb-6">You got ${sessionScore} correct this round.</p>
-                    <button onclick="location.reload()" class="px-8 py-3 bg-blue-600 rounded-full font-bold">Play Again</button>
+        function finishGame() {
+            document.getElementById('stage').innerHTML = `
+                <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+                    <div class="text-6xl mb-4">🏆</div>
+                    <h2 class="text-3xl font-black mb-2">ROUND OVER</h2>
+                    <p class="text-gray-400 mb-8">You identified ${correctCount} candidates correctly.</p>
+                    <button onclick="location.reload()" class="w-full py-4 bg-blue-600 rounded-2xl font-bold uppercase tracking-widest">Replay Blitz</button>
                 </div>
             `;
         }
