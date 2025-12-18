@@ -72,7 +72,7 @@ export default function Home() {
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
           <div className="aspect-[4/5] relative bg-gray-200">
             <img
-              src={current.image_url || 'https://via.placeholder.com/400x500?text=No+Image'}
+              src={current.img || 'https://via.placeholder.com/400x500?text=No+Image'}
               alt={current.name}
               className="w-full h-full object-cover"
               onError={(e) => {
