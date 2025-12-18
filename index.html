@@ -3,48 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Party Guesser Pro - 119th Congress</title>
+    <title>Political Affiliation Trainer v2.5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-[#050505] text-white font-sans antialiased overflow-hidden">
+<body class="bg-[#020617] text-slate-100 font-sans antialiased overflow-hidden">
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
 
-        // Expanded dataset for the 119th Congress & Current Governors
-        const MASTER_POOL = [
-            // Senators
-            { name: "John Fetterman", pos: "U.S. Senator", state: "PA", party: "Democrat", id: "F000474", type: "Senate" },
-            { name: "Pete Ricketts", pos: "U.S. Senator", state: "NE", party: "Republican", id: "R000618", type: "Senate" },
-            { name: "Catherine Cortez Masto", pos: "U.S. Senator", state: "NV", party: "Democrat", id: "C001113", type: "Senate" },
-            { name: "Katie Britt", pos: "U.S. Senator", state: "AL", party: "Republican", id: "B001319", type: "Senate" },
-            { name: "Mark Kelly", pos: "U.S. Senator", state: "AZ", party: "Democrat", id: "K000377", type: "Senate" },
-            { name: "J.D. Vance", pos: "U.S. Senator", state: "OH", party: "Republican", id: "V000137", type: "Senate" },
-            
-            // House (Battleground/Freshmen)
-            { name: "Yadira Caraveo", pos: "U.S. Rep", state: "CO", party: "Democrat", id: "C001117", type: "House" },
-            { name: "Lori Chavez-DeRemer", pos: "U.S. Rep", state: "OR", party: "Republican", id: "C001129", type: "House" },
-            { name: "Marie Perez", pos: "U.S. Rep", state: "WA", party: "Democrat", id: "G000600", type: "House" },
-            { name: "Juan Ciscomani", pos: "U.S. Rep", state: "AZ", party: "Republican", id: "C001133", type: "House" },
-            { name: "Don Davis", pos: "U.S. Rep", state: "NC", party: "Democrat", id: "D000230", type: "House" },
-            { name: "Jen Kiggans", pos: "U.S. Rep", state: "VA", party: "Republican", id: "K000399", type: "House" },
-            { name: "Mary Peltola", pos: "U.S. Rep", state: "AK", party: "Democrat", id: "P000619", type: "House" },
-            { name: "Marc Molinaro", pos: "U.S. Rep", state: "NY", party: "Republican", id: "M001221", type: "House" },
-            { name: "Gabe Vasquez", pos: "U.S. Rep", state: "NM", party: "Democrat", id: "V000135", type: "House" },
-            { name: "Anna Paulina Luna", pos: "U.S. Rep", state: "FL", party: "Republican", id: "L000596", type: "House" },
-            { name: "Mike Lawler", pos: "U.S. Rep", state: "NY", party: "Republican", id: "L000599", type: "House" },
-            { name: "John Duarte", pos: "U.S. Rep", state: "CA", party: "Republican", id: "D000633", type: "House" },
-            
-            // Governors (Hardcoded IDs based on standard sets)
-            { name: "Josh Shapiro", pos: "Governor", state: "PA", party: "Democrat", id: "shapiro_josh", type: "Gov" },
-            { name: "Glenn Youngkin", pos: "Governor", state: "VA", party: "Republican", id: "youngkin_glenn", type: "Gov" },
-            { name: "Gretchen Whitmer", pos: "Governor", state: "MI", party: "Democrat", id: "whitmer_gretchen", type: "Gov" },
-            { name: "Brian Kemp", pos: "Governor", state: "GA", party: "Republican", id: "kemp_brian", type: "Gov" }
+        /**
+         * UPDATED 2025 BANK: 
+         * Includes 119th Congress fresh faces and confirmed 2025 Governors.
+         */
+        const MASTER_BANK = [
+            // SENATE (119th Congress)
+            { name: "John Fetterman", state: "PA", party: "Democrat", id: "F000474", type: "Senate" },
+            { name: "Dave McCormick", state: "PA", party: "Republican", id: "M001230", type: "Senate" },
+            { name: "Adam Schiff", state: "CA", party: "Democrat", id: "S001150", type: "Senate" },
+            { name: "Bernie Moreno", state: "OH", party: "Republican", id: "M001234", type: "Senate" },
+            { name: "Angela Alsobrooks", state: "MD", party: "Democrat", id: "A000382", type: "Senate" },
+            { name: "Jim Justice", state: "WV", party: "Republican", id: "J000311", type: "Senate" },
+            { name: "Ruben Gallego", state: "AZ", party: "Democrat", id: "G000574", type: "Senate" },
+            { name: "Katie Britt", state: "AL", party: "Republican", id: "B001319", type: "Senate" },
+            { name: "John Hoeven", state: "ND", party: "Republican", id: "H001061", type: "Senate" },
+            { name: "Catherine Cortez Masto", state: "NV", party: "Democrat", id: "C001113", type: "Senate" },
+
+            // HOUSE (Toss-ups/Key Members)
+            { name: "Marie Perez", state: "WA", party: "Democrat", id: "G000600", type: "House" },
+            { name: "Lori Chavez-DeRemer", state: "OR", party: "Republican", id: "C001129", type: "House" },
+            { name: "Don Davis", state: "NC", party: "Democrat", id: "D000230", type: "House" },
+            { name: "Juan Ciscomani", state: "AZ", party: "Republican", id: "C001133", type: "House" },
+            { name: "Yadira Caraveo", state: "CO", party: "Democrat", id: "C001117", type: "House" },
+            { name: "Jen Kiggans", state: "VA", party: "Republican", id: "K000399", type: "House" },
+            { name: "Mary Peltola", state: "AK", party: "Democrat", id: "P000619", type: "House" },
+            { name: "Marc Molinaro", state: "NY", party: "Republican", id: "M001221", type: "House" },
+
+            // GOVERNORS (2025 Active)
+            { name: "Josh Stein", state: "NC", party: "Democrat", id: "stein_josh", type: "Gov" },
+            { name: "Kelly Ayotte", state: "NH", party: "Republican", id: "ayotte_kelly", type: "Gov" },
+            { name: "Matt Meyer", state: "DE", party: "Democrat", id: "meyer_matt", type: "Gov" },
+            { name: "Mike Braun", state: "IN", party: "Republican", id: "braun_mike", type: "Gov" },
+            { name: "Josh Shapiro", state: "PA", party: "Democrat", id: "shapiro_josh", type: "Gov" },
+            { name: "Glenn Youngkin", state: "VA", party: "Republican", id: "youngkin_glenn", type: "Gov" },
+            { name: "Gretchen Whitmer", state: "MI", party: "Democrat", id: "whitmer_gretchen", type: "Gov" },
+            { name: "Ron DeSantis", state: "FL", party: "Republican", id: "desantis_ron", type: "Gov" }
         ];
 
         const App = () => {
@@ -53,77 +60,56 @@
             const [idx, setIdx] = useState(0);
             const [revealed, setRevealed] = useState(false);
             const [isCorrect, setIsCorrect] = useState(null);
-            const [isTransitioning, setIsTransitioning] = useState(false);
-            
-            const [stats, setStats] = useState({
-                score: 0,
-                streak: 0,
-                maxStreak: 0,
-                byType: { House: { c: 0, t: 0 }, Senate: { c: 0, t: 0 }, Gov: { c: 0, t: 0 } }
-            });
+            const [isLoading, setIsLoading] = useState(true);
+            const [stats, setStats] = useState({ score: 0, streak: 0, total: 0 });
 
-            const startMode = (modeType) => {
-                let filtered = modeType === 'Mixed' 
-                    ? [...MASTER_POOL] 
-                    : MASTER_POOL.filter(p => p.type === modeType);
-                
-                // Shuffle logic
+            // Initialize Icons
+            useEffect(() => { if (window.lucide) lucide.createIcons(); }, [gameState, revealed]);
+
+            const startMode = (type) => {
+                let filtered = type === 'Mixed' ? [...MASTER_BANK] : MASTER_BANK.filter(p => p.type === type);
+                // Randomize & Take 10
                 const shuffled = filtered.sort(() => Math.random() - 0.5).slice(0, 10);
                 setDeck(shuffled);
                 setIdx(0);
-                setStats({ score: 0, streak: 0, maxStreak: 0, byType: { House: { c: 0, t: 0 }, Senate: { c: 0, t: 0 }, Gov: { c: 0, t: 0 } } });
+                setStats({ score: 0, streak: 0, total: 10 });
                 setGameState('playing');
                 setRevealed(false);
+                setIsLoading(true);
             };
 
-            const handleGuess = (party) => {
-                if (revealed || isTransitioning) return;
-                const current = deck[idx];
-                const correct = current.party === party;
-                
+            const handleGuess = (guess) => {
+                if (revealed || isLoading) return;
+                const correct = deck[idx].party === guess;
                 setIsCorrect(correct);
+                if (correct) setStats(s => ({ ...s, score: s.score + 1, streak: s.streak + 1 }));
+                else setStats(s => ({ ...s, streak: 0 }));
                 setRevealed(true);
-                
-                setStats(prev => {
-                    const newStreak = correct ? prev.streak + 1 : 0;
-                    return {
-                        ...prev,
-                        score: prev.score + (correct ? 1 : 0),
-                        streak: newStreak,
-                        maxStreak: Math.max(prev.maxStreak, newStreak),
-                        byType: {
-                            ...prev.byType,
-                            [current.type]: {
-                                c: prev.byType[current.type].c + (correct ? 1 : 0),
-                                t: prev.byType[current.type].t + 1
-                            }
-                        }
-                    };
-                });
             };
 
-            const nextMember = () => {
-                setIsTransitioning(true);
-                setTimeout(() => {
-                    if (idx + 1 < deck.length) {
-                        setRevealed(false);
-                        setIsCorrect(null);
-                        setIdx(prev => prev + 1);
-                        setIsTransitioning(false);
-                    } else {
-                        setGameState('finished');
-                    }
-                }, 300);
+            const next = () => {
+                if (idx + 1 < deck.length) {
+                    setIsLoading(true);
+                    setRevealed(false);
+                    setIsCorrect(null);
+                    setIdx(i => i + 1);
+                } else {
+                    setGameState('finished');
+                }
             };
 
             if (gameState === 'menu') return (
-                <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center bg-[#050505]">
-                    <h1 className="text-[12px] font-black tracking-[0.5em] text-blue-500 uppercase mb-4">Tactical Trainer</h1>
-                    <h2 className="text-5xl font-black text-white mb-12 tracking-tighter">SELECT SET</h2>
-                    <div className="grid grid-cols-1 gap-4 w-full max-w-xs">
-                        {['Mixed', 'House', 'Senate', 'Gov'].map(m => (
-                            <button key={m} onClick={() => startMode(m)} className="py-5 bg-white/5 border border-white/10 rounded-3xl font-black text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all active:scale-95">
-                                {m} Pool
+                <div className="min-h-screen flex flex-col items-center justify-center p-6 space-y-8 bg-gradient-to-b from-[#020617] to-[#0f172a]">
+                    <div className="text-center space-y-2">
+                        <h1 className="text-5xl font-black tracking-tighter text-white uppercase italic">Party Guesser</h1>
+                        <p className="text-blue-400 font-mono text-xs tracking-widest uppercase">119th Congress Training Module</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 gap-3 w-full max-w-xs">
+                        {['Mixed', 'Senate', 'House', 'Gov'].map(mode => (
+                            <button key={mode} onClick={() => startMode(mode)} className="group flex justify-between items-center px-6 py-5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white hover:text-black transition-all active:scale-95">
+                                <span className="font-black text-sm uppercase tracking-widest">{mode} Bank</span>
+                                <i data-lucide="chevron-right" className="w-4 h-4 opacity-30 group-hover:opacity-100"></i>
                             </button>
                         ))}
                     </div>
@@ -131,89 +117,98 @@
             );
 
             if (gameState === 'finished') return (
-                <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[#050505] text-center">
-                    <h2 className="text-xs font-black tracking-[0.4em] text-blue-500 mb-2 uppercase">Session Report</h2>
-                    <p className="text-8xl font-black text-white mb-8">{Math.round((stats.score/deck.length)*100)}%</p>
-                    
-                    <div className="grid grid-cols-3 gap-8 mb-12 w-full max-w-sm">
-                        {Object.entries(stats.byType).map(([key, val]) => val.t > 0 && (
-                            <div key={key}>
-                                <p className="text-[10px] text-slate-500 font-black uppercase mb-1">{key}</p>
-                                <p className="text-xl font-mono font-bold">{Math.round((val.c/val.t)*100)}%</p>
-                            </div>
-                        ))}
+                <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center space-y-6">
+                    <h2 className="text-xs font-black tracking-[0.4em] text-blue-500 uppercase">Debriefing Complete</h2>
+                    <div className="space-y-1">
+                        <p className="text-8xl font-black text-white">{Math.round((stats.score/deck.length)*100)}%</p>
+                        <p className="text-slate-500 font-mono text-sm uppercase">Accuracy Across {deck.length} Targets</p>
                     </div>
-
-                    <button onClick={() => setGameState('menu')} className="px-12 py-5 bg-white text-black rounded-full font-black text-xs tracking-widest hover:bg-slate-200 transition-all">
-                        RESTART
+                    <button onClick={() => setGameState('menu')} className="px-12 py-4 bg-blue-600 text-white rounded-full font-black uppercase tracking-widest hover:bg-blue-500 transition-all shadow-xl shadow-blue-500/20">
+                        New Session
                     </button>
                 </div>
             );
 
             const current = deck[idx];
-            // High-res imagery logic
+            // High-res Image Strategy
             const imgUrl = current.type === 'Gov' 
-                ? `https://www.nga.org/wp-content/uploads/${current.id}.jpg`
+                ? `https://www.nga.org/wp-content/uploads/2023/01/Governor-${current.name.replace(' ', '-')}-Portrait.jpg` // Approximation for NGA
                 : `https://unitedstates.github.io/images/congress/450x550/${current.id.toUpperCase()}.jpg`;
 
             return (
-                <div className="min-h-screen flex items-center justify-center p-4">
-                    <div className="w-full max-w-sm flex flex-col gap-6">
-                        <div className="flex justify-between items-center px-1">
-                            <div className="space-y-1">
-                                <h1 className="text-[10px] font-black tracking-[0.3em] text-blue-500 uppercase leading-none">Scanning Pool</h1>
-                                <div className="flex gap-1">
-                                    {deck.map((_, i) => (
-                                        <div key={i} className={`h-1 w-1.5 rounded-full transition-all duration-300 ${i === idx ? 'bg-blue-500 w-5' : i < idx ? 'bg-slate-700' : 'bg-slate-900'}`} />
-                                    ))}
-                                </div>
+                <div className="min-h-screen flex flex-col items-center justify-center p-4">
+                    <div className="w-full max-w-sm space-y-6">
+                        
+                        {/* Game Header */}
+                        <div className="flex justify-between items-center px-2">
+                            <button onClick={() => setGameState('menu')} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                                <i data-lucide="arrow-left" className="w-5 h-5 text-slate-400"></i>
+                            </button>
+                            <div className="flex gap-2">
+                                {deck.map((_, i) => (
+                                    <div key={i} className={`h-1.5 w-3 rounded-full transition-all duration-300 ${i === idx ? 'bg-blue-500 w-8' : i < idx ? 'bg-slate-700' : 'bg-slate-800'}`} />
+                                ))}
                             </div>
-                            <div className="text-right leading-none">
-                                <span className="text-2xl font-mono font-bold text-white">{stats.score}</span>
-                                <span className="text-slate-600 font-bold ml-1 text-sm">/{idx + (revealed ? 1 : 0)}</span>
+                            <div className="text-right">
+                                <span className="text-xl font-mono font-bold">{stats.score}</span>
+                                <span className="text-slate-600 font-bold ml-1 text-xs">/ {idx + (revealed ? 1 : 0)}</span>
                             </div>
                         </div>
 
-                        <div key={idx} className={`relative aspect-[3/4] rounded-[40px] overflow-hidden bg-slate-900 border border-white/5 shadow-2xl transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-                            <img src={imgUrl} className={`w-full h-full object-cover transition-all duration-700 ${revealed ? 'scale-110 blur-2xl brightness-[0.15]' : 'scale-100'}`} alt="Visual ID" />
+                        {/* Identification Card */}
+                        <div className="relative aspect-[3/4] rounded-[48px] overflow-hidden bg-slate-900 border border-white/10 shadow-2xl group">
+                            {isLoading && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-slate-900 z-10">
+                                    <div className="w-8 h-8 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+                                </div>
+                            )}
+                            <img 
+                                src={imgUrl} 
+                                onLoad={() => setIsLoading(false)}
+                                className={`w-full h-full object-cover transition-all duration-700 ${revealed ? 'scale-110 blur-xl brightness-50' : 'scale-100'}`} 
+                                alt="Subject" 
+                            />
                             
-                            <div className={`absolute inset-0 flex flex-col justify-end p-8 transition-all duration-500 ${revealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
-                                <div className="space-y-2">
-                                    <span className={`inline-block px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${current.party === 'Democrat' ? 'bg-blue-600' : 'bg-red-600'}`}>
+                            {/* Hidden Identity Details */}
+                            <div className={`absolute inset-0 flex flex-col justify-end p-10 transition-all duration-500 ${revealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12 pointer-events-none'}`}>
+                                <div className="space-y-3">
+                                    <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${current.party === 'Democrat' ? 'bg-blue-600' : 'bg-red-600'}`}>
                                         {current.party}
                                     </span>
-                                    <h2 className="text-3xl font-bold leading-tight tracking-tight text-white">{current.name}</h2>
-                                    <div className="flex items-center gap-3 text-slate-400 text-[11px] font-bold uppercase tracking-tighter">
-                                        <span>{current.pos}</span>
-                                        <span className="opacity-30">•</span>
+                                    <h2 className="text-4xl font-bold leading-tight tracking-tight">{current.name}</h2>
+                                    <div className="flex items-center gap-2 text-slate-400 text-[11px] font-black uppercase tracking-widest">
+                                        <span>{current.type}</span>
+                                        <span className="opacity-20">•</span>
                                         <span>{current.state}</span>
                                     </div>
-                                    <button onClick={nextMember} className="mt-6 w-full py-4 bg-white text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all">
+                                    <button onClick={next} className="mt-6 w-full py-4 bg-white text-black rounded-3xl font-black uppercase tracking-[0.2em] text-xs hover:bg-slate-200 active:scale-95 transition-all">
                                         Identify Next
                                     </button>
                                 </div>
                             </div>
 
                             {revealed && (
-                                <div className="absolute top-8 right-8">
-                                    {isCorrect ? <span className="text-green-500 text-6xl drop-shadow-2xl">✓</span> : <span className="text-red-500 text-6xl drop-shadow-2xl">✕</span>}
+                                <div className="absolute top-10 right-10 animate-in zoom-in duration-300">
+                                    {isCorrect ? 
+                                        <div className="p-4 bg-green-500/20 border border-green-500/50 rounded-full text-green-500 shadow-lg shadow-green-500/20"><i data-lucide="check" className="w-8 h-8"></i></div> : 
+                                        <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-full text-red-500 shadow-lg shadow-red-500/20"><i data-lucide="x" className="w-8 h-8"></i></div>
+                                    }
                                 </div>
                             )}
                         </div>
 
+                        {/* Analysis Trigger Buttons */}
                         {!revealed ? (
-                            <div className="grid grid-cols-2 gap-3">
-                                <button onClick={() => handleGuess('Democrat')} className="py-5 rounded-[24px] bg-blue-600/10 border border-blue-500/20 text-blue-400 font-black text-[10px] tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all active:scale-95 uppercase">
+                            <div className="grid grid-cols-2 gap-4">
+                                <button onClick={() => handleGuess('Democrat')} className="py-6 rounded-[32px] bg-blue-600/10 border border-blue-500/20 text-blue-400 font-black text-xs tracking-widest hover:bg-blue-600 hover:text-white transition-all active:scale-90 uppercase">
                                     Democrat
                                 </button>
-                                <button onClick={() => handleGuess('Republican')} className="py-5 rounded-[24px] bg-red-600/10 border border-red-500/20 text-red-400 font-black text-[10px] tracking-[0.2em] hover:bg-red-600 hover:text-white transition-all active:scale-95 uppercase">
+                                <button onClick={() => handleGuess('Republican')} className="py-6 rounded-[32px] bg-red-600/10 border border-red-500/30 text-red-400 font-black text-xs tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-90 uppercase">
                                     Republican
                                 </button>
                             </div>
                         ) : (
-                            <div className="h-[66px] flex items-center justify-center">
-                                <span className="text-[10px] font-bold text-slate-700 uppercase tracking-widest animate-pulse">Analyzing Result...</span>
-                            </div>
+                            <div className="h-[76px]" />
                         )}
                     </div>
                 </div>
