@@ -10,7 +10,7 @@
         body { font-family: 'Inter', sans-serif; background-color: #0b0e14; color: white; }
         .portrait-frame { height: 60vh; width: 100%; max-width: 400px; border-radius: 32px; overflow: hidden; position: relative; }
         .portrait-img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.4s ease; }
-        .active-mode { background-color: #3b82f6; border-color: #60a5fa; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+        .active-mode { background-color: #3b82f6 !important; border-color: #60a5fa !important; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
     </style>
 </head>
 <body class="flex flex-col items-center justify-between min-h-screen p-4 overflow-hidden">
@@ -20,8 +20,8 @@
             <span class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Global Correct</span>
             <span id="global-xp" class="text-xl font-bold text-blue-400">0</span>
         </div>
-        <div id="status-tag" class="text-[10px] bg-white/10 px-3 py-1 rounded-full text-gray-400 font-bold uppercase tracking-widest">
-            Loading Database...
+        <div id="status-tag" class="text-[9px] bg-white/5 px-3 py-1 rounded-full text-gray-500 font-bold uppercase">
+            Syncing...
         </div>
         <div class="text-right">
             <span id="round-progress" class="text-sm font-bold text-gray-400">0 / 20</span>
@@ -29,10 +29,10 @@
     </div>
 
     <div id="mode-selector" class="grid grid-cols-4 gap-2 w-full max-w-md mt-4">
-        <button onclick="setMode('house')" class="bg-white/5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-tighter hover:bg-white/10 transition-all">House</button>
-        <button onclick="setMode('senate')" class="bg-white/5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-tighter hover:bg-white/10 transition-all">Senate</button>
-        <button onclick="setMode('gov')" class="bg-white/5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-tighter hover:bg-white/10 transition-all">Gov</button>
-        <button onclick="setMode('mixed')" class="bg-white/5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-tighter active-mode">Mixed</button>
+        <button onclick="setMode('house')" class="mode-btn bg-white/5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-tighter hover:bg-white/10">House</button>
+        <button onclick="setMode('senate')" class="mode-btn bg-white/5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-tighter hover:bg-white/10">Senate</button>
+        <button onclick="setMode('gov')" class="mode-btn bg-white/5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-tighter hover:bg-white/10">Gov</button>
+        <button onclick="setMode('mixed')" class="mode-btn bg-white/5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-tighter active-mode">Mixed</button>
     </div>
 
     <div id="game-stage" class="portrait-frame bg-[#161b22] border border-white/10 mt-6 shadow-2xl flex items-center justify-center">
@@ -58,57 +58,42 @@
         let currentIndex = 0;
         let roundCorrect = 0;
 
-        // 2025 GOVERNOR DATABASE
-        const governorData = [
-            { name: "Kay Ivey", party: "Republican", state: "AL", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Kay-Ivey-300x400.jpg" },
-            { name: "Mike Dunleavy", party: "Republican", state: "AK", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Mike-Dunleavy-300x400.jpg" },
-            { name: "Katie Hobbs", party: "Democrat", state: "AZ", category: "gov", img: "https://www.nga.org/wp-content/uploads/2023/01/Katie-Hobbs-300x400.jpg" },
-            { name: "Sarah Huckabee Sanders", party: "Republican", state: "AR", category: "gov", img: "https://www.nga.org/wp-content/uploads/2023/01/Sarah-Huckabee-Sanders-300x400.jpg" },
-            { name: "Gavin Newsom", party: "Democrat", state: "CA", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Gavin-Newsom-300x400.jpg" },
-            { name: "Jared Polis", party: "Democrat", state: "CO", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Jared-Polis-300x400.jpg" },
-            { name: "Ned Lamont", party: "Democrat", state: "CT", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Ned-Lamont-300x400.jpg" },
-            { name: "Ron DeSantis", party: "Republican", state: "FL", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Ron-DeSantis-300x400.jpg" },
-            { name: "Brian Kemp", party: "Republican", state: "GA", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Brian-Kemp-300x400.jpg" },
-            { name: "Josh Green", party: "Democrat", state: "HI", category: "gov", img: "https://www.nga.org/wp-content/uploads/2023/01/Josh-Green-300x400.jpg" },
-            { name: "J.B. Pritzker", party: "Democrat", state: "IL", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/JB-Pritzker-300x400.jpg" },
-            { name: "Andy Beshear", party: "Democrat", state: "KY", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Andy-Beshear-300x400.jpg" },
-            { name: "Wes Moore", party: "Democrat", state: "MD", category: "gov", img: "https://www.nga.org/wp-content/uploads/2023/01/Wes-Moore-300x400.jpg" },
-            { name: "Maura Healey", party: "Democrat", state: "MA", category: "gov", img: "https://www.nga.org/wp-content/uploads/2023/01/Maura-Healey-300x400.jpg" },
-            { name: "Gretchen Whitmer", party: "Democrat", state: "MI", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Gretchen-Whitmer-300x400.jpg" },
-            { name: "Tim Walz", party: "Democrat", state: "MN", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Tim-Walz-300x400.jpg" },
-            { name: "Kathy Hochul", party: "Democrat", state: "NY", category: "gov", img: "https://www.nga.org/wp-content/uploads/2021/08/Kathy-Hochul-300x400.jpg" },
-            { name: "Josh Shapiro", party: "Democrat", state: "PA", category: "gov", img: "https://www.nga.org/wp-content/uploads/2023/01/Josh-Shapiro-300x400.jpg" },
-            { name: "Greg Abbott", party: "Republican", state: "TX", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Greg-Abbott-300x400.jpg" },
-            { name: "Glenn Youngkin", party: "Republican", state: "VA", category: "gov", img: "https://www.nga.org/wp-content/uploads/2022/01/Glenn-Youngkin-300x400.jpg" }
-            // Note: I included 20 representative governors to fit the sample size.
+        // EMERGENCY FALLBACK DATA (High-Profile Portraits)
+        const fallbackPool = [
+            { party: "Democrat", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Gavin-Newsom-300x400.jpg" },
+            { party: "Republican", category: "gov", img: "https://www.nga.org/wp-content/uploads/2020/01/Ron-DeSantis-300x400.jpg" },
+            { party: "Democrat", category: "senate", img: "https://unitedstates.github.io/images/congress/450x550/S000148.jpg" },
+            { party: "Republican", category: "senate", img: "https://unitedstates.github.io/images/congress/450x550/M000355.jpg" },
+            { party: "Democrat", category: "house", img: "https://unitedstates.github.io/images/congress/450x550/P000197.jpg" },
+            { party: "Republican", category: "house", img: "https://unitedstates.github.io/images/congress/450x550/J000289.jpg" }
         ];
 
         async function init() {
             updateXPDisplay();
             try {
                 const response = await fetch('https://theunitedstates.io/congress-legislators/legislators-current.json');
+                if (!response.ok) throw new Error("API Offline");
+                
                 const rawData = await response.json();
                 
-                // MAP CONGRESS DATA TO OUR FORMAT
+                // MAP CONGRESS DATA
                 const congressData = rawData.map(leg => {
                     const lastTerm = leg.terms[leg.terms.length - 1];
-                    const bioguideId = leg.id.bioguide;
                     return {
-                        name: `${leg.name.first} ${leg.name.last}`,
                         party: lastTerm.party,
-                        state: lastTerm.state,
                         category: lastTerm.type === 'sen' ? 'senate' : 'house',
-                        img: `https://unitedstates.github.io/images/congress/450x550/${bioguideId}.jpg`
+                        img: `https://unitedstates.github.io/images/congress/450x550/${leg.id.bioguide}.jpg`
                     };
                 }).filter(p => p.party === 'Democrat' || p.party === 'Republican');
 
-                fullPoliticianPool = [...congressData, ...governorData];
-                document.getElementById('status-tag').innerText = `${fullPoliticianPool.length} Politicians Loaded`;
-                setMode('mixed');
+                fullPoliticianPool = congressData;
+                document.getElementById('status-tag').innerText = `LIVE: ${fullPoliticianPool.length} PORTRAITS`;
             } catch (err) {
-                console.error("Database load failed", err);
-                document.getElementById('status-tag').innerText = "Load Failed - Check Connection";
+                // If the live API fails, use the fallback data automatically
+                fullPoliticianPool = fallbackPool;
+                document.getElementById('status-tag').innerText = "OFFLINE MODE ACTIVE";
             }
+            setMode('mixed');
         }
 
         function updateXPDisplay() {
@@ -117,12 +102,10 @@
 
         function setMode(mode) {
             currentMode = mode;
-            document.querySelectorAll('button').forEach(btn => {
-                if(btn.onclick && btn.onclick.toString().includes('setMode')) {
-                    btn.classList.remove('active-mode');
-                    if(btn.innerText.toLowerCase() === mode || (mode === 'gov' && btn.innerText === 'Gov')) {
-                        btn.classList.add('active-mode');
-                    }
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active-mode');
+                if(btn.innerText.toLowerCase() === mode || (mode === 'gov' && btn.innerText === 'Gov')) {
+                    btn.classList.add('active-mode');
                 }
             });
             startNewRound();
@@ -134,12 +117,16 @@
                 filtered = fullPoliticianPool.filter(p => p.category === currentMode);
             }
 
-            // Shuffle and pick 20 random portraits
+            // Shuffle and pick up to 20
             currentRoundSet = filtered.sort(() => 0.5 - Math.random()).slice(0, 20);
             currentIndex = 0;
             roundCorrect = 0;
             
-            if (currentRoundSet.length > 0) loadPortrait();
+            if (currentRoundSet.length > 0) {
+                loadPortrait();
+            } else {
+                alert("No portraits available for this category in offline mode.");
+            }
         }
 
         function loadPortrait() {
@@ -153,7 +140,6 @@
 
             const imgUrl = currentRoundSet[currentIndex].img;
             
-            // PRE-LOADER
             const preloader = new Image();
             preloader.src = imgUrl;
             preloader.onload = () => {
@@ -162,7 +148,8 @@
                 spinner.classList.add('hidden');
             };
             preloader.onerror = () => {
-                console.warn("Portrait missing, skipping...");
+                // If a specific image fails, skip to the next one automatically
+                console.warn("Skipping broken image link");
                 makeGuess('skip');
             };
         }
