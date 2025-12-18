@@ -1,0 +1,10 @@
+[
+  { "name": "Gavin Newsom", "party": "Democrat", "state": "California", "category": "gov", "img": "https://www.nga.org/wp-content/uploads/2020/01/Gavin-Newsom-300x400.jpg" },
+  { "name": "Ron DeSantis", "party": "Republican", "state": "Florida", "category": "gov", "img": "https://www.nga.org/wp-content/uploads/2020/01/Ron-DeSantis-300x400.jpg" },
+  { "name": "Chuck Schumer", "party": "Democrat", "state": "New York", "category": "senate", "img": "https://unitedstates.github.io/images/congress/450x550/S000148.jpg" },
+  { "name": "Mitch McConnell", "party": "Republican", "state": "Kentucky", "category": "senate", "img": "https://unitedstates.github.io/images/congress/450x550/M000355.jpg" },
+  { "name": "Hakeem Jeffries", "party": "Democrat", "state": "New York", "category": "house", "img": "https://unitedstates.github.io/images/congress/450x550/J000294.jpg" },
+  { "name": "Mike Johnson", "party": "Republican", "state": "Louisiana", "category": "house", "img": "https://unitedstates.github.io/images/congress/450x550/J000299.jpg" },
+  { "name": "Gretchen Whitmer", "party": "Democrat", "state": "Michigan", "category": "gov", "img": "https://www.nga.org/wp-content/uploads/2020/01/Gretchen-Whitmer-300x400.jpg" },
+  { "name": "Greg Abbott", "party": "Republican", "state": "Texas", "category": "gov", "img": "https://www.nga.org/wp-content/uploads/2020/01/Greg-Abbott-300x400.jpg" }
+]
