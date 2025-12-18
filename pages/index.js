@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Head from 'next/head';
 
 export default function Home() {
   const [politicians, setPoliticians] = useState([]);
@@ -7,73 +8,91 @@ export default function Home() {
   const [feedback, setFeedback] = useState(null);
 
   useEffect(() => {
-    // Fetches from the public folder automatically
     fetch('/politicians.json')
       .then(res => res.json())
       .then(data => {
         setPoliticians(data);
-        if (data.length > 0) {
-          setCurrent(data[Math.floor(Math.random() * data.length)]);
-        }
-      })
-      .catch(err => console.error("Error loading JSON:", err));
+        setCurrent(data[Math.floor(Math.random() * data.length)]);
+      });
   }, []);
 
-  const handleGuess = (guess) => {
-    if (guess === current.party) {
-      setScore(s => s + 1);
-      setFeedback("Correct! 🎉");
+  const handleGuess = (party) => {
+    if (party === current.party) {
+      setScore(score + 1);
+      setFeedback({ type: 'success', msg: 'Correct!' });
     } else {
-      setFeedback(`Wrong! That was a ${current.party}.`);
+      setFeedback({ type: 'error', msg: `Wrong! They are a ${current.party}.` });
     }
 
-    // Wait a second then show next politician
     setTimeout(() => {
-      const next = politicians[Math.floor(Math.random() * politicians.length)];
-      setCurrent(next);
       setFeedback(null);
-    }, 1200);
+      setCurrent(politicians[Math.floor(Math.random() * politicians.length)]);
+    }, 1500);
   };
 
-  if (!current) return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  if (!current) return <div className="flex h-screen items-center justify-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center p-8">
-      <h1 className="text-4xl font-extrabold mb-4">Guess The Party</h1>
-      <p className="text-xl mb-8">Score: <span className="text-yellow-400 font-bold">{score}</span></p>
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <Head>
+        <title>Guess The Party</title>
+      </Head>
 
-      <div className="bg-slate-800 p-6 rounded-2xl shadow-2xl border border-slate-700 max-w-sm w-full text-center">
-        <div className="relative h-96 w-full mb-4 overflow-hidden rounded-lg">
-           <img
-            src={current.img}
-            alt={current.name}
-            className="w-full h-full object-cover"
-          />
+      <div className="max-w-md mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold tracking-tight">Guess The Party</h1>
+          <div className="bg-white px-4 py-1 rounded-full shadow-sm border border-gray-200">
+            <span className="text-sm font-medium text-gray-500">Score:</span>
+            <span className="ml-2 font-bold text-blue-600">{score}</span>
+          </div>
         </div>
 
-        <h2 className="text-2xl font-bold">{current.name}</h2>
-        <p className="text-slate-400 mb-6 uppercase tracking-widest text-sm">{current.state} • {current.category}</p>
+        {/* Game Card */}
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 transition-all">
+          <div className="aspect-[3/4] relative overflow-hidden bg-gray-200">
+            <img
+              src={current.image_url || 'https://via.placeholder.com/400x500'}
+              alt={current.name}
+              className="w-full h-full object-cover"
+            />
+            {feedback && (
+              <div className={`absolute inset-0 flex items-center justify-center backdrop-blur-sm transition-opacity ${
+                feedback.type === 'success' ? 'bg-green-500/20' : 'bg-red-500/20'
+              }`}>
+                <span className={`text-4xl font-black uppercase tracking-widest drop-shadow-md ${
+                  feedback.type === 'success' ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {feedback.msg}
+                </span>
+              </div>
+            )}
+          </div>
 
-        {feedback ? (
-          <div className={`py-4 text-xl font-bold ${feedback.includes('Correct') ? 'text-green-400' : 'text-red-400'}`}>
-            {feedback}
+          <div className="p-6 text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">{current.name}</h2>
+            <p className="text-gray-500 uppercase tracking-widest text-xs font-semibold mb-6">
+              {current.state} • {current.chamber}
+            </p>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={() => handleGuess('Democrat')}
+                disabled={!!feedback}
+                className="py-4 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 active:scale-95 transition-all shadow-lg shadow-blue-200 disabled:opacity-50"
+              >
+                Democrat
+              </button>
+              <button
+                onClick={() => handleGuess('Republican')}
+                disabled={!!feedback}
+                className="py-4 rounded-2xl bg-red-600 text-white font-bold hover:bg-red-700 active:scale-95 transition-all shadow-lg shadow-red-200 disabled:opacity-50"
+              >
+                Republican
+              </button>
+            </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-4">
-            <button
-              onClick={() => handleGuess('Democrat')}
-              className="bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold transition-all"
-            >
-              Democrat
-            </button>
-            <button
-              onClick={() => handleGuess('Republican')}
-              className="bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold transition-all"
-            >
-              Republican
-            </button>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
