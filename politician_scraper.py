@@ -33,7 +33,7 @@ def generate_database():
     ]
     pool.extend(govs)
 
-    with open('politicians.json', 'w') as f:
+    with open('public/politicians.json', 'w') as f:
         json.dump(pool, f, indent=2)
     print(f"Success! Created politicians.json with {len(pool)} entries.")
 
