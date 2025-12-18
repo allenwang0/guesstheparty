@@ -9,13 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"
   },
   "devDependencies": {
-    "autoprefixer": "latest",
-    "postcss": "latest",
-    "tailwindcss": "latest"
-  }
+  "autoprefixer": "latest",
+  "postcss": "latest",
+  "tailwindcss": "latest",
+  "@tailwindcss/postcss": "latest"
+}
 }
