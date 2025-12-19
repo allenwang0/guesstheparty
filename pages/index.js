@@ -774,34 +774,74 @@ export default function Home() {
       <AnimatePresence>
         {showInfo && (
           <Modal onClose={closeInfoModal}>
-            <div className="text-center space-y-6 py-4">
-               <h3 className="text-xl font-black uppercase tracking-tight leading-snug">
-                Can you guess a politician&apos;s party based on their portrait alone?
+            <div className="text-center space-y-5 py-2">
+              <h3 className="text-xl font-black uppercase tracking-tight leading-none">
+                Guess the party from the portrait.
               </h3>
 
-              <div className="grid grid-cols-2 gap-6">
-                <div className="bg-gray-50 rounded-2xl p-4 flex flex-col items-center gap-3">
-                  <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center shadow-sm">
-                    <MousePointer2 size={20} className="text-black" />
-                  </div>
-                  <div className="text-[10px] font-black uppercase tracking-widest text-gray-400">Desktop</div>
-                  <div className="text-xs font-bold">Arrow Keys</div>
+              <p className="text-sm font-medium text-gray-600 max-w-[260px] mx-auto leading-relaxed">
+                Swipe or use arrow keys to guess.
+                <br />
+                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1 block">
+                  Left = Dem • Right = Rep
+                </span>
+              </p>
+
+              <div className="grid grid-cols-2 gap-4">
+                 {/* Left Tile */}
+                 <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex flex-col items-center gap-2">
+                    <div className="h-8 w-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                      <ArrowLeft size={16} strokeWidth={3} />
+                    </div>
+                    <div className="leading-none">
+                      <div className="text-[10px] font-black uppercase tracking-widest text-blue-300">Left</div>
+                      <div className="text-sm font-black uppercase text-blue-600">Democrat</div>
+                    </div>
+                 </div>
+
+                 {/* Right Tile */}
+                 <div className="bg-red-50/50 border border-red-100 rounded-2xl p-4 flex flex-col items-center gap-2">
+                    <div className="h-8 w-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                      <ArrowRight size={16} strokeWidth={3} />
+                    </div>
+                    <div className="leading-none">
+                      <div className="text-[10px] font-black uppercase tracking-widest text-red-300">Right</div>
+                      <div className="text-sm font-black uppercase text-red-600">Republican</div>
+                    </div>
+                 </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="bg-gray-50 rounded-xl p-3 text-xs text-gray-500 font-medium leading-relaxed">
+                  <p>You can also tap the buttons below.</p>
+                  <p className="mt-2">
+                    Names & details reveal <strong>after</strong> you guess.
+                    <br/>
+                    The next portrait loads automatically.
+                  </p>
                 </div>
-                <div className="bg-gray-50 rounded-2xl p-4 flex flex-col items-center gap-3">
-                  <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center shadow-sm">
-                    <MoveHorizontal size={20} className="text-black" />
-                  </div>
-                  <div className="text-[10px] font-black uppercase tracking-widest text-gray-400">Mobile</div>
-                  <div className="text-xs font-bold">Swipe L/R</div>
+
+                <div className="text-[10px] text-gray-400 font-medium max-w-xs mx-auto leading-normal">
+                  Stats track your streak & speed.
+                  <br />
+                  Resetting clears stats, but <strong>Trophies persist</strong>.
                 </div>
               </div>
 
+              <p className="text-[9px] text-gray-300 uppercase tracking-widest">
+                Just for fun • Portraits vary by source
+              </p>
+
               <button
                 onClick={closeInfoModal}
-                className="w-full py-4 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs active:scale-95 transition-transform"
+                className="w-full py-4 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs active:scale-95 transition-transform shadow-xl"
               >
                 Let's Play
               </button>
+
+              <div className="text-[9px] text-gray-300 font-bold uppercase tracking-widest pt-1">
+                Tap (i) to view rules anytime
+              </div>
             </div>
           </Modal>
         )}
