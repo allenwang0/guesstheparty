@@ -3,10 +3,11 @@ import Head from "next/head";
 import Image from "next/image";
 import { Analytics } from "@vercel/analytics/react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
-import confetti from "canvas-confetti"; // Make sure to npm install canvas-confetti
+import confetti from "canvas-confetti";
 import {
   Loader2, Check, Info, Timer, Target, Award, Trophy,
-  Flame, Star, ShieldCheck, Zap, XCircle, Lock, MousePointer2
+  Flame, Star, ShieldCheck, Zap, XCircle, Lock, MousePointer2,
+  Share2, ArrowLeft, ArrowRight, TrendingUp, AlertCircle
 } from "lucide-react";
 
 /* ----------------------------- Sub-Components ---------------------------- */
@@ -51,7 +52,7 @@ const ProgressBar = ({ label, value, color, total }) => (
 
 /* -------------------------------- Trophies ------------------------------ */
 
-const TROPHY_KEY = "partyTrophies_v1";
+const TROPHY_KEY = "partyTrophies_v2";
 const INTRO_KEY = "partyHasSeenIntro_v1";
 
 const TROPHIES = [
@@ -63,8 +64,7 @@ const TROPHIES = [
   { id: "seen_50", title: "Caucus Regular", desc: "Seen ≥ 50.", icon: <Target size={18} />, tier: "bronze", check: ({ stats }) => (stats.total || 0) >= 50 },
   { id: "seen_200", title: "Capitol Fixture", desc: "Seen ≥ 200.", icon: <Trophy size={18} />, tier: "gold", check: ({ stats }) => (stats.total || 0) >= 200 },
   { id: "accuracy_80_50", title: "Solid Read", desc: "≥80% accuracy with ≥50 seen.", icon: <Award size={18} />, tier: "silver", check: ({ stats }) => { const t = stats.total || 0; return t >= 50 && (stats.correct / t) >= 0.8; } },
-  { id: "accuracy_90_100", title: "Polling Wizard", desc: "≥90% accuracy with ≥100 seen.", icon: <Trophy size={18} />, tier: "platinum", check: ({ stats }) => { const t = stats.total || 0; return t >= 100 && (stats.correct / t) >= 0.9; } },
-  { id: "speed_2s_50", title: "Rapid Fire", desc: "Avg <2.0s with ≥50 seen.", icon: <Zap size={18} />, tier: "gold", check: ({ stats }) => { const t = stats.total || 0; return t >= 50 && (stats.totalTime / t / 1000) < 2.0; } },
+  { id: "speed_fast", title: "Fast Reflexes", desc: "Answer correctly in <1s.", icon: <Zap size={18} />, tier: "gold", check: ({ lastResult }) => lastResult?.isFast && lastResult?.isCorrect },
 ];
 
 function tierStyles(tier) {
@@ -79,10 +79,16 @@ function tierStyles(tier) {
 
 function formatOffice(p) {
   const c = (p?.category ?? "").toString().trim().toLowerCase();
-  if (c === "house") return "Representative";
-  if (c === "senate") return "Senator";
-  if (c === "gov") return "Governor";
-  return "Public Official";
+  let state = "";
+  if (p?.description) {
+     const match = p.description.match(/\b([A-Z]{2})\b/) || p.description.match(/from\s([A-Za-z\s]+)/);
+     if(match) state = ` • ${match[1] || match[0].replace('from ', '')}`;
+  }
+
+  if (c === "house") return `Representative${state}`;
+  if (c === "senate") return `Senator${state}`;
+  if (c === "gov") return `Governor${state}`;
+  return `Public Official${state}`;
 }
 
 /* ----------------------------- Main Application -------------------------- */
@@ -92,7 +98,24 @@ export default function Home() {
   const [current, setCurrent] = useState(null);
   const [loadingQueue, setLoadingQueue] = useState([]);
   const [hasMounted, setHasMounted] = useState(false);
-  const [stats, setStats] = useState({ correct: 0, total: 0, streak: 0, bestStreak: 0, demGuesses: 0, repGuesses: 0, demCorrect: 0, repCorrect: 0, totalTime: 0 });
+
+  // EXPANDED STATS STRUCTURE
+  const [stats, setStats] = useState({
+    correct: 0,
+    total: 0,
+    streak: 0,
+    bestStreak: 0,
+    demGuesses: 0,
+    repGuesses: 0,
+    demCorrect: 0,
+    repCorrect: 0,
+    demMistakes: 0,
+    repMistakes: 0,
+    totalTime: 0,
+    demTime: 0,
+    repTime: 0
+  });
+
   const [trophies, setTrophies] = useState({ unlocked: [], firstUnlockedAt: {} });
   const [gameState, setGameState] = useState("guessing");
   const [imgLoading, setImgLoading] = useState(true);
@@ -118,6 +141,19 @@ export default function Home() {
   const accuracy = useMemo(() => (stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100)), [stats]);
   const avgSpeed = useMemo(() => (stats.total === 0 ? 0 : (stats.totalTime / stats.total / 1000).toFixed(1)), [stats]);
 
+  // Derived Stats for Wrapped
+  const demBias = useMemo(() => {
+    const totalGuesses = stats.demGuesses + stats.repGuesses;
+    if (totalGuesses === 0) return 50;
+    return Math.round((stats.demGuesses / totalGuesses) * 100);
+  }, [stats]);
+
+  const mostConfusedBy = useMemo(() => {
+     if (stats.demMistakes > stats.repMistakes) return { party: "Republicans", count: stats.demMistakes, desc: "You often mistake them for Democrats" };
+     if (stats.repMistakes > stats.demMistakes) return { party: "Democrats", count: stats.repMistakes, desc: "You often mistake them for Republicans" };
+     return { party: "None", count: 0, desc: "Balanced confusion" };
+  }, [stats]);
+
   const rank = useMemo(() => {
     const s = stats.bestStreak || 0;
     if (s >= 50) return { title: "Speaker of the House", color: "text-indigo-600" };
@@ -130,10 +166,19 @@ export default function Home() {
 
   const revealed = gameState === "revealed";
 
+  // Dynamic Background based on result
+  const bgColor = useMemo(() => {
+    if (gameState === "revealed" && lastResult) {
+      if (lastResult.correctParty === "Democrat") return "bg-blue-50/50";
+      if (lastResult.correctParty === "Republican") return "bg-red-50/50";
+    }
+    return "bg-[#F5F5F7]";
+  }, [gameState, lastResult]);
+
   // Initial Load & Data Fetch
   useEffect(() => {
     setHasMounted(true);
-    const savedStats = localStorage.getItem("partyStats");
+    const savedStats = localStorage.getItem("partyStats_v2");
     if (savedStats) try { setStats(prev => ({ ...prev, ...JSON.parse(savedStats) })); } catch {}
     const savedTrophies = localStorage.getItem(TROPHY_KEY);
     if (savedTrophies) try { setTrophies(prev => ({ ...prev, ...JSON.parse(savedTrophies) })); } catch {}
@@ -153,7 +198,7 @@ export default function Home() {
     });
   }, []);
 
-  useEffect(() => { if (hasMounted) localStorage.setItem("partyStats", JSON.stringify(stats)); }, [stats, hasMounted]);
+  useEffect(() => { if (hasMounted) localStorage.setItem("partyStats_v2", JSON.stringify(stats)); }, [stats, hasMounted]);
   useEffect(() => { if (hasMounted) localStorage.setItem(TROPHY_KEY, JSON.stringify(trophies)); }, [trophies, hasMounted]);
 
   // Keyboard Handlers
@@ -170,12 +215,12 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [gameState, showInfo, showStats, showTrophyCase, showWrapped]);
 
-  const maybeUnlockTrophies = useCallback((nextStats) => {
+  const maybeUnlockTrophies = useCallback((nextStats, result) => {
     const nextUnlocked = new Set(trophies.unlocked || []);
     const firstUnlockedAt = { ...(trophies.firstUnlockedAt || {}) };
     let changed = false;
     TROPHIES.forEach(t => {
-      if (!nextUnlocked.has(t.id) && t.check({ stats: nextStats })) {
+      if (!nextUnlocked.has(t.id) && t.check({ stats: nextStats, lastResult: result })) {
         nextUnlocked.add(t.id);
         firstUnlockedAt[t.id] = Date.now();
         changed = true;
@@ -206,6 +251,9 @@ export default function Home() {
     if (gameState !== "guessing" || !current) return;
 
     const isCorrect = party === current.party;
+    const timeTaken = Date.now() - startTime;
+    const isFast = timeTaken < 1000;
+    const newStreak = isCorrect ? stats.streak + 1 : 0;
 
     // Haptic feedback
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
@@ -213,10 +261,7 @@ export default function Home() {
       else navigator.vibrate([30, 50, 30]);
     }
 
-    const timeTaken = Date.now() - startTime;
-    const newStreak = isCorrect ? stats.streak + 1 : 0;
-
-    // Confetti on milestones (every 10 streak)
+    // Confetti on milestones
     if (isCorrect && newStreak > 0 && newStreak % 10 === 0) {
       confetti({
         particleCount: 100,
@@ -226,22 +271,33 @@ export default function Home() {
       });
     }
 
+    const actualParty = current.party;
+
     const nextStats = {
       ...stats,
       total: stats.total + 1,
       correct: isCorrect ? stats.correct + 1 : stats.correct,
       streak: newStreak,
       bestStreak: Math.max(newStreak, stats.bestStreak),
-      demGuesses: current.party === "Democrat" ? stats.demGuesses + 1 : stats.demGuesses,
-      repGuesses: current.party !== "Democrat" ? stats.repGuesses + 1 : stats.repGuesses,
-      demCorrect: current.party === "Democrat" && isCorrect ? stats.demCorrect + 1 : stats.demCorrect,
-      repCorrect: current.party !== "Democrat" && isCorrect ? stats.repCorrect + 1 : stats.repCorrect,
+
+      demGuesses: party === "Democrat" ? stats.demGuesses + 1 : stats.demGuesses,
+      repGuesses: party === "Republican" ? stats.repGuesses + 1 : stats.repGuesses,
+
+      demCorrect: actualParty === "Democrat" && isCorrect ? stats.demCorrect + 1 : stats.demCorrect,
+      repCorrect: actualParty === "Republican" && isCorrect ? stats.repCorrect + 1 : stats.repCorrect,
+
+      demMistakes: party === "Democrat" && !isCorrect ? stats.demMistakes + 1 : stats.demMistakes,
+      repMistakes: party === "Republican" && !isCorrect ? stats.repMistakes + 1 : stats.repMistakes,
+
       totalTime: stats.totalTime + timeTaken,
+      demTime: actualParty === "Democrat" ? stats.demTime + timeTaken : stats.demTime,
+      repTime: actualParty === "Republican" ? stats.repTime + timeTaken : stats.repTime,
     };
 
+    const resultObj = { isCorrect, guessedParty: party, correctParty: current.party, isFast };
     setStats(nextStats);
-    maybeUnlockTrophies(nextStats);
-    setLastResult({ isCorrect, guessedParty: party, correctParty: current.party });
+    maybeUnlockTrophies(nextStats, resultObj);
+    setLastResult(resultObj);
     setGameState("revealed");
 
     if (revealTimeoutRef.current) clearTimeout(revealTimeoutRef.current);
@@ -253,9 +309,18 @@ export default function Home() {
     localStorage.setItem(INTRO_KEY, "true");
   };
 
+  const copyStats = () => {
+    const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nAccuracy: ${accuracy}%\nTop Streak: ${stats.bestStreak}\n\nCan you beat my score?`;
+    navigator.clipboard.writeText(text);
+    alert("Stats copied to clipboard!");
+  }
+
   const handleReset = () => {
     if(confirm("Reset all stats and trophies?")) {
-      setStats({ correct: 0, total: 0, streak: 0, bestStreak: 0, demGuesses: 0, repGuesses: 0, demCorrect: 0, repCorrect: 0, totalTime: 0 });
+      setStats({
+        correct: 0, total: 0, streak: 0, bestStreak: 0, demGuesses: 0, repGuesses: 0,
+        demCorrect: 0, repCorrect: 0, demMistakes: 0, repMistakes: 0, totalTime: 0, demTime: 0, repTime: 0
+      });
       setTrophies({ unlocked: [], firstUnlockedAt: {} });
       localStorage.removeItem(INTRO_KEY);
       window.location.reload();
@@ -265,7 +330,7 @@ export default function Home() {
   if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
 
   return (
-    <div className="min-h-screen w-full bg-[#F5F5F7] text-[#1D1D1F] font-sans overflow-x-hidden">
+    <div className={`min-h-screen w-full ${bgColor} text-[#1D1D1F] font-sans overflow-x-hidden transition-colors duration-700`}>
       <Head>
         <title>Guess The Party | Allen Wang</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
@@ -291,7 +356,7 @@ export default function Home() {
                 <div className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Allen Wang</div>
               </div>
               <div className="flex items-center gap-2">
-                {/* PERSISTENT SMALL STREAK INDICATOR */}
+                {/* PERSISTENT STREAK */}
                 {stats.streak > 0 && (
                   <div className="h-9 md:h-11 px-3 rounded-xl md:rounded-2xl bg-orange-50 border border-orange-100 flex items-center gap-1.5 text-orange-600 shadow-sm">
                     <Flame size={14} className="fill-orange-600" />
@@ -313,7 +378,21 @@ export default function Home() {
 
         <main className="flex justify-center relative">
 
-          {/* TRANSIENT COMBO STREAK POPUP - MOVED TO TOP OF CARD AREA */}
+           {/* DESKTOP KEYBOARD HINTS - ONLY SHOW IF TOTAL SEEN IS 0 */}
+           {stats.total === 0 && !revealed && (
+            <>
+              <div className="hidden md:flex fixed left-10 top-1/2 -translate-y-1/2 flex-col items-center gap-2 opacity-30 pointer-events-none">
+                <div className="w-12 h-12 border-2 border-black rounded-xl flex items-center justify-center"><ArrowLeft size={24} /></div>
+                <span className="text-[9px] font-black uppercase tracking-widest">Dem</span>
+              </div>
+              <div className="hidden md:flex fixed right-10 top-1/2 -translate-y-1/2 flex-col items-center gap-2 opacity-30 pointer-events-none">
+                <div className="w-12 h-12 border-2 border-black rounded-xl flex items-center justify-center"><ArrowRight size={24} /></div>
+                <span className="text-[9px] font-black uppercase tracking-widest">Rep</span>
+              </div>
+            </>
+           )}
+
+          {/* STREAK COMBO POPUP */}
           <AnimatePresence>
             {stats.streak >= 3 && gameState === 'revealed' && lastResult?.isCorrect && (
               <motion.div
@@ -350,8 +429,9 @@ export default function Home() {
               drag={gameState === "guessing" ? "x" : false}
               dragConstraints={{ left: 0, right: 0 }}
               style={{ x, rotate }}
+              animate={revealed && !lastResult?.isCorrect ? { x: [-5, 5, -5, 5, 0], transition: { duration: 0.4 } } : {}}
               onDragEnd={(e, i) => { if (i.offset.x < -80) handleGuess("Democrat"); else if (i.offset.x > 80) handleGuess("Republican"); }}
-              className="relative z-10 w-full max-w-[560px] h-[68vh] md:h-[76vh] max-h-[760px] min-h-[500px] rounded-[2.5rem] overflow-hidden border border-white bg-white shadow-[0_24px_80px_rgba(0,0,0,0.14)]"
+              className="relative z-10 w-full max-w-[560px] h-[68vh] md:h-[76vh] max-h-[760px] min-h-[500px] rounded-[2.5rem] overflow-hidden border border-white bg-white shadow-[0_24px_80px_rgba(0,0,0,0.14)] touch-none"
             >
               <motion.div className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundColor: swipeBg }} />
 
@@ -391,10 +471,17 @@ export default function Home() {
                     <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-4 md:mb-6 shadow-xl ${lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500"}`}>
                       {lastResult?.isCorrect ? <Check size={30} className="text-white" strokeWidth={3.5} /> : <XCircle size={30} className="text-white" strokeWidth={2.8} />}
                     </div>
-                    <div className="space-y-1">
-                      <div className="text-white/60 text-[9px] font-black uppercase tracking-[0.3em]">{formatOffice(current)}</div>
-                      <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter leading-tight">{current.name}</h2>
-                      <Pill className={`mt-3 ${current.party === "Democrat" ? "bg-blue-600 text-white" : "bg-red-600 text-white"}`}>{current.party}</Pill>
+                    <div className="space-y-1 max-w-full">
+                      <div className="text-white/60 text-[9px] font-black uppercase tracking-[0.3em] truncate px-4">{formatOffice(current)}</div>
+                      <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter leading-tight truncate px-2">{current.name}</h2>
+                      <div className="flex items-center justify-center gap-2 mt-3">
+                         <Pill className={`${current.party === "Democrat" ? "bg-blue-600 text-white" : "bg-red-600 text-white"}`}>{current.party}</Pill>
+                         {lastResult?.isFast && lastResult?.isCorrect && (
+                            <div className="flex items-center gap-1 px-2 py-1 bg-yellow-400 text-yellow-900 rounded-full text-[9px] font-black uppercase tracking-widest">
+                               <Zap size={10} className="fill-yellow-900" /> Fast
+                            </div>
+                         )}
+                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -451,13 +538,9 @@ export default function Home() {
                 Swipe card or use arrow keys
              </p>
           </div>
-
-          <div className="text-center">
-            <p className="text-[10px] uppercase tracking-widest text-gray-400">Data via public records</p>
-          </div>
         </Modal>}
 
-        {/* STATS MODAL (BENTO GRID) */}
+        {/* STATS MODAL */}
         {showStats && <Modal onClose={() => setShowStats(false)} maxW="max-w-2xl">
           <div className="flex justify-between items-start mb-6">
             <div>
@@ -471,7 +554,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-            {/* Large Accuracy Block */}
+            {/* Accuracy Block */}
             <div className="col-span-2 row-span-2 bg-white rounded-[2rem] border border-black/5 p-6 flex flex-col justify-between shadow-sm relative overflow-hidden">
                <div className="relative z-10">
                   <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Total Accuracy</div>
@@ -481,11 +564,10 @@ export default function Home() {
                   <ProgressBar label="Democrat" value={stats.demCorrect} total={stats.demGuesses} color="bg-blue-500" />
                   <ProgressBar label="Republican" value={stats.repCorrect} total={stats.repGuesses} color="bg-red-500" />
                </div>
-               {/* Decor */}
                <Target className="absolute -bottom-4 -right-4 text-gray-50 opacity-50" size={120} />
             </div>
 
-            {/* Small Metric Blocks */}
+            {/* Metrics */}
             <div className="col-span-1 bg-white rounded-[2rem] border border-black/5 p-4 flex flex-col justify-center items-center text-center shadow-sm">
                 <div className="mb-2 p-2 bg-orange-50 text-orange-500 rounded-xl"><Flame size={20} /></div>
                 <div className="text-2xl font-black">{stats.streak}</div>
@@ -496,13 +578,17 @@ export default function Home() {
                 <div className="text-2xl font-black">{avgSpeed}s</div>
                 <div className="text-[8px] font-black uppercase tracking-widest text-gray-400">Avg Speed</div>
             </div>
-            <div className="col-span-2 bg-white rounded-[2rem] border border-black/5 p-5 flex items-center justify-between shadow-sm">
-                <div>
-                   <div className="text-[9px] font-black uppercase tracking-widest text-gray-400">Cards Seen</div>
-                   <div className="text-3xl font-black">{stats.total}</div>
-                </div>
-                <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
-                    <span className="text-xs font-black">🇺🇸</span>
+
+             <div className="col-span-2 bg-white rounded-[2rem] border border-black/5 p-5 flex items-center justify-between shadow-sm">
+                <div className="w-full">
+                   <div className="flex justify-between items-center mb-2">
+                       <div className="text-[9px] font-black uppercase tracking-widest text-gray-400">Guess Bias</div>
+                       <div className="text-[9px] font-black uppercase tracking-widest text-gray-600">{demBias > 50 ? 'Leans Democrat' : 'Leans Republican'}</div>
+                   </div>
+                   <div className="flex h-3 w-full rounded-full overflow-hidden">
+                       <div style={{ width: `${demBias}%` }} className="bg-blue-500 h-full"></div>
+                       <div style={{ width: `${100 - demBias}%` }} className="bg-red-500 h-full"></div>
+                   </div>
                 </div>
             </div>
           </div>
@@ -513,7 +599,47 @@ export default function Home() {
           </button>
         </Modal>}
 
-        {/* WRAPPED (GLOSSY CARD) */}
+        {/* TROPHY CASE MODAL (FIXED SCROLLING) */}
+        {showTrophyCase && <Modal onClose={() => setShowTrophyCase(false)} maxW="max-w-3xl">
+          <div className="flex flex-col gap-2 mb-6">
+            <div className="flex justify-between items-start">
+               <h2 className="text-2xl font-black uppercase tracking-tighter">Trophies</h2>
+               <IconButton onClick={() => setShowTrophyCase(false)}><XCircle size={20} /></IconButton>
+            </div>
+            <div className="flex items-center gap-3">
+               <div className="flex-grow h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-amber-500" style={{ width: `${(unlockedCount / TROPHIES.length) * 100}%` }}></div>
+               </div>
+               <div className="text-[10px] font-black uppercase text-gray-400">{unlockedCount}/{TROPHIES.length}</div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {TROPHIES.map(t => {
+              const unlocked = unlockedSet.has(t.id);
+              return (
+                <div key={t.id} className={`relative p-4 rounded-[2rem] border transition-all ${unlocked ? "bg-white border-black/10 shadow-sm" : "bg-gray-50 border-transparent"}`}>
+                  <div className={`flex items-center gap-4 ${unlocked ? "opacity-100" : "opacity-40 grayscale blur-[0.5px]"}`}>
+                    <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${unlocked ? tierStyles(t.tier) : "bg-gray-200"}`}>
+                        {unlocked ? t.icon : <Lock size={18} />}
+                    </div>
+                    <div className="min-w-0">
+                        <div className="text-sm font-black uppercase tracking-tight truncate">{t.title}</div>
+                        <div className="text-[11px] font-bold text-gray-500 line-clamp-1">{t.desc}</div>
+                    </div>
+                  </div>
+                  {unlocked && (
+                     <div className="absolute top-4 right-4">
+                        <div className={`w-2 h-2 rounded-full ${t.tier === 'platinum' ? 'bg-indigo-400' : 'bg-amber-400'}`}></div>
+                     </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </Modal>}
+
+        {/* WRAPPED */}
         {showWrapped && (
           <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowWrapped(false)}>
             <motion.div
@@ -522,28 +648,25 @@ export default function Home() {
               className="relative w-full max-w-sm aspect-[9/16] rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/20 select-none"
               onClick={e => e.stopPropagation()}
             >
-              {/* Dynamic Background */}
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-black"></div>
               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
 
-              {/* Content */}
               <div className="relative z-10 h-full flex flex-col p-8 text-white">
                 <div className="flex justify-between items-start">
                    <div className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">2025 Review</div>
-                   {/* Star icon removed as requested */}
                 </div>
 
-                <div className="mt-8">
+                <div className="mt-6">
                    <h3 className="text-6xl font-black tracking-tighter leading-none mb-2">MY<br/>PARTY<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-red-400">IQ</span></h3>
                 </div>
 
-                <div className="flex-grow flex flex-col justify-center gap-6">
+                <div className="flex-grow flex flex-col justify-center gap-3">
                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/10">
                       <div className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">Rank Achieved</div>
                       <div className="text-2xl font-black uppercase tracking-tight">{rank.title}</div>
                    </div>
 
-                   <div className="grid grid-cols-2 gap-4">
+                   <div className="grid grid-cols-2 gap-3">
                       <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/10">
                          <div className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">Accuracy</div>
                          <div className="text-3xl font-black">{accuracy}%</div>
@@ -553,11 +676,36 @@ export default function Home() {
                          <div className="text-3xl font-black text-orange-400">{stats.bestStreak}</div>
                       </div>
                    </div>
+
+                   <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/10">
+                       <div className="flex items-center gap-2 mb-1">
+                          <AlertCircle size={12} className="text-white/50" />
+                          <div className="text-[9px] font-black uppercase tracking-widest text-white/50">Most Confused By</div>
+                       </div>
+                       <div className="text-lg font-black">{mostConfusedBy.party}</div>
+                       <div className="text-[10px] opacity-60 leading-tight mt-1">{mostConfusedBy.desc}</div>
+                   </div>
+
+                   <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/10">
+                       <div className="flex items-center gap-2 mb-1">
+                          <TrendingUp size={12} className="text-white/50" />
+                          <div className="text-[9px] font-black uppercase tracking-widest text-white/50">Guessing Bias</div>
+                       </div>
+                       <div className="text-lg font-black">{demBias > 50 ? 'Democrat Lean' : (demBias < 50 ? 'Republican Lean' : 'Perfectly Balanced')}</div>
+                       <div className="w-full bg-white/20 h-1 mt-2 rounded-full overflow-hidden">
+                           <div style={{ width: `${demBias}%` }} className="bg-blue-400 h-full"></div>
+                       </div>
+                   </div>
                 </div>
 
-                <div className="mt-auto pt-6 border-t border-white/10 text-center">
-                    <p className="text-[9px] font-black uppercase tracking-[0.3em] opacity-40">Guess The Party</p>
-                    <p className="text-[9px] font-bold opacity-30 mt-1">Allen Wang</p>
+                <div className="mt-auto pt-6 border-t border-white/10 text-center flex justify-between items-center">
+                    <div className="text-left">
+                        <p className="text-[9px] font-black uppercase tracking-[0.3em] opacity-40">Guess The Party</p>
+                        <p className="text-[9px] font-bold opacity-30 mt-1">Allen Wang</p>
+                    </div>
+                    <button onClick={copyStats} className="h-8 w-8 bg-white text-black rounded-full flex items-center justify-center active:scale-90 transition-transform">
+                        <Share2 size={14} />
+                    </button>
                 </div>
               </div>
 
@@ -582,6 +730,12 @@ function LoadingScreen({ message }) {
 }
 
 function Modal({ children, onClose, maxW = "max-w-xl" }) {
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = 'unset'; }
+  }, []);
+
   return (
     <div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-xl flex items-center justify-center p-4 md:p-6" onClick={onClose}>
       <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className={`w-full ${maxW} max-h-[90vh] overflow-y-auto rounded-[2.5rem] bg-[#F5F5F7] shadow-2xl p-7 md:p-10`} onClick={e => e.stopPropagation()}>
