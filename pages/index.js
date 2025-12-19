@@ -907,13 +907,13 @@ export default function Home() {
 
         {showWrapped && (
           <div
-            className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 pt-32"
+            className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
             onClick={() => setShowWrapped(false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              className="relative w-full max-w-sm bg-gradient-to-br from-gray-900 to-black rounded-[2.5rem] border border-white/10 p-8 text-white shadow-2xl overflow-hidden"
+              className="relative w-full max-w-sm max-h-[90vh] overflow-y-auto bg-gradient-to-br from-gray-900 to-black rounded-[2.5rem] border border-white/10 p-8 text-white shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative z-10 flex flex-col gap-6">
