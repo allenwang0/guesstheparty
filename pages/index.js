@@ -128,13 +128,13 @@ function Modal({ children, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-end md:items-center justify-center p-4 md:p-6"
+      className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 md:p-6"
       onClick={onClose}
     >
       <motion.div
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 100, opacity: 0 }}
+        initial={{ y: 20, opacity: 0, scale: 0.95 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: 20, opacity: 0, scale: 0.95 }}
         className="w-full max-w-md max-h-[85vh] overflow-y-auto bg-white rounded-[2rem] shadow-2xl p-6 md:p-8"
         onClick={(e) => e.stopPropagation()}
       >
@@ -147,7 +147,7 @@ function Modal({ children, onClose }) {
 /* -------------------------------- Logic & Data ------------------------------ */
 
 const TROPHY_KEY = "partyTrophies_v3";
-const INTRO_KEY = "partyHasSeenIntro_v3"; // incremented version to force show new intro
+const INTRO_KEY = "partyHasSeenIntro_v3";
 const STATS_KEY = "partyStats_v3";
 
 const TROPHIES = [
@@ -292,12 +292,10 @@ export default function Home() {
     return { title: "Political Intern" };
   }, [stats.bestStreak]);
 
-  // Requirement 5: Accuracy Comparison
   const bestGuessedParty = useMemo(() => {
     const demAcc = stats.demGuesses > 0 ? (stats.demCorrect / stats.demGuesses) : 0;
     const repAcc = stats.repGuesses > 0 ? (stats.repCorrect / stats.repGuesses) : 0;
 
-    // Default to Democrat donkey if equal or 0 to avoid empty state
     if (demAcc >= repAcc) {
       return {
         name: "Democrats",
@@ -635,7 +633,6 @@ export default function Home() {
           )}
 
           {/* Card Stack */}
-          {/* Requirement 3: Dynamic spacing via flex grow */}
           <div className="relative w-full max-w-[400px] flex-grow flex flex-col max-h-[75vh]">
             <div className="relative flex-grow w-full">
               {loadingQueue[0] && (
@@ -676,7 +673,6 @@ export default function Home() {
                     </>
                   )}
 
-                  {/* Requirement 2: object-contain to ensure top/bottom fit and full portrait is visible */}
                   <div className="relative flex-grow bg-gray-50 overflow-hidden w-full h-full">
                     {imgLoading && (
                       <div className="absolute inset-0 flex items-center justify-center z-30 bg-white/50 backdrop-blur-sm">
@@ -750,7 +746,6 @@ export default function Home() {
                       </button>
                     </div>
 
-                    {/* Requirement 3: Explicit clickable buttons for Trophy/Reset */}
                     <div className="flex items-center justify-between mt-2">
                       <button
                         onClick={() => setShowTrophyCase(true)}
@@ -777,7 +772,6 @@ export default function Home() {
       </div>
 
       <AnimatePresence>
-        {/* Requirement 1: Simplified How to Play */}
         {showInfo && (
           <Modal onClose={closeInfoModal}>
             <div className="text-center space-y-6 py-4">
@@ -862,7 +856,7 @@ export default function Home() {
 
         {showTrophyCase && (
           <Modal onClose={() => setShowTrophyCase(false)}>
-            <div className="flex flex-col gap-4 mb-4">
+            <div className="flex flex-col gap-4 mb-4 pt-2">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-black uppercase tracking-tighter">Trophies</h2>
                 <IconButton onClick={() => setShowTrophyCase(false)} ariaLabel="Close">
@@ -931,8 +925,7 @@ export default function Home() {
                 </div>
 
                 <h3 className="text-3xl font-black tracking-tighter uppercase leading-none">
-                  My Party<br />
-                  <span className="text-blue-400">I.Q.</span>
+                  My Party <span className="text-blue-400">IQ</span>
                 </h3>
 
                 <div className="space-y-3">
@@ -952,7 +945,6 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Requirement 5: Replaced Confused By with Accuracy + Images */}
                   <div className="bg-white/10 rounded-2xl p-4 border border-white/5 flex items-center gap-4">
                     <div className="relative h-12 w-12 shrink-0 bg-white rounded-full p-2">
                        <img
@@ -975,7 +967,6 @@ export default function Home() {
                     <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">Guess The Party</p>
                     <p className="text-[9px] font-bold opacity-30 mt-0.5">Allen Wang</p>
                   </div>
-                  {/* Requirement 4: Fixed Share Button (zIndex and Handler) */}
                   <div className="relative z-50">
                     <IconButton onClick={copyStats} ariaLabel="Share" className="h-8 w-8 bg-white text-black hover:bg-white/90">
                       <Share2 size={14} />
