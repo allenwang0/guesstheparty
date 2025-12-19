@@ -4,24 +4,22 @@ import Head from "next/head";
 import { Analytics } from "@vercel/analytics/react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import {
-  RefreshCcw,
   Loader2,
   Check,
   X as XIcon,
-  Share2,
-  Flame,
   Info,
+  Share2,
   Timer,
   Target,
   Award,
   Trophy,
-  Keyboard,
-  Zap,
+  Flame,
   Star,
   ShieldCheck,
+  Zap,
 } from "lucide-react";
 
-/* --------------------------------- Icons --------------------------------- */
+/* ----------------------------- Assets & Icons ---------------------------- */
 
 const DonkeyIcon = ({ className }) => (
   <img
@@ -38,8 +36,6 @@ const ElephantIcon = ({ className }) => (
     className={className}
   />
 );
-
-/* --------------------------------- UI ------------------------------------ */
 
 const Glass = ({ children, className = "" }) => (
   <div
@@ -65,85 +61,22 @@ const Pill = ({ children, className = "" }) => (
   </span>
 );
 
-const SectionTitle = ({ children, right }) => (
-  <div className="flex items-center justify-between">
-    <div className="text-[11px] font-black uppercase tracking-[0.22em] text-gray-500">{children}</div>
-    {right}
-  </div>
-);
-
-const StatPill = ({ label, value }) => (
-  <div className="flex items-center justify-between rounded-2xl border border-black/10 bg-white px-4 py-3">
-    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">{label}</div>
-    <div className="text-xl font-black tabular-nums">{value}</div>
-  </div>
-);
-
-/* -------------------------------- Trophies ------------------------------- */
+/* -------------------------------- Trophies ------------------------------ */
 
 const TROPHY_KEY = "partyTrophies_v1";
 
 const TROPHIES = [
-  {
-    id: "first_correct",
-    title: "First Blood",
-    desc: "Get your first correct guess.",
-    icon: <Star size={18} />,
-    tier: "bronze",
-    check: ({ stats }) => (stats.correct || 0) >= 1,
-  },
-  {
-    id: "streak_5",
-    title: "Warm Streak",
-    desc: "Reach a 5 streak.",
-    icon: <Flame size={18} />,
-    tier: "bronze",
-    check: ({ stats }) => (stats.bestStreak || 0) >= 5,
-  },
-  {
-    id: "streak_10",
-    title: "Campaign Staff",
-    desc: "Reach a 10 streak.",
-    icon: <Award size={18} />,
-    tier: "silver",
-    check: ({ stats }) => (stats.bestStreak || 0) >= 10,
-  },
-  {
-    id: "streak_25",
-    title: "Party Operator",
-    desc: "Reach a 25 streak.",
-    icon: <ShieldCheck size={18} />,
-    tier: "gold",
-    check: ({ stats }) => (stats.bestStreak || 0) >= 25,
-  },
-  {
-    id: "streak_50",
-    title: "Floor Leader",
-    desc: "Reach a 50 streak.",
-    icon: <Trophy size={18} />,
-    tier: "platinum",
-    check: ({ stats }) => (stats.bestStreak || 0) >= 50,
-  },
-  {
-    id: "seen_50",
-    title: "Caucus Regular",
-    desc: "See 50 politicians.",
-    icon: <Target size={18} />,
-    tier: "bronze",
-    check: ({ stats }) => (stats.total || 0) >= 50,
-  },
-  {
-    id: "seen_200",
-    title: "Capitol Fixture",
-    desc: "See 200 politicians.",
-    icon: <Trophy size={18} />,
-    tier: "gold",
-    check: ({ stats }) => (stats.total || 0) >= 200,
-  },
+  { id: "first_correct", title: "First Blood", desc: "First correct guess.", icon: <Star size={18} />, tier: "bronze", check: ({ stats }) => (stats.correct || 0) >= 1 },
+  { id: "streak_5", title: "Warm Streak", desc: "Best streak ≥ 5.", icon: <Flame size={18} />, tier: "bronze", check: ({ stats }) => (stats.bestStreak || 0) >= 5 },
+  { id: "streak_10", title: "Campaign Staff", desc: "Best streak ≥ 10.", icon: <Award size={18} />, tier: "silver", check: ({ stats }) => (stats.bestStreak || 0) >= 10 },
+  { id: "streak_25", title: "Party Operator", desc: "Best streak ≥ 25.", icon: <ShieldCheck size={18} />, tier: "gold", check: ({ stats }) => (stats.bestStreak || 0) >= 25 },
+  { id: "streak_50", title: "Floor Leader", desc: "Best streak ≥ 50.", icon: <Trophy size={18} />, tier: "platinum", check: ({ stats }) => (stats.bestStreak || 0) >= 50 },
+  { id: "seen_50", title: "Caucus Regular", desc: "Seen ≥ 50.", icon: <Target size={18} />, tier: "bronze", check: ({ stats }) => (stats.total || 0) >= 50 },
+  { id: "seen_200", title: "Capitol Fixture", desc: "Seen ≥ 200.", icon: <Trophy size={18} />, tier: "gold", check: ({ stats }) => (stats.total || 0) >= 200 },
   {
     id: "accuracy_80_50",
     title: "Solid Read",
-    desc: "80% accuracy with at least 50 seen.",
+    desc: "≥80% accuracy with ≥50 seen.",
     icon: <Award size={18} />,
     tier: "silver",
     check: ({ stats }) => {
@@ -155,7 +88,7 @@ const TROPHIES = [
   {
     id: "accuracy_90_100",
     title: "Polling Wizard",
-    desc: "90% accuracy with at least 100 seen.",
+    desc: "≥90% accuracy with ≥100 seen.",
     icon: <Trophy size={18} />,
     tier: "platinum",
     check: ({ stats }) => {
@@ -167,7 +100,7 @@ const TROPHIES = [
   {
     id: "speed_2s_50",
     title: "Rapid Fire",
-    desc: "Average under 2.0s with at least 50 seen.",
+    desc: "Avg <2.0s with ≥50 seen.",
     icon: <Zap size={18} />,
     tier: "gold",
     check: ({ stats }) => {
@@ -193,7 +126,37 @@ function tierStyles(tier) {
   }
 }
 
-/* --------------------------------- Page ---------------------------------- */
+/* ------------------------------ Office label ----------------------------- */
+/**
+ * Goal: show "U.S. Senator", "U.S. Representative", "Governor" etc.
+ * Works best if your JSON provides one of: office, chamber, title, role.
+ * Fallback is "Public Official" if nothing usable exists.
+ */
+function formatOffice(p) {
+  const raw =
+    (p?.office || p?.role || p?.title || p?.position || p?.chamber || "").toString().trim();
+
+  const s = raw.toLowerCase();
+
+  // common patterns
+  if (s.includes("senat")) return "U.S. Senator";
+  if (s.includes("house") || s.includes("representative") || s.includes("rep.")) return "U.S. Representative";
+  if (s.includes("governor") || s.includes("gov")) return "Governor";
+  if (s.includes("mayor")) return "Mayor";
+  if (s.includes("attorney general")) return "Attorney General";
+  if (s.includes("secretary of state")) return "Secretary of State";
+
+  // data sometimes stores chamber as "Senate"/"House"
+  if (raw === "Senate") return "U.S. Senator";
+  if (raw === "House") return "U.S. Representative";
+
+  // if raw is short and usable, show it
+  if (raw && raw.length <= 28) return raw;
+
+  return "Public Official";
+}
+
+/* ----------------------------- Main Application -------------------------- */
 
 export default function Home() {
   const [allPoliticians, setAllPoliticians] = useState([]);
@@ -213,16 +176,14 @@ export default function Home() {
     totalTime: 0,
   });
 
-  const [trophies, setTrophies] = useState({
-    unlocked: [],
-    firstUnlockedAt: {},
-  });
+  // trophies persist even if you reset stats
+  const [trophies, setTrophies] = useState({ unlocked: [], firstUnlockedAt: {} });
 
   const [gameState, setGameState] = useState("guessing");
   const [imgLoading, setImgLoading] = useState(true);
   const [startTime, setStartTime] = useState(null);
 
-  const [showInstructions, setShowInstructions] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
@@ -231,14 +192,15 @@ export default function Home() {
   const revealTimeoutRef = useRef(null);
 
   const x = useMotionValue(0);
-  const rotate = useTransform(x, [-220, 220], [-12, 12]);
+  const rotate = useTransform(x, [-220, 220], [-10, 10]);
   const swipeBg = useTransform(
     x,
     [-160, 0, 160],
     ["rgba(0,174,243,0.10)", "rgba(0,0,0,0)", "rgba(232,27,35,0.10)"]
   );
 
-  /* ----------------------------- Derived data ----------------------------- */
+  const unlockedCount = trophies.unlocked?.length || 0;
+  const unlockedSet = useMemo(() => new Set(trophies.unlocked || []), [trophies.unlocked]);
 
   const accuracy = useMemo(() => {
     const total = stats.total || 0;
@@ -260,9 +222,6 @@ export default function Home() {
     return { title: "Political Intern", color: "text-gray-600" };
   }, [stats.bestStreak]);
 
-  const unlockedCount = trophies.unlocked?.length || 0;
-  const unlockedSet = useMemo(() => new Set(trophies.unlocked || []), [trophies.unlocked]);
-
   /* ----------------------------- Load + Persist --------------------------- */
 
   useEffect(() => {
@@ -282,13 +241,14 @@ export default function Home() {
       } catch {}
     }
 
-    const dismissed = localStorage.getItem("instructionsDismissed");
-    if (!dismissed) setShowInstructions(true);
-
     fetch("/politicians.json")
       .then((res) => res.json())
       .then((data) => {
-        const normalized = (data || []).map((p) => ({ ...p, imageUrl: p.img || p.image_url }));
+        const normalized = (data || []).map((p) => ({
+          ...p,
+          imageUrl: p.img || p.image_url,
+        }));
+
         setAllPoliticians(normalized);
 
         const shuffled = [...normalized].sort(() => 0.5 - Math.random());
@@ -342,10 +302,7 @@ export default function Home() {
       }
 
       if (changed) {
-        setTrophies({
-          unlocked: Array.from(nextUnlocked),
-          firstUnlockedAt,
-        });
+        setTrophies({ unlocked: Array.from(nextUnlocked), firstUnlockedAt });
       }
     },
     [trophies.unlocked, trophies.firstUnlockedAt]
@@ -409,28 +366,23 @@ export default function Home() {
       setGameState("revealed");
 
       if (revealTimeoutRef.current) clearTimeout(revealTimeoutRef.current);
-      revealTimeoutRef.current = setTimeout(() => {
-        advanceToNext();
-      }, 1100);
+      revealTimeoutRef.current = setTimeout(() => advanceToNext(), 1100);
     },
     [gameState, current, startTime, stats, maybeUnlockTrophies, advanceToNext]
   );
 
-  // Keyboard controls
+  // Keyboard controls (no on-screen hint text)
   useEffect(() => {
     const onKeyDown = (e) => {
-      if (showStats || showWrapped || showInstructions || showTrophyCase) return;
+      if (showStats || showWrapped || showInfo || showTrophyCase) return;
       if (gameState !== "guessing") return;
 
       if (e.key === "ArrowLeft") handleGuess("Democrat");
       if (e.key === "ArrowRight") handleGuess("Republican");
-      if (e.key.toLowerCase() === "i") setShowInstructions(true);
-      if (e.key.toLowerCase() === "s") setShowStats(true);
-      if (e.key.toLowerCase() === "t") setShowTrophyCase(true);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [gameState, handleGuess, showStats, showWrapped, showInstructions, showTrophyCase]);
+  }, [gameState, handleGuess, showStats, showWrapped, showInfo, showTrophyCase]);
 
   const resetGameStatsOnly = useCallback(() => {
     if (!confirm("Reset game stats? (Trophies will stay.)")) return;
@@ -448,7 +400,9 @@ export default function Home() {
     });
   }, []);
 
-  if (!hasMounted || !current) return <LoadingScreen message="Convening Congress..." />;
+  if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
+
+  const officeLabel = formatOffice(current);
 
   return (
     <div className="min-h-screen w-full bg-[#F5F5F7] text-[#1D1D1F] font-sans">
@@ -458,33 +412,27 @@ export default function Home() {
       </Head>
       <Analytics />
 
-      {/* The fix: simpler desktop layout. No left rail. One main + one side panel. */}
-      <div className="mx-auto max-w-5xl px-4 md:px-8 py-6 md:py-8">
-        {/* Header (compact) */}
-        <header className="pb-5 md:pb-6">
-          <Glass className="px-5 md:px-6 py-4 md:py-4 rounded-[2.25rem]">
+      {/* Minimal top bar. No keyboard hint text. */}
+      <div className="mx-auto max-w-4xl px-4 md:px-8 py-6">
+        <header className="mb-6">
+          <Glass className="px-5 py-4 rounded-[2.25rem]">
             <div className="flex items-center justify-between gap-4">
               <div className="min-w-0">
-                <h1 className="text-lg md:text-xl font-black tracking-tighter uppercase flex items-center gap-2">
-                  <span className="text-base">🇺🇸</span>
-                  <span className="truncate">GUESS THE PARTY</span>
-                  <span className="text-base">🇺🇸</span>
-                </h1>
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <Pill className="bg-black/5 text-gray-700 border border-black/10">
-                    <Keyboard size={14} className="opacity-70" /> ← Dem • → Rep • S Stats • T Trophies • I Help
-                  </Pill>
-                  <Pill className="bg-white text-gray-700 border border-black/10">
-                    Created by <span className="text-black">Allen Wang</span>
-                  </Pill>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-lg md:text-xl font-black tracking-tighter uppercase truncate">
+                    🇺🇸 Guess the Party
+                  </h1>
+                </div>
+                <div className="mt-1 text-[10px] font-black uppercase tracking-[0.28em] text-gray-400">
+                  Allen Wang
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setShowInstructions(true)}
+                  onClick={() => setShowInfo(true)}
                   className="h-11 w-11 rounded-2xl bg-white border border-black/10 shadow-sm active:scale-95 transition-transform flex items-center justify-center"
-                  aria-label="How to play"
+                  aria-label="Info"
                 >
                   <Info size={18} className="text-gray-600" />
                 </button>
@@ -511,74 +459,92 @@ export default function Home() {
           </Glass>
         </header>
 
-        {/* Main layout */}
-        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_360px] gap-6 md:gap-8 items-start">
-          {/* Game */}
-          <main className="flex justify-center md:justify-start">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={current.name}
-                drag={gameState === "guessing" ? "x" : false}
-                dragConstraints={{ left: 0, right: 0 }}
-                style={{ x, rotate }}
-                onDragEnd={(e, i) => {
-                  if (i.offset.x < -80) handleGuess("Democrat");
-                  else if (i.offset.x > 80) handleGuess("Republican");
-                }}
-                className={[
-                  "relative w-full max-w-[540px] md:max-w-none",
-                  "h-[72vh] max-h-[720px] min-h-[560px]",
-                  "rounded-[2.5rem] overflow-hidden",
-                  "border border-white shadow-[0_24px_80px_rgba(0,0,0,0.16)] bg-white",
-                  "cursor-grab active:cursor-grabbing",
-                ].join(" ")}
-              >
-                <motion.div className="absolute inset-0 z-0" style={{ backgroundColor: swipeBg }} />
+        {/* The whole app is just the portrait card. No side panels. */}
+        <main className="flex justify-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current.name}
+              drag={gameState === "guessing" ? "x" : false}
+              dragConstraints={{ left: 0, right: 0 }}
+              style={{ x, rotate }}
+              onDragEnd={(e, i) => {
+                if (i.offset.x < -80) handleGuess("Democrat");
+                else if (i.offset.x > 80) handleGuess("Republican");
+              }}
+              className={[
+                "relative w-full max-w-[560px]",
+                "h-[76vh] max-h-[760px] min-h-[560px]",
+                "rounded-[2.5rem] overflow-hidden",
+                "border border-white bg-white",
+                "shadow-[0_24px_80px_rgba(0,0,0,0.14)]",
+                "cursor-grab active:cursor-grabbing",
+              ].join(" ")}
+            >
+              <motion.div className="absolute inset-0 z-0" style={{ backgroundColor: swipeBg }} />
 
-                {/* Image region with fixed framing so it doesn't feel weird on desktop */}
-                <div className="relative z-10 h-[78%] bg-[#fbfbfb] overflow-hidden">
-                  {imgLoading ? (
-                    <div className="absolute inset-0 flex items-center justify-center z-20 bg-white/70 backdrop-blur">
-                      <Loader2 className="animate-spin text-blue-500" size={34} />
+              {/* Image */}
+              <div className="relative z-10 h-[78%] bg-[#fbfbfb] overflow-hidden">
+                {imgLoading ? (
+                  <div className="absolute inset-0 flex items-center justify-center z-20 bg-white/70 backdrop-blur">
+                    <Loader2 className="animate-spin text-blue-500" size={34} />
+                  </div>
+                ) : null}
+
+                <img
+                  src={current.imageUrl}
+                  onLoad={() => setImgLoading(false)}
+                  className={[
+                    "absolute inset-0 w-full h-full",
+                    "object-contain object-center",
+                    "transition-all duration-700",
+                    gameState === "revealed" ? "scale-110 blur-2xl brightness-[0.35]" : "scale-100",
+                  ].join(" ")}
+                  alt={current.name}
+                />
+
+                {/* Subtle caption overlay (always) */}
+                <div className="absolute left-5 right-5 bottom-5 z-10">
+                  <div className="inline-flex flex-col gap-2 rounded-3xl bg-white/70 backdrop-blur-xl border border-white/70 shadow-sm px-4 py-3">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Pill className="bg-black/5 text-gray-700 border border-black/10">{officeLabel}</Pill>
+                      {current?.state ? (
+                        <Pill className="bg-white text-gray-700 border border-black/10">{current.state}</Pill>
+                      ) : null}
                     </div>
-                  ) : null}
+                    <div className="text-xl md:text-2xl font-black tracking-tight leading-none">
+                      {current.name}
+                    </div>
+                  </div>
+                </div>
 
-                  <img
-                    src={current.imageUrl}
-                    onLoad={() => setImgLoading(false)}
-                    className={[
-                      "absolute inset-0 w-full h-full",
-                      "object-contain md:object-contain object-top",
-                      "transition-all duration-700",
-                      gameState === "revealed" ? "scale-110 blur-2xl brightness-[0.35]" : "scale-100",
-                    ].join(" ")}
-                    alt={current.name}
-                  />
-
-                  {gameState === "revealed" ? (
-                    <motion.div
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center p-8"
+                {/* Reveal overlay */}
+                {gameState === "revealed" ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center p-8"
+                  >
+                    <div
+                      className={[
+                        "w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-xl",
+                        lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500",
+                      ].join(" ")}
                     >
-                      <div
-                        className={[
-                          "w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-xl",
-                          lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500",
-                        ].join(" ")}
-                      >
-                        {lastResult?.isCorrect ? (
-                          <Check size={34} className="text-white" strokeWidth={3.5} />
-                        ) : (
-                          <XIcon size={34} className="text-white" strokeWidth={3.5} />
-                        )}
-                      </div>
+                      {lastResult?.isCorrect ? (
+                        <Check size={34} className="text-white" strokeWidth={3.5} />
+                      ) : (
+                        <XIcon size={34} className="text-white" strokeWidth={3.5} />
+                      )}
+                    </div>
 
+                    <div className="space-y-2">
+                      <div className="text-white/60 text-[10px] font-black uppercase tracking-[0.34em]">
+                        {officeLabel}
+                      </div>
                       <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter leading-none">
                         {current.name}
                       </h2>
-
-                      <div className="mt-4 flex flex-col items-center gap-2">
+                      <div className="pt-4 flex flex-col items-center gap-2">
                         <Pill
                           className={[
                             "border border-white/10",
@@ -587,194 +553,109 @@ export default function Home() {
                         >
                           {current.party}
                         </Pill>
-                        <div className="text-white/55 text-[10px] font-black uppercase tracking-[0.34em]">
-                          {current.state}
-                        </div>
+                        {current.state ? (
+                          <div className="text-white/55 text-[10px] font-black uppercase tracking-[0.34em]">
+                            {current.state}
+                          </div>
+                        ) : null}
                       </div>
-                    </motion.div>
-                  ) : null}
-                </div>
-
-                {/* Controls */}
-                <div className="relative z-10 h-[22%] px-5 md:px-6 py-5 bg-white border-t border-black/5">
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      onClick={() => handleGuess("Democrat")}
-                      disabled={gameState === "revealed"}
-                      className={[
-                        "h-14 rounded-2xl bg-[#00AEF3] text-white",
-                        "font-black text-xs uppercase tracking-widest",
-                        "active:scale-95 transition-transform",
-                        "disabled:opacity-60 disabled:active:scale-100",
-                      ].join(" ")}
-                    >
-                      Democrat
-                    </button>
-
-                    <button
-                      onClick={() => handleGuess("Republican")}
-                      disabled={gameState === "revealed"}
-                      className={[
-                        "h-14 rounded-2xl bg-[#E81B23] text-white",
-                        "font-black text-xs uppercase tracking-widest",
-                        "active:scale-95 transition-transform",
-                        "disabled:opacity-60 disabled:active:scale-100",
-                      ].join(" ")}
-                    >
-                      Republican
-                    </button>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">
-                      Drag or use ← / →
                     </div>
-                    <button
-                      onClick={() => setShowTrophyCase(true)}
-                      className="sm:hidden h-9 rounded-xl px-3 bg-white border border-black/10 shadow-sm active:scale-95 transition-transform flex items-center gap-2"
-                    >
-                      <Trophy size={14} className="text-amber-600" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.18em]">
-                        {unlockedCount}/{TROPHIES.length}
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </main>
+                  </motion.div>
+                ) : null}
+              </div>
 
-          {/* Side Panel (polished, fewer boxes) */}
-          <aside className="w-full">
-            <Glass className="p-6 rounded-[2.25rem]">
-              <SectionTitle
-                right={
+              {/* Buttons (minimal) */}
+              <div className="relative z-10 h-[22%] px-5 md:px-6 py-5 bg-white border-t border-black/5">
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => handleGuess("Democrat")}
+                    disabled={gameState === "revealed"}
+                    className={[
+                      "h-14 rounded-2xl bg-[#00AEF3] text-white",
+                      "font-black text-xs uppercase tracking-widest",
+                      "active:scale-95 transition-transform",
+                      "disabled:opacity-60 disabled:active:scale-100",
+                    ].join(" ")}
+                  >
+                    Democrat
+                  </button>
+
+                  <button
+                    onClick={() => handleGuess("Republican")}
+                    disabled={gameState === "revealed"}
+                    className={[
+                      "h-14 rounded-2xl bg-[#E81B23] text-white",
+                      "font-black text-xs uppercase tracking-widest",
+                      "active:scale-95 transition-transform",
+                      "disabled:opacity-60 disabled:active:scale-100",
+                    ].join(" ")}
+                  >
+                    Republican
+                  </button>
+                </div>
+
+                {/* mobile trophies quick access only (not redundant on desktop) */}
+                <div className="mt-4 flex items-center justify-between">
+                  <button
+                    onClick={() => setShowTrophyCase(true)}
+                    className="sm:hidden h-10 rounded-2xl px-4 bg-white border border-black/10 shadow-sm active:scale-95 transition-transform flex items-center gap-2"
+                  >
+                    <Trophy size={16} className="text-amber-600" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.18em] tabular-nums">
+                      {unlockedCount}/{TROPHIES.length}
+                    </span>
+                  </button>
+
                   <button
                     onClick={resetGameStatsOnly}
-                    className="h-10 w-10 rounded-2xl bg-rose-50 text-rose-500 border border-rose-100 shadow-sm active:rotate-180 transition-transform duration-500 flex items-center justify-center"
-                    aria-label="Reset stats"
+                    className="ml-auto h-10 rounded-2xl px-4 bg-white border border-black/10 shadow-sm active:scale-95 transition-transform text-[10px] font-black uppercase tracking-[0.18em] text-gray-600"
                   >
-                    <RefreshCcw size={18} />
+                    Reset stats
                   </button>
-                }
-              >
-                Session
-              </SectionTitle>
-
-              <div className="mt-5 space-y-3">
-                <StatPill label="Streak" value={<span className="tabular-nums">{stats.streak || 0}</span>} />
-                <StatPill label="Accuracy" value={<span className="tabular-nums">{accuracy}%</span>} />
-                <StatPill label="Seen" value={<span className="tabular-nums">{stats.total || 0}</span>} />
-                <StatPill label="Avg Speed" value={<span className="tabular-nums">{avgSpeed}s</span>} />
-              </div>
-
-              <div className="mt-6 rounded-3xl border border-black/10 bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Rank</div>
-                  {(stats.streak || 0) >= 5 ? <Flame size={16} className="text-orange-500 fill-orange-500" /> : null}
-                </div>
-                <div className={`mt-2 text-2xl font-black tracking-tight ${rank.color}`}>{rank.title}</div>
-                <div className="mt-3 text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">
-                  Best streak: <span className="text-gray-700 tabular-nums">{stats.bestStreak || 0}</span>
                 </div>
               </div>
-
-              <div className="mt-6 rounded-3xl border border-black/10 bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Trophy size={18} className="text-amber-600" />
-                    <div className="text-[11px] font-black uppercase tracking-[0.22em] text-gray-600">
-                      Trophy Case
-                    </div>
-                  </div>
-                  <div className="text-[11px] font-black uppercase tracking-[0.22em] text-gray-500 tabular-nums">
-                    {unlockedCount}/{TROPHIES.length}
-                  </div>
-                </div>
-
-                <div className="mt-3 h-2 rounded-full bg-black/5 overflow-hidden">
-                  <div
-                    className="h-full bg-amber-400"
-                    style={{ width: `${Math.round((unlockedCount / TROPHIES.length) * 100)}%` }}
-                  />
-                </div>
-
-                <button
-                  onClick={() => setShowTrophyCase(true)}
-                  className="mt-4 w-full h-11 rounded-2xl bg-black text-white font-black uppercase tracking-[0.22em] text-[11px] active:scale-95 transition-transform flex items-center justify-center gap-2"
-                >
-                  <Trophy size={16} />
-                  Open Trophy Case
-                </button>
-
-                <div className="mt-3 text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">
-                  Never resets
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setShowStats(true)}
-                  className="h-11 rounded-2xl bg-white border border-black/10 shadow-sm font-black uppercase tracking-[0.22em] text-[10px] active:scale-95 transition-transform"
-                >
-                  Stats
-                </button>
-                <button
-                  onClick={() => setShowWrapped(true)}
-                  className="h-11 rounded-2xl bg-white border border-black/10 shadow-sm font-black uppercase tracking-[0.22em] text-[10px] active:scale-95 transition-transform flex items-center justify-center gap-2"
-                >
-                  <Share2 size={14} className="text-gray-700" />
-                  Wrapped
-                </button>
-              </div>
-            </Glass>
-          </aside>
-        </div>
+            </motion.div>
+          </AnimatePresence>
+        </main>
       </div>
 
-      {/* ------------------------------- Overlays ------------------------------ */}
+      {/* ------------------------------- Modals ------------------------------- */}
       <AnimatePresence>
-        {showInstructions ? (
-          <Modal onClose={() => setShowInstructions(false)} maxW="max-w-lg">
+        {showInfo ? (
+          <Modal onClose={() => setShowInfo(false)} maxW="max-w-lg">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-3xl font-black italic uppercase tracking-tighter">How to Play</h3>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <Pill className="bg-white border border-black/10 text-gray-700">
-                    <Keyboard size={14} className="opacity-70" /> ← / → on desktop
-                  </Pill>
-                  <Pill className="bg-black/5 border border-black/10 text-gray-700">Swipe on mobile</Pill>
+                <h3 className="text-2xl font-black uppercase tracking-tighter">How it works</h3>
+                <div className="mt-2 text-sm font-bold text-gray-700 leading-relaxed">
+                  Swipe/drag left for Democrat, right for Republican. Arrow keys work on desktop.
+                  Stats and trophies only live in these menus to keep the main UI portrait-only.
                 </div>
               </div>
-
               <button
-                onClick={() => setShowInstructions(false)}
+                onClick={() => setShowInfo(false)}
                 className="h-10 w-10 rounded-2xl bg-black/5 border border-black/10 active:scale-95 transition-transform flex items-center justify-center"
               >
                 <XIcon size={18} className="text-gray-600" />
               </button>
             </div>
 
-            <div className="mt-7 space-y-4">
-              <HowRow n="1" color="bg-blue-600" text="Left = Democrat" />
-              <HowRow n="2" color="bg-red-600" text="Right = Republican" />
+            <div className="mt-6 grid grid-cols-2 gap-3">
               <div className="rounded-3xl bg-white border border-black/10 p-5">
-                <div className="text-[11px] font-black uppercase tracking-[0.22em] text-gray-500">Shortcuts</div>
-                <div className="mt-3 text-sm font-bold text-gray-700">
-                  S = stats • T = trophies • I = help
-                </div>
+                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Controls</div>
+                <div className="mt-2 text-sm font-bold text-gray-700">Drag or ← / →</div>
+              </div>
+              <div className="rounded-3xl bg-white border border-black/10 p-5">
+                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Reset</div>
+                <div className="mt-2 text-sm font-bold text-gray-700">Resets stats only</div>
               </div>
             </div>
 
-            <button
-              onClick={() => {
-                localStorage.setItem("instructionsDismissed", "true");
-                setShowInstructions(false);
-              }}
-              className="mt-7 w-full h-14 rounded-2xl bg-black text-white font-black uppercase tracking-[0.22em] text-[12px] active:scale-95 transition-transform"
-            >
-              Start Playing
-            </button>
+            <div className="mt-6 rounded-3xl bg-white border border-black/10 p-5">
+              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Office label</div>
+              <div className="mt-2 text-sm font-bold text-gray-700">
+                Shows “U.S. Senator / U.S. Representative / Governor” based on your JSON fields (office/title/chamber).
+              </div>
+            </div>
           </Modal>
         ) : null}
 
@@ -782,7 +663,7 @@ export default function Home() {
           <Modal onClose={() => setShowStats(false)} maxW="max-w-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-3xl font-black italic uppercase tracking-tighter">Dossier</h2>
+                <h2 className="text-2xl font-black uppercase tracking-tighter">Stats</h2>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <Pill className="bg-white border border-black/10 text-gray-700">
                     <Award size={14} className={`${rank.color} opacity-90`} />
@@ -803,22 +684,29 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
               <StatCard icon={<Target size={18} />} label="Total Seen" value={stats.total || 0} />
               <StatCard icon={<Award size={18} />} label="Best Streak" value={stats.bestStreak || 0} />
               <StatCard icon={<Timer size={18} />} label="Avg Speed" value={`${avgSpeed}s`} />
               <StatCard icon={<Flame size={18} />} label="Accuracy" value={`${accuracy}%`} />
             </div>
 
-            <div className="mt-6 rounded-3xl bg-white border border-black/10 p-6">
-              <SectionTitle>Party breakdown</SectionTitle>
+            <div className="mt-5 rounded-3xl bg-white border border-black/10 p-6">
+              <div className="text-[11px] font-black uppercase tracking-[0.22em] text-gray-500">Party breakdown</div>
               <div className="mt-5 space-y-5">
                 <StatBar label="Democrat Accuracy" current={stats.demCorrect} total={stats.demGuesses} color="bg-blue-500" />
                 <StatBar label="Republican Accuracy" current={stats.repCorrect} total={stats.repGuesses} color="bg-red-500" />
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setShowTrophyCase(true)}
+                className="h-12 rounded-2xl bg-white border border-black/10 shadow-sm font-black uppercase tracking-[0.22em] text-[11px] active:scale-95 transition-transform flex items-center justify-center gap-2"
+              >
+                <Trophy size={16} className="text-amber-600" />
+                Trophies
+              </button>
               <button
                 onClick={() => {
                   setShowStats(false);
@@ -829,13 +717,6 @@ export default function Home() {
                 <Share2 size={16} />
                 Wrapped
               </button>
-              <button
-                onClick={() => setShowTrophyCase(true)}
-                className="h-12 rounded-2xl bg-white border border-black/10 shadow-sm font-black uppercase tracking-[0.22em] text-[11px] active:scale-95 transition-transform flex items-center justify-center gap-2"
-              >
-                <Trophy size={16} className="text-amber-600" />
-                Trophies
-              </button>
             </div>
           </Modal>
         ) : null}
@@ -844,13 +725,9 @@ export default function Home() {
           <Modal onClose={() => setShowTrophyCase(false)} maxW="max-w-3xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-3xl font-black italic uppercase tracking-tighter">Trophy Case</h2>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <Pill className="bg-white border border-black/10 text-gray-700">
-                    <Trophy size={14} className="text-amber-600 opacity-90" />
-                    <span className="tabular-nums">{unlockedCount}</span> / {TROPHIES.length} unlocked
-                  </Pill>
-                  <Pill className="bg-black/5 border border-black/10 text-gray-700">Does not reset</Pill>
+                <h2 className="text-2xl font-black uppercase tracking-tighter">Trophy Case</h2>
+                <div className="mt-2 text-sm font-bold text-gray-700">
+                  These persist even if you reset stats.
                 </div>
               </div>
 
@@ -862,7 +739,7 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
               {TROPHIES.map((t) => {
                 const unlocked = unlockedSet.has(t.id);
                 return (
@@ -995,19 +872,6 @@ function LoadingScreen({ message }) {
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F5F5F7] gap-4">
       <Loader2 className="animate-spin text-blue-600" size={52} />
       <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">{message}</p>
-    </div>
-  );
-}
-
-function HowRow({ n, color, text }) {
-  return (
-    <div className="rounded-3xl bg-white border border-black/10 p-5">
-      <div className="flex items-center gap-4">
-        <span className={`w-9 h-9 ${color} text-white rounded-2xl flex items-center justify-center font-black`}>
-          {n}
-        </span>
-        <p className="text-sm font-bold text-gray-700">{text}</p>
-      </div>
     </div>
   );
 }
