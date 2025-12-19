@@ -378,7 +378,7 @@ export default function Home() {
 
         <main className="flex justify-center relative">
 
-           {/* DESKTOP KEYBOARD HINTS - ONLY SHOW IF TOTAL SEEN IS 0 */}
+           {/* DESKTOP KEYBOARD HINTS */}
            {stats.total === 0 && !revealed && (
             <>
               <div className="hidden md:flex fixed left-10 top-1/2 -translate-y-1/2 flex-col items-center gap-2 opacity-30 pointer-events-none">
@@ -392,27 +392,22 @@ export default function Home() {
             </>
            )}
 
-          {/* STREAK COMBO POPUP */}
+          {/* IMPROVED STREAK POPUP */}
           <AnimatePresence>
-            {stats.streak >= 3 && gameState === 'revealed' && lastResult?.isCorrect && (
+            {stats.streak >= 2 && gameState === 'revealed' && lastResult?.isCorrect && (
               <motion.div
-                key={`streak-${stats.streak}`}
-                initial={{ scale: 0.5, opacity: 0, y: 0 }}
-                animate={{ scale: 1.1, opacity: 1, y: 10 }}
-                exit={{ scale: 1.5, opacity: 0, filter: "blur(10px)", y: -20 }}
-                transition={{ duration: 0.5, ease: "backOut" }}
-                className="absolute top-[5%] md:top-[8%] left-0 right-0 z-50 pointer-events-none flex flex-col items-center justify-center"
+                key="streak-pop"
+                initial={{ scale: 0.8, opacity: 0, y: 0 }}
+                animate={{ scale: 1, opacity: 1, y: -20 }}
+                exit={{ scale: 1.5, opacity: 0, y: -40 }}
+                transition={{ duration: 0.4, ease: "backOut" }}
+                className="absolute top-[-20px] md:top-[-40px] z-50 pointer-events-none flex items-center justify-center gap-2 w-full"
               >
-                <div className="relative">
-                  <span className="absolute -inset-2 bg-orange-500 blur-xl opacity-30 rounded-full"></span>
-                  <div className="relative text-6xl md:text-8xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-orange-400 to-red-600 drop-shadow-sm stroke-white"
-                       style={{ WebkitTextStroke: "2px white" }}>
+                 <span className="text-4xl md:text-5xl">🔥</span>
+                 <span className="text-5xl md:text-6xl font-black italic tracking-tighter text-white drop-shadow-xl stroke-black"
+                       style={{ WebkitTextStroke: "2.5px black" }}>
                     {stats.streak}
-                  </div>
-                </div>
-                <div className="mt-2 text-orange-500 font-black uppercase tracking-[0.5em] text-[10px] bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow-xl">
-                  Combo!
-                </div>
+                 </span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -599,7 +594,7 @@ export default function Home() {
           </button>
         </Modal>}
 
-        {/* TROPHY CASE MODAL (FIXED SCROLLING) */}
+        {/* TROPHY CASE MODAL */}
         {showTrophyCase && <Modal onClose={() => setShowTrophyCase(false)} maxW="max-w-3xl">
           <div className="flex flex-col gap-2 mb-6">
             <div className="flex justify-between items-start">
