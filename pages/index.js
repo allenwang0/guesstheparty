@@ -776,7 +776,7 @@ export default function Home() {
           <Modal onClose={closeInfoModal}>
             <div className="text-center space-y-5 py-2">
               <h3 className="text-xl font-black uppercase tracking-tight leading-none">
-                Can you decipher political leanings from a portrait?
+                Can you tell if a politician is a Democrat or Republican from just their picture?
               </h3>
 
               <p className="text-sm font-medium text-gray-600 max-w-[260px] mx-auto leading-relaxed">
