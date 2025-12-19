@@ -3,17 +3,30 @@ import { kv } from '@vercel/kv';
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send();
 
-  const { accuracy } = req.body; // e.g., 85
+  try {
+    const { accuracy } = req.body;
 
-  // Calculate which bucket this falls into (0, 10, 20... 90)
-  const bucket = Math.floor(accuracy / 10) * 10;
-  const key = `stats:accuracy:${bucket}`;
+    // Validate input
+    if (typeof accuracy !== 'number' || accuracy < 0 || accuracy > 100) {
+      return res.status(400).json({ error: 'Invalid accuracy' });
+    }
 
-  // Atomic increment: fast and thread-safe
-  await kv.incr(key);
+    // Calculate which bucket this falls into (0, 10, 20... 90)
+    let bucket = Math.floor(accuracy / 10) * 10;
 
-  // Also increment total games played for percentage math
-  await kv.incr('stats:total_games');
+    // Edge case: If accuracy is 100, Math.floor gives 100.
+    // We want to group 100 into the 90+ bucket.
+    if (bucket === 100) bucket = 90;
 
-  return res.status(200).json({ success: true });
+    const key = `stats:accuracy:${bucket}`;
+
+    // Atomic increment
+    await kv.incr(key);
+    await kv.incr('stats:total_games');
+
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
 }

@@ -25,30 +25,16 @@ import {
   MousePointer2
 } from "lucide-react";
 
-/* ----------------------------- Static Data (Fake It 'Til You Make It) ---------------------------- */
+/* ----------------------------- Utility Helper ---------------------------- */
 
-// Simulating a Bell Curve distribution of player scores
-const FAKE_DISTRIBUTION = [
-  { range: '0-10', count: 2 },
-  { range: '10-20', count: 5 },
-  { range: '20-30', count: 12 },
-  { range: '30-40', count: 20 },
-  { range: '40-50', count: 45 }, // Peak difficulty
-  { range: '50-60', count: 60 },
-  { range: '60-70', count: 40 },
-  { range: '70-80', count: 25 },
-  { range: '80-90', count: 10 },
-  { range: '90-100', count: 3 }
-];
-
-// Helper to calculate percentile ranking
+// Helper to calculate percentile ranking based on dynamic data
 function calculatePercentile(userAcc, data) {
   if (!data || data.length === 0) return 0;
 
   let totalPlayers = 0;
   let playersBeaten = 0;
 
-  // Calculate total players
+  // Calculate total players from the dataset
   data.forEach(d => totalPlayers += d.count);
 
   // Calculate how many people scored in buckets strictly lower than the user's bucket
@@ -131,29 +117,48 @@ const Toast = ({ message }) => (
   </motion.div>
 );
 
-const Histogram = ({ userAccuracy }) => {
+const Histogram = ({ userAccuracy, totalGamesPlayed }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate API fetch delay for realism
-    const timer = setTimeout(() => {
-      // Process the raw counts into percentages for the UI
-      const total = FAKE_DISTRIBUTION.reduce((acc, curr) => acc + curr.count, 0);
-      const processed = FAKE_DISTRIBUTION.map(d => ({
-        ...d,
-        percentOfPlayers: Math.round((d.count / total) * 100)
-      }));
-      setData(processed);
-      setLoading(false);
-    }, 600);
-    return () => clearTimeout(timer);
-  }, []);
+    let isMounted = true;
+
+    const syncStats = async () => {
+      try {
+        // 1. Submit the current user's score silently so they are part of the curve
+        // Only submit if they have actually played a game to prevent 0% spam on open
+        if (totalGamesPlayed > 0) {
+          await fetch('/api/submit-score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accuracy: userAccuracy }),
+          });
+        }
+
+        // 2. Fetch the real global distribution
+        const response = await fetch('/api/get-distribution');
+        const result = await response.json();
+
+        if (isMounted && result.distribution) {
+          setData(result.distribution);
+        }
+      } catch (error) {
+        console.error("Failed to sync stats", error);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    syncStats();
+
+    return () => { isMounted = false; };
+  }, [userAccuracy, totalGamesPlayed]);
 
   if (loading) return <div className="text-[10px] font-black uppercase tracking-widest text-gray-300 mt-6 text-center animate-pulse">Loading global benchmarks...</div>;
 
   // Find the max value to normalize bar heights
-  const maxPercent = Math.max(...data.map(d => d.percentOfPlayers));
+  const maxPercent = Math.max(...(data.map(d => d.percentOfPlayers) || [0]));
 
   return (
     <div className="w-full mt-6 pt-6 border-t border-gray-100">
@@ -173,7 +178,7 @@ const Histogram = ({ userAccuracy }) => {
               {/* The Bar */}
               <motion.div
                 initial={{ height: 0 }}
-                animate={{ height: `${(bucket.percentOfPlayers / maxPercent) * 100}%` }}
+                animate={{ height: `${(bucket.percentOfPlayers / (maxPercent || 1)) * 100}%` }}
                 transition={{ duration: 0.5, delay: i * 0.05 }}
                 className={`w-full rounded-t-sm relative ${
                   (isUserBucket || isUser100) ? 'bg-blue-500' : 'bg-gray-200'
@@ -196,7 +201,7 @@ const Histogram = ({ userAccuracy }) => {
 
       {/* Contextual Text */}
       <div className="mt-3 text-center text-xs text-gray-500">
-        You performed better than <span className="font-bold text-black">{calculatePercentile(userAccuracy, FAKE_DISTRIBUTION)}%</span> of players.
+        You performed better than <span className="font-bold text-black">{calculatePercentile(userAccuracy, data)}%</span> of players.
       </div>
     </div>
   );
@@ -569,10 +574,10 @@ export default function Home() {
 
       // Screen Shake on Error
       if (!isCorrect) {
-         shakeControls.start({
-             x: [0, -10, 10, -10, 10, 0],
-             transition: { duration: 0.4 }
-         });
+          shakeControls.start({
+              x: [0, -10, 10, -10, 10, 0],
+              transition: { duration: 0.4 }
+          });
       }
 
       if (isCorrect && newStreak > 0 && newStreak % 10 === 0) {
@@ -979,7 +984,7 @@ export default function Home() {
             </div>
 
             {/* HISTOGRAM ADDED HERE */}
-            <Histogram userAccuracy={accuracy} />
+            <Histogram userAccuracy={accuracy} totalGamesPlayed={stats.total} />
 
             <button
               onClick={() => {
