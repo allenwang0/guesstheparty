@@ -6,7 +6,6 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-mo
 import {
   Loader2,
   Check,
-  X as XIcon,
   Info,
   Share2,
   Timer,
@@ -17,6 +16,7 @@ import {
   Star,
   ShieldCheck,
   Zap,
+  XCircle,
 } from "lucide-react";
 
 /* ----------------------------- Assets & Icons ---------------------------- */
@@ -61,18 +61,83 @@ const Pill = ({ children, className = "" }) => (
   </span>
 );
 
+const IconButton = ({ onClick, ariaLabel, children, className = "" }) => (
+  <button
+    onClick={onClick}
+    aria-label={ariaLabel}
+    className={[
+      "h-10 w-10 rounded-full",
+      "bg-white/70 border border-black/10 backdrop-blur",
+      "shadow-sm active:scale-95 transition-transform",
+      "flex items-center justify-center",
+      className,
+    ].join(" ")}
+  >
+    {children}
+  </button>
+);
+
 /* -------------------------------- Trophies ------------------------------ */
 
 const TROPHY_KEY = "partyTrophies_v1";
 
 const TROPHIES = [
-  { id: "first_correct", title: "First Blood", desc: "First correct guess.", icon: <Star size={18} />, tier: "bronze", check: ({ stats }) => (stats.correct || 0) >= 1 },
-  { id: "streak_5", title: "Warm Streak", desc: "Best streak ≥ 5.", icon: <Flame size={18} />, tier: "bronze", check: ({ stats }) => (stats.bestStreak || 0) >= 5 },
-  { id: "streak_10", title: "Campaign Staff", desc: "Best streak ≥ 10.", icon: <Award size={18} />, tier: "silver", check: ({ stats }) => (stats.bestStreak || 0) >= 10 },
-  { id: "streak_25", title: "Party Operator", desc: "Best streak ≥ 25.", icon: <ShieldCheck size={18} />, tier: "gold", check: ({ stats }) => (stats.bestStreak || 0) >= 25 },
-  { id: "streak_50", title: "Floor Leader", desc: "Best streak ≥ 50.", icon: <Trophy size={18} />, tier: "platinum", check: ({ stats }) => (stats.bestStreak || 0) >= 50 },
-  { id: "seen_50", title: "Caucus Regular", desc: "Seen ≥ 50.", icon: <Target size={18} />, tier: "bronze", check: ({ stats }) => (stats.total || 0) >= 50 },
-  { id: "seen_200", title: "Capitol Fixture", desc: "Seen ≥ 200.", icon: <Trophy size={18} />, tier: "gold", check: ({ stats }) => (stats.total || 0) >= 200 },
+  {
+    id: "first_correct",
+    title: "First Blood",
+    desc: "First correct guess.",
+    icon: <Star size={18} />,
+    tier: "bronze",
+    check: ({ stats }) => (stats.correct || 0) >= 1,
+  },
+  {
+    id: "streak_5",
+    title: "Warm Streak",
+    desc: "Best streak ≥ 5.",
+    icon: <Flame size={18} />,
+    tier: "bronze",
+    check: ({ stats }) => (stats.bestStreak || 0) >= 5,
+  },
+  {
+    id: "streak_10",
+    title: "Campaign Staff",
+    desc: "Best streak ≥ 10.",
+    icon: <Award size={18} />,
+    tier: "silver",
+    check: ({ stats }) => (stats.bestStreak || 0) >= 10,
+  },
+  {
+    id: "streak_25",
+    title: "Party Operator",
+    desc: "Best streak ≥ 25.",
+    icon: <ShieldCheck size={18} />,
+    tier: "gold",
+    check: ({ stats }) => (stats.bestStreak || 0) >= 25,
+  },
+  {
+    id: "streak_50",
+    title: "Floor Leader",
+    desc: "Best streak ≥ 50.",
+    icon: <Trophy size={18} />,
+    tier: "platinum",
+    check: ({ stats }) => (stats.bestStreak || 0) >= 50,
+  },
+  {
+    id: "seen_50",
+    title: "Caucus Regular",
+    desc: "Seen ≥ 50.",
+    icon: <Target size={18} />,
+    tier: "bronze",
+    check: ({ stats }) => (stats.total || 0) >= 50,
+  },
+  {
+    id: "seen_200",
+    title: "Capitol Fixture",
+    desc: "Seen ≥ 200.",
+    icon: <Trophy size={18} />,
+    tier: "gold",
+    check: ({ stats }) => (stats.total || 0) >= 200,
+  },
   {
     id: "accuracy_80_50",
     title: "Solid Read",
@@ -128,30 +193,29 @@ function tierStyles(tier) {
 
 /* ------------------------------ Office label ----------------------------- */
 /**
- * Goal: show "U.S. Senator", "U.S. Representative", "Governor" etc.
- * Works best if your JSON provides one of: office, chamber, title, role.
- * Fallback is "Public Official" if nothing usable exists.
+ * Must be derived from politicians.json fields.
+ * Expect office/chamber to be: "house" | "senate" | "gov" (or close variants).
+ * Do NOT use/display name/office/state until after guess (handled in UI below).
  */
 function formatOffice(p) {
-  const raw =
-    (p?.office || p?.role || p?.title || p?.position || p?.chamber || "").toString().trim();
+  const raw = (p?.office ?? p?.chamber ?? p?.level ?? "").toString().trim().toLowerCase();
 
-  const s = raw.toLowerCase();
+  // normalize common variants
+  const v = raw
+    .replaceAll(".", "")
+    .replaceAll("_", "")
+    .replaceAll("-", "")
+    .replace(/\s+/g, "");
 
-  // common patterns
-  if (s.includes("senat")) return "U.S. Senator";
-  if (s.includes("house") || s.includes("representative") || s.includes("rep.")) return "U.S. Representative";
-  if (s.includes("governor") || s.includes("gov")) return "Governor";
-  if (s.includes("mayor")) return "Mayor";
-  if (s.includes("attorney general")) return "Attorney General";
-  if (s.includes("secretary of state")) return "Secretary of State";
+  if (v === "senate" || v === "us_senate" || v === "ussenate") return "Senator";
+  if (v === "house" || v === "us_house" || v === "ushouse" || v === "representative" || v === "rep")
+    return "Representative";
+  if (v === "gov" || v === "governor") return "Governor";
 
-  // data sometimes stores chamber as "Senate"/"House"
-  if (raw === "Senate") return "U.S. Senator";
-  if (raw === "House") return "U.S. Representative";
-
-  // if raw is short and usable, show it
-  if (raw && raw.length <= 28) return raw;
+  // best-effort fallback (still based on JSON fields, just looser matching)
+  if (v.includes("senat")) return "Senator";
+  if (v.includes("hous") || v.includes("rep")) return "Representative";
+  if (v.includes("gov")) return "Governor";
 
   return "Public Official";
 }
@@ -301,9 +365,7 @@ export default function Home() {
         }
       }
 
-      if (changed) {
-        setTrophies({ unlocked: Array.from(nextUnlocked), firstUnlockedAt });
-      }
+      if (changed) setTrophies({ unlocked: Array.from(nextUnlocked), firstUnlockedAt });
     },
     [trophies.unlocked, trophies.firstUnlockedAt]
   );
@@ -403,6 +465,7 @@ export default function Home() {
   if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
 
   const officeLabel = formatOffice(current);
+  const revealed = gameState === "revealed";
 
   return (
     <div className="min-h-screen w-full bg-[#F5F5F7] text-[#1D1D1F] font-sans">
@@ -412,7 +475,7 @@ export default function Home() {
       </Head>
       <Analytics />
 
-      {/* Minimal top bar. No keyboard hint text. */}
+      {/* Minimal top bar */}
       <div className="mx-auto max-w-4xl px-4 md:px-8 py-6">
         <header className="mb-6">
           <Glass className="px-5 py-4 rounded-[2.25rem]">
@@ -459,7 +522,7 @@ export default function Home() {
           </Glass>
         </header>
 
-        {/* The whole app is just the portrait card. No side panels. */}
+        {/* Portrait-only main UI */}
         <main className="flex justify-center">
           <AnimatePresence mode="wait">
             <motion.div
@@ -497,28 +560,30 @@ export default function Home() {
                     "absolute inset-0 w-full h-full",
                     "object-contain object-center",
                     "transition-all duration-700",
-                    gameState === "revealed" ? "scale-110 blur-2xl brightness-[0.35]" : "scale-100",
+                    revealed ? "scale-110 blur-2xl brightness-[0.35]" : "scale-100",
                   ].join(" ")}
-                  alt={current.name}
+                  alt={revealed ? current.name : "Portrait"}
                 />
 
-                {/* Subtle caption overlay (always) */}
-                <div className="absolute left-5 right-5 bottom-5 z-10">
-                  <div className="inline-flex flex-col gap-2 rounded-3xl bg-white/70 backdrop-blur-xl border border-white/70 shadow-sm px-4 py-3">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Pill className="bg-black/5 text-gray-700 border border-black/10">{officeLabel}</Pill>
-                      {current?.state ? (
-                        <Pill className="bg-white text-gray-700 border border-black/10">{current.state}</Pill>
-                      ) : null}
-                    </div>
-                    <div className="text-xl md:text-2xl font-black tracking-tight leading-none">
-                      {current.name}
+                {/* IMPORTANT: Do not show name/office/state until AFTER guess */}
+                {revealed ? (
+                  <div className="absolute left-5 right-5 bottom-5 z-10">
+                    <div className="inline-flex flex-col gap-2 rounded-3xl bg-white/70 backdrop-blur-xl border border-white/70 shadow-sm px-4 py-3">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Pill className="bg-black/5 text-gray-700 border border-black/10">{officeLabel}</Pill>
+                        {current?.state ? (
+                          <Pill className="bg-white text-gray-700 border border-black/10">{current.state}</Pill>
+                        ) : null}
+                      </div>
+                      <div className="text-xl md:text-2xl font-black tracking-tight leading-none">
+                        {current.name}
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : null}
 
                 {/* Reveal overlay */}
-                {gameState === "revealed" ? (
+                {revealed ? (
                   <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -533,7 +598,7 @@ export default function Home() {
                       {lastResult?.isCorrect ? (
                         <Check size={34} className="text-white" strokeWidth={3.5} />
                       ) : (
-                        <XIcon size={34} className="text-white" strokeWidth={3.5} />
+                        <XCircle size={34} className="text-white" strokeWidth={2.8} />
                       )}
                     </div>
 
@@ -569,7 +634,7 @@ export default function Home() {
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => handleGuess("Democrat")}
-                    disabled={gameState === "revealed"}
+                    disabled={revealed}
                     className={[
                       "h-14 rounded-2xl bg-[#00AEF3] text-white",
                       "font-black text-xs uppercase tracking-widest",
@@ -582,7 +647,7 @@ export default function Home() {
 
                   <button
                     onClick={() => handleGuess("Republican")}
-                    disabled={gameState === "revealed"}
+                    disabled={revealed}
                     className={[
                       "h-14 rounded-2xl bg-[#E81B23] text-white",
                       "font-black text-xs uppercase tracking-widest",
@@ -594,7 +659,6 @@ export default function Home() {
                   </button>
                 </div>
 
-                {/* mobile trophies quick access only (not redundant on desktop) */}
                 <div className="mt-4 flex items-center justify-between">
                   <button
                     onClick={() => setShowTrophyCase(true)}
@@ -627,16 +691,14 @@ export default function Home() {
               <div>
                 <h3 className="text-2xl font-black uppercase tracking-tighter">How it works</h3>
                 <div className="mt-2 text-sm font-bold text-gray-700 leading-relaxed">
-                  Swipe/drag left for Democrat, right for Republican. Arrow keys work on desktop.
-                  Stats and trophies only live in these menus to keep the main UI portrait-only.
+                  Swipe/drag left for Democrat, right for Republican. Arrow keys work on desktop. The main screen stays
+                  portrait-only—details appear only after you guess.
                 </div>
               </div>
-              <button
-                onClick={() => setShowInfo(false)}
-                className="h-10 w-10 rounded-2xl bg-black/5 border border-black/10 active:scale-95 transition-transform flex items-center justify-center"
-              >
-                <XIcon size={18} className="text-gray-600" />
-              </button>
+
+              <IconButton onClick={() => setShowInfo(false)} ariaLabel="Close">
+                <XCircle size={20} className="text-gray-700" />
+              </IconButton>
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
@@ -651,9 +713,13 @@ export default function Home() {
             </div>
 
             <div className="mt-6 rounded-3xl bg-white border border-black/10 p-5">
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Office label</div>
+              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Role label</div>
               <div className="mt-2 text-sm font-bold text-gray-700">
-                Shows “U.S. Senator / U.S. Representative / Governor” based on your JSON fields (office/title/chamber).
+                After you guess, the game reads your <code className="px-1 py-0.5 bg-black/5 rounded">politicians.json</code>{" "}
+                and maps <code className="px-1 py-0.5 bg-black/5 rounded">office</code> /{" "}
+                <code className="px-1 py-0.5 bg-black/5 rounded">chamber</code> to{" "}
+                <span className="font-black">Senator</span> (senate), <span className="font-black">Representative</span>{" "}
+                (house), or <span className="font-black">Governor</span> (gov).
               </div>
             </div>
           </Modal>
@@ -676,12 +742,9 @@ export default function Home() {
                 </div>
               </div>
 
-              <button
-                onClick={() => setShowStats(false)}
-                className="h-10 w-10 rounded-2xl bg-black/5 border border-black/10 active:scale-95 transition-transform flex items-center justify-center"
-              >
-                <XIcon size={18} className="text-gray-600" />
-              </button>
+              <IconButton onClick={() => setShowStats(false)} ariaLabel="Close">
+                <XCircle size={20} className="text-gray-700" />
+              </IconButton>
             </div>
 
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -695,7 +758,12 @@ export default function Home() {
               <div className="text-[11px] font-black uppercase tracking-[0.22em] text-gray-500">Party breakdown</div>
               <div className="mt-5 space-y-5">
                 <StatBar label="Democrat Accuracy" current={stats.demCorrect} total={stats.demGuesses} color="bg-blue-500" />
-                <StatBar label="Republican Accuracy" current={stats.repCorrect} total={stats.repGuesses} color="bg-red-500" />
+                <StatBar
+                  label="Republican Accuracy"
+                  current={stats.repCorrect}
+                  total={stats.repGuesses}
+                  color="bg-red-500"
+                />
               </div>
             </div>
 
@@ -726,75 +794,93 @@ export default function Home() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-black uppercase tracking-tighter">Trophy Case</h2>
-                <div className="mt-2 text-sm font-bold text-gray-700">
-                  These persist even if you reset stats.
-                </div>
+                <div className="mt-2 text-sm font-bold text-gray-700">These persist even if you reset stats.</div>
               </div>
 
-              <button
-                onClick={() => setShowTrophyCase(false)}
-                className="h-10 w-10 rounded-2xl bg-black/5 border border-black/10 active:scale-95 transition-transform flex items-center justify-center"
-              >
-                <XIcon size={18} className="text-gray-600" />
-              </button>
+              <IconButton onClick={() => setShowTrophyCase(false)} ariaLabel="Close">
+                <XCircle size={20} className="text-gray-700" />
+              </IconButton>
             </div>
 
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="mt-5 rounded-3xl bg-white border border-black/10 p-5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center">
+                  <Trophy size={18} className="text-amber-700" />
+                </div>
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Unlocked</div>
+                  <div className="text-xl font-black tabular-nums">{unlockedCount}</div>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Total</div>
+                <div className="text-xl font-black tabular-nums">{TROPHIES.length}</div>
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3">
               {TROPHIES.map((t) => {
                 const unlocked = unlockedSet.has(t.id);
+                const unlockedAt = trophies.firstUnlockedAt?.[t.id];
+
                 return (
                   <div
                     key={t.id}
                     className={[
-                      "rounded-3xl border p-5",
+                      "rounded-3xl border",
+                      "p-4 md:p-5",
+                      "flex items-start justify-between gap-4",
                       unlocked ? "bg-white border-black/10" : "bg-[#F5F5F7] border-black/10",
                     ].join(" ")}
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3">
-                        <div
-                          className={[
-                            "h-11 w-11 rounded-2xl flex items-center justify-center border",
-                            unlocked ? tierStyles(t.tier) : "bg-white text-gray-400 border-black/10",
-                          ].join(" ")}
-                        >
-                          {t.icon}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <div className="text-base font-black tracking-tight">{t.title}</div>
-                            <span
-                              className={[
-                                "text-[9px] font-black uppercase tracking-[0.22em] px-2 py-1 rounded-full border",
-                                tierStyles(t.tier),
-                              ].join(" ")}
-                            >
-                              {t.tier}
-                            </span>
-                          </div>
-                          <div className="mt-1 text-sm font-bold text-gray-600">{t.desc}</div>
-                        </div>
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div
+                        className={[
+                          "h-11 w-11 rounded-2xl flex items-center justify-center border shrink-0",
+                          unlocked ? tierStyles(t.tier) : "bg-white text-gray-400 border-black/10",
+                        ].join(" ")}
+                      >
+                        {t.icon}
                       </div>
 
-                      <div>
-                        {unlocked ? (
-                          <Pill className="bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            <Check size={14} /> Unlocked
-                          </Pill>
-                        ) : (
-                          <Pill className="bg-white text-gray-500 border border-black/10">Locked</Pill>
-                        )}
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <div className="text-base font-black tracking-tight truncate">{t.title}</div>
+                          <span
+                            className={[
+                              "text-[9px] font-black uppercase tracking-[0.22em] px-2 py-1 rounded-full border",
+                              tierStyles(t.tier),
+                            ].join(" ")}
+                          >
+                            {t.tier}
+                          </span>
+                        </div>
+                        <div className="mt-1 text-sm font-bold text-gray-600">{t.desc}</div>
+
+                        {unlocked && unlockedAt ? (
+                          <div className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-gray-400">
+                            Unlocked{" "}
+                            <span className="text-gray-600">
+                              {new Date(unlockedAt).toLocaleDateString(undefined, {
+                                year: "numeric",
+                                month: "short",
+                                day: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                        ) : null}
                       </div>
                     </div>
 
-                    {unlocked && trophies.firstUnlockedAt?.[t.id] ? (
-                      <div className="mt-4 text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">
-                        First unlocked:{" "}
-                        <span className="text-gray-600">
-                          {new Date(trophies.firstUnlockedAt[t.id]).toLocaleString()}
-                        </span>
-                      </div>
-                    ) : null}
+                    <div className="shrink-0">
+                      {unlocked ? (
+                        <Pill className="bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <Check size={14} /> Unlocked
+                        </Pill>
+                      ) : (
+                        <Pill className="bg-white text-gray-500 border border-black/10">Locked</Pill>
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -815,9 +901,9 @@ export default function Home() {
             >
               <button
                 onClick={() => setShowWrapped(false)}
-                className="absolute top-8 right-8 h-10 w-10 bg-white/10 backdrop-blur-xl rounded-2xl z-50 active:scale-90 transition-transform flex items-center justify-center"
+                className="absolute top-8 right-8 h-10 w-10 bg-white/10 backdrop-blur-xl rounded-full z-50 active:scale-90 transition-transform flex items-center justify-center"
               >
-                <XIcon size={18} className="text-white" />
+                <XCircle size={20} className="text-white" />
               </button>
 
               <div className="flex-grow pt-10 text-white">
