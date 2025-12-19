@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { Analytics } from "@vercel/analytics/react";
 import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation } from "framer-motion";
+import html2canvas from "html2canvas";
 import {
   Loader2,
   Check,
@@ -21,11 +22,12 @@ import {
   ArrowRight,
   AlertCircle,
   RefreshCw,
-  TrendingUp
+  TrendingUp,
+  Download,
+  Copy
 } from "lucide-react";
 
 /* ----------------------------- Static Data ---------------------------- */
-// Fallback data so the chart is never empty
 const FAKE_DISTRIBUTION = [
   { range: '0-10', count: 2, percentOfPlayers: 1 },
   { range: '10-20', count: 5, percentOfPlayers: 2 },
@@ -123,14 +125,14 @@ const Toast = ({ message }) => (
     initial={{ opacity: 0, y: -20, scale: 0.9 }}
     animate={{ opacity: 1, y: 0, scale: 1 }}
     exit={{ opacity: 0, y: -20, scale: 0.9 }}
-    className="fixed top-24 left-1/2 -translate-x-1/2 z-[150] bg-black/80 backdrop-blur text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 pointer-events-none"
+    className="fixed top-24 left-1/2 -translate-x-1/2 z-[150] bg-black/80 backdrop-blur text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 pointer-events-none whitespace-nowrap"
   >
     <span className="text-xs font-bold tracking-widest uppercase">{message}</span>
   </motion.div>
 );
 
 /* ----------------------------- Histogram Component ---------------------------- */
-const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubmit = false }) => {
+const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubmit = false, compact = false }) => {
   const [data, setData] = useState(FAKE_DISTRIBUTION);
 
   useEffect(() => {
@@ -161,25 +163,25 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
   }, [userAccuracy, totalGamesPlayed, disableSubmit]);
 
   const maxCount = Math.max(...data.map(d => d.count), 0);
+  const containerHeight = compact ? "h-20" : "h-32";
 
   return (
-    <div className={`w-full mt-6 pt-6 border-t ${isDark ? 'border-white/10' : 'border-gray-100'}`}>
-      <h3 className={`text-[10px] font-black uppercase tracking-widest mb-4 ${isDark ? 'text-white/40' : 'text-gray-400'}`}>
+    <div className={`w-full mt-4 pt-4 border-t ${isDark ? 'border-white/10' : 'border-gray-100'}`}>
+      <h3 className={`text-[10px] font-black uppercase tracking-widest mb-3 ${isDark ? 'text-white/40' : 'text-gray-400'}`}>
         Global Player Distribution
       </h3>
-      <div className="flex items-end justify-between h-32 gap-1 mb-2">
+      <div className={`flex items-end justify-between ${containerHeight} gap-1 mb-2`}>
         {data.map((bucket, i) => {
           const rangeStart = i * 10;
           const isUserBucket = userAccuracy >= rangeStart && userAccuracy < rangeStart + 10;
           const isUser100 = userAccuracy === 100 && i === 9;
           const isActive = isUserBucket || isUser100;
           const barHeight = maxCount > 0 ? (bucket.count / maxCount) * 100 : 0;
-          const totalCount = data.reduce((acc, curr) => acc + curr.count, 0);
-          const displayPercent = totalCount > 0 ? Math.round((bucket.count / totalCount) * 100) : 0;
+
           return (
             <div
               key={i}
-              className="h-full flex flex-col justify-end items-center gap-1 flex-1 group relative"
+              className="h-full flex flex-col justify-end items-center gap-1 flex-1 relative"
             >
               <motion.div
                 initial={{ height: 0 }}
@@ -190,12 +192,8 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
                     ? 'bg-blue-500'
                     : (isDark ? 'bg-white/10' : 'bg-gray-200')
                 }`}
-              >
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-[9px] px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-10">
-                  {displayPercent}%
-                </div>
-              </motion.div>
-              <span className={`text-[8px] font-bold ${
+              />
+              <span className={`text-[7px] font-bold ${
                 isActive
                   ? 'text-blue-500'
                   : (isDark ? 'text-white/20' : 'text-gray-300')
@@ -206,9 +204,11 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
           );
         })}
       </div>
-      <div className={`mt-3 text-center text-xs ${isDark ? 'text-white/60' : 'text-gray-500'}`}>
-        You performed better than <span className={`font-bold ${isDark ? 'text-white' : 'text-black'}`}>{calculatePercentile(userAccuracy, data)}%</span> of players.
-      </div>
+      {!compact && (
+        <div className={`mt-3 text-center text-xs ${isDark ? 'text-white/60' : 'text-gray-500'}`}>
+          You performed better than <span className={`font-bold ${isDark ? 'text-white' : 'text-black'}`}>{calculatePercentile(userAccuracy, data)}%</span> of players.
+        </div>
+      )}
     </div>
   );
 };
@@ -326,7 +326,6 @@ async function fireConfettiSafe() {
   }
 }
 
-// Rank Definitions for Legend
 const RANK_TIERS = [
   { title: "Speaker", min: 110000 },
   { title: "Party Whip", min: 100000 },
@@ -344,6 +343,7 @@ export default function Home() {
   const [hasMounted, setHasMounted] = useState(false);
   const [fatalError, setFatalError] = useState(null);
   const containerRef = useRef(null);
+  const wrappedRef = useRef(null);
 
   // Logic Refs
   const recentIds = useRef(new Set());
@@ -355,7 +355,7 @@ export default function Home() {
   const [showStats, setShowStats] = useState(false);
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
-  const shakeControls = useAnimation(); // For Screen Shake
+  const shakeControls = useAnimation();
 
   // Game State
   const [gameState, setGameState] = useState("guessing");
@@ -414,7 +414,6 @@ export default function Home() {
     return (ms / 1000).toFixed(1);
   }, [stats.responseTimes]);
 
-  // --- UPDATED RANK LOGIC ---
   const rank = useMemo(() => {
     if (stats.total < 20) {
       return { title: "Unranked", score: 0, nextGoal: 20 - stats.total };
@@ -479,6 +478,30 @@ export default function Home() {
       } catch {}
     }
   }, []);
+
+  // --- DOWNLOAD LOGIC ---
+  const handleDownloadWrapped = async () => {
+    if (!wrappedRef.current) return;
+    try {
+        showToast("Generating image...");
+        const canvas = await html2canvas(wrappedRef.current, {
+            scale: 2, // Higher resolution
+            useCORS: true,
+            backgroundColor: null, // Transparent background if possible, though we have a gradient
+            logging: false,
+        });
+
+        const image = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.href = image;
+        link.download = `GuessTheParty-Wrapped-2025.png`;
+        link.click();
+        showToast("Saved to Photos");
+    } catch (e) {
+        console.error("Download failed", e);
+        showToast("Download failed");
+    }
+  };
 
   // --- Initialization ---
   useEffect(() => {
@@ -683,7 +706,7 @@ export default function Home() {
   };
 
   const copyStats = async () => {
-    const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nScore: ${rank.score}\nAccuracy: ${accuracy}%\nBest Streak: ${stats.bestStreak}\n\nCan you beat my score?`;
+    const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nScore: ${rank.score}\nAccuracy: ${accuracy}%\nBest Streak: ${stats.bestStreak}\n\nguesstheparty.com`;
     try {
       if (typeof navigator !== "undefined" && navigator.clipboard) {
         await navigator.clipboard.writeText(text);
@@ -724,9 +747,9 @@ export default function Home() {
 
       <AnimatePresence>{toast && <Toast message={toast} />}</AnimatePresence>
 
-      <div className="mx-auto max-w-2xl px-4 md:px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] h-full flex flex-col relative z-10">
+      <div className="mx-auto max-w-2xl px-4 md:px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] h-full flex flex-col relative z-20">
         {/* Header */}
-        <header className="mb-4 mt-4 shrink-0 flex justify-center">
+        <header className="mb-4 mt-4 shrink-0 flex justify-center relative z-50">
           <Glass className="px-5 py-3 rounded-full flex items-center justify-between w-full max-w-lg">
             <div className="flex flex-col items-start pr-4">
               <h1 className="text-sm md:text-base font-black uppercase tracking-tighter leading-none whitespace-nowrap">
@@ -859,8 +882,12 @@ export default function Home() {
                     )}
                   </div>
 
-                  {/* Controls */}
-                  <div className="relative shrink-0 h-32 px-5 py-4 bg-white flex flex-col justify-between z-50">
+                  {/* Controls - FIXED: stopPropagation ensures clicks work on the draggable card */}
+                  <div
+                    className="relative shrink-0 h-32 px-5 py-4 bg-white flex flex-col justify-between z-50"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onTouchStart={(e) => e.stopPropagation()}
+                  >
                     <div className="grid grid-cols-2 gap-3 h-12">
                       <button
                         onClick={() => handleGuess("Democrat")}
@@ -907,7 +934,7 @@ export default function Home() {
           <Modal onClose={closeInfoModal}>
             <div className="text-center space-y-5 py-2">
               <h3 className="text-xl font-black uppercase tracking-tight leading-none">
-                Does ideology have a look?
+                Can you tell political leanings from a picture?
               </h3>
               <p className="text-sm font-medium text-gray-600 max-w-[260px] mx-auto leading-relaxed">
                 Swipe or use arrow keys to guess.
@@ -1027,6 +1054,55 @@ export default function Home() {
           </Modal>
         )}
 
+        {showTrophyCase && (
+          <Modal onClose={() => setShowTrophyCase(false)}>
+            <div className="flex flex-col gap-4 mb-4 pt-2">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-black uppercase tracking-tighter">Trophies</h2>
+                <IconButton onClick={() => setShowTrophyCase(false)} ariaLabel="Close">
+                  <XCircle size={20} />
+                </IconButton>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex-grow h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-amber-500"
+                    style={{ width: `${(unlockedCount / TROPHIES.length) * 100}%` }}
+                  />
+                </div>
+                <div className="text-[10px] font-black uppercase text-gray-400">
+                  {unlockedCount}/{TROPHIES.length}
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              {TROPHIES.map((t) => {
+                const unlocked = unlockedSet.has(t.id);
+                return (
+                  <div
+                    key={t.id}
+                    className={`p-4 rounded-2xl border flex items-center gap-4 ${
+                      unlocked ? "bg-white border-gray-100 shadow-sm" : "bg-gray-50 border-transparent opacity-60 grayscale"
+                    }`}
+                  >
+                    <div
+                      className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${
+                        unlocked ? tierStyles(t.tier) : "bg-gray-200"
+                      }`}
+                    >
+                      {unlocked ? t.icon : <Lock size={16} />}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-black uppercase tracking-tight truncate">{t.title}</div>
+                      <div className="text-[10px] font-bold text-gray-400">{t.desc}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Modal>
+        )}
+
         {showWrapped && (
           <div
             className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
@@ -1035,75 +1111,94 @@ export default function Home() {
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              className="relative w-full max-w-sm max-h-[90vh] overflow-y-auto bg-gradient-to-br from-gray-900 to-black rounded-[2.5rem] border border-white/10 p-8 text-white shadow-2xl"
+              className="relative w-full max-w-sm overflow-hidden bg-white/5 rounded-[2.5rem] p-4 flex flex-col gap-4"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative z-10 flex flex-col gap-6">
-                <div className="flex justify-between items-start">
-                  <div className="text-[9px] font-black uppercase tracking-[0.25em] opacity-60">2025 Review</div>
-                  <button onClick={() => setShowWrapped(false)} className="opacity-50 hover:opacity-100">
-                    <XCircle size={20} />
-                  </button>
+                {/* --- WRAPPED CARD (Captured) --- */}
+                <div
+                    ref={wrappedRef}
+                    className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-[2rem] border border-white/10 p-6 text-white shadow-2xl flex flex-col justify-between aspect-[9/14]"
+                >
+                    {/* Header */}
+                    <div className="flex justify-between items-start border-b border-white/10 pb-4">
+                        <div>
+                             <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-50 mb-1">Rank</div>
+                             <div className="text-2xl font-black uppercase text-blue-400 leading-none">{rank.title}</div>
+                             <div className="text-[10px] font-mono opacity-50 mt-1">Score: {rank.score.toLocaleString()}</div>
+                        </div>
+                        <div className="text-right">
+                            {/* Assuming percentile calculation logic from helper */}
+                            <div className="text-3xl font-black leading-none">{calculatePercentile(accuracy, FAKE_DISTRIBUTION)}%</div>
+                            <div className="text-[9px] font-black uppercase tracking-widest opacity-50 mt-1">Top Percentile</div>
+                        </div>
+                    </div>
+
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 gap-2 my-2">
+                        <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                            <div className="text-[8px] uppercase tracking-widest opacity-50 mb-1">Accuracy</div>
+                            <div className="text-xl font-black">{accuracy}%</div>
+                        </div>
+                        <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                            <div className="text-[8px] uppercase tracking-widest opacity-50 mb-1">Streak</div>
+                            <div className="text-xl font-black text-amber-400">{stats.bestStreak}</div>
+                        </div>
+                    </div>
+
+                    {/* Best Party */}
+                    <div className="bg-white/5 rounded-xl p-3 border border-white/5 flex items-center gap-3">
+                        <div className="relative h-10 w-10 shrink-0 bg-white rounded-full p-1.5">
+                            <img src={bestGuessedParty.img} alt={bestGuessedParty.name} className="w-full h-full object-contain" />
+                        </div>
+                        <div>
+                            <div className="text-[8px] uppercase tracking-widest opacity-50">Best Read</div>
+                            <div className={`text-xs font-bold ${bestGuessedParty.color}`}>
+                                {bestGuessedParty.name} <span className="opacity-50 text-white font-normal">({bestGuessedParty.value || 0}%)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Histogram (Compact) */}
+                    <Histogram
+                        userAccuracy={accuracy}
+                        totalGamesPlayed={stats.total}
+                        isDark={true}
+                        disableSubmit={true}
+                        compact={true}
+                    />
+
+                    {/* Footer */}
+                    <div className="pt-4 border-t border-white/10 flex justify-between items-end opacity-50">
+                         <div>
+                            <div className="text-[8px] font-black uppercase tracking-widest">Guess The Party</div>
+                            <div className="text-[8px]">2025 Review</div>
+                         </div>
+                         <div className="text-[8px] font-mono">guesstheparty.com</div>
+                    </div>
                 </div>
-                <h3 className="text-3xl font-black tracking-tighter uppercase leading-none">
-                  My Party <span className="text-blue-400">IQ</span>
-                </h3>
+                {/* --- END CAPTURED AREA --- */}
 
-                <div className="space-y-3">
-                  <div className="bg-white/10 rounded-2xl p-4 border border-white/5">
-                    <div className="text-[9px] uppercase tracking-widest opacity-50 mb-1">Rank</div>
-                    <div className="text-xl font-black uppercase text-blue-400">{rank.title}</div>
-                    <div className="text-xs text-white/50 mt-1 font-mono">Score: {rank.score.toLocaleString()}</div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-white/10 rounded-2xl p-4 border border-white/5">
-                      <div className="text-[9px] uppercase tracking-widest opacity-50 mb-1">Accuracy</div>
-                      <div className="text-2xl font-black">{accuracy}%</div>
-                    </div>
-                    <div className="bg-white/10 rounded-2xl p-4 border border-white/5">
-                      <div className="text-[9px] uppercase tracking-widest opacity-50 mb-1">Streak</div>
-                      <div className="text-2xl font-black text-amber-400">{stats.bestStreak}</div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white/10 rounded-2xl p-4 border border-white/5 flex items-center gap-4">
-                    <div className="relative h-12 w-12 shrink-0 bg-white rounded-full p-2">
-                       <img
-                        src={bestGuessedParty.img}
-                        alt={bestGuessedParty.name}
-                        className="w-full h-full object-contain"
-                       />
-                    </div>
-                    <div>
-                      <div className="text-[9px] uppercase tracking-widest opacity-50">Best Accuracy</div>
-                      <div className={`text-sm font-bold ${bestGuessedParty.color}`}>
-                        {bestGuessedParty.name} <span className="opacity-50 text-white font-normal">({bestGuessedParty.value || 0}%)</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* HISTOGRAM - Dark Mode */}
-                  <Histogram
-                    userAccuracy={accuracy}
-                    totalGamesPlayed={stats.total}
-                    isDark={true}
-                    disableSubmit={true}
-                  />
+                {/* Actions */}
+                <div className="grid grid-cols-2 gap-3">
+                     <button
+                        onClick={copyStats}
+                        className="h-12 bg-white text-black rounded-2xl flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest active:scale-95 transition-all"
+                     >
+                        <Copy size={16} /> Copy Text
+                     </button>
+                     <button
+                        onClick={handleDownloadWrapped}
+                        className="h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest active:scale-95 transition-all"
+                     >
+                        <Download size={16} /> Save Image
+                     </button>
                 </div>
-
-                <div className="pt-4 border-t border-white/10 flex justify-between items-center">
-                  <div>
-                    <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">Guess The Party</p>
-                    <p className="text-[9px] font-bold opacity-30 mt-0.5">Allen Wang</p>
-                  </div>
-                  <div className="relative z-50">
-                    <IconButton onClick={copyStats} ariaLabel="Share" className="h-8 w-8 bg-white text-black hover:bg-white/90">
-                      <Share2 size={14} />
-                    </IconButton>
-                  </div>
-                </div>
-              </div>
+                <button
+                    onClick={() => setShowWrapped(false)}
+                    className="w-full h-12 bg-black/40 text-white/50 hover:text-white rounded-2xl flex items-center justify-center font-black text-xs uppercase tracking-widest transition-colors"
+                >
+                    Close
+                </button>
             </motion.div>
           </div>
         )}
