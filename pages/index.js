@@ -21,8 +21,7 @@ import {
   ArrowRight,
   AlertCircle,
   RefreshCw,
-  MoveHorizontal,
-  MousePointer2
+  TrendingUp
 } from "lucide-react";
 
 /* ----------------------------- Static Data ---------------------------- */
@@ -41,18 +40,14 @@ const FAKE_DISTRIBUTION = [
 ];
 
 /* ----------------------------- Utility Helper ---------------------------- */
-// Helper to calculate percentile ranking based on dynamic data
 function calculatePercentile(userAcc, data) {
   if (!data || data.length === 0) return 0;
   let totalPlayers = 0;
   let playersStrictlyBelow = 0;
   let playersInSameBucket = 0;
 
-  // Calculate totals
   data.forEach(d => totalPlayers += d.count);
 
-  // Identify which bucket the user falls into (0-9)
-  // 100% accuracy gets clamped to index 9
   const userBucketIndex = Math.min(Math.floor(userAcc / 10), 9);
 
   data.forEach((d, i) => {
@@ -64,9 +59,6 @@ function calculatePercentile(userAcc, data) {
   });
 
   if (totalPlayers === 0) return 0;
-
-  // SMOOTHED LOGIC:
-  // We count all players strictly below you, PLUS half the players in your own bucket.
   const weightedScore = playersStrictlyBelow + (playersInSameBucket * 0.5);
   return Math.round((weightedScore / totalPlayers) * 100);
 }
@@ -139,14 +131,12 @@ const Toast = ({ message }) => (
 
 /* ----------------------------- Histogram Component ---------------------------- */
 const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubmit = false }) => {
-  // 1. Initialize with FAKE_DISTRIBUTION so the chart is visible immediately
   const [data, setData] = useState(FAKE_DISTRIBUTION);
 
   useEffect(() => {
     let isMounted = true;
     const syncStats = async () => {
       try {
-        // Only submit if allowed and the user has actually played
         if (!disableSubmit && totalGamesPlayed > 0) {
           await fetch('/api/submit-score', {
             method: 'POST',
@@ -157,7 +147,6 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
         const response = await fetch('/api/get-distribution');
         const result = await response.json();
         if (isMounted && result.distribution) {
-          // Check if we actually have data counts
           const totalRealPlayers = result.distribution.reduce((acc, curr) => acc + curr.count, 0);
           if (totalRealPlayers > 0) {
             setData(result.distribution);
@@ -171,8 +160,6 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
     return () => { isMounted = false; };
   }, [userAccuracy, totalGamesPlayed, disableSubmit]);
 
-  // 2. Calculate heights purely from counts (Robust Fix)
-  // This ensures bars appear even if the backend percentage math is skewed/zero
   const maxCount = Math.max(...data.map(d => d.count), 0);
 
   return (
@@ -180,32 +167,22 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
       <h3 className={`text-[10px] font-black uppercase tracking-widest mb-4 ${isDark ? 'text-white/40' : 'text-gray-400'}`}>
         Global Player Distribution
       </h3>
-
-      {/* Container: h-32 */}
       <div className="flex items-end justify-between h-32 gap-1 mb-2">
         {data.map((bucket, i) => {
           const rangeStart = i * 10;
           const isUserBucket = userAccuracy >= rangeStart && userAccuracy < rangeStart + 10;
           const isUser100 = userAccuracy === 100 && i === 9;
           const isActive = isUserBucket || isUser100;
-
-          // Calculate height relative to the largest bar
           const barHeight = maxCount > 0 ? (bucket.count / maxCount) * 100 : 0;
-
-          // Calculate display percentage for the tooltip
           const totalCount = data.reduce((acc, curr) => acc + curr.count, 0);
           const displayPercent = totalCount > 0 ? Math.round((bucket.count / totalCount) * 100) : 0;
-
           return (
             <div
               key={i}
-              // FIX APPLIED HERE: Added 'h-full' and 'justify-end'
               className="h-full flex flex-col justify-end items-center gap-1 flex-1 group relative"
             >
-              {/* The Bar */}
               <motion.div
                 initial={{ height: 0 }}
-                // Percentage height now works because parent is h-full
                 animate={{ height: `${barHeight}%` }}
                 transition={{ duration: 0.5, delay: i * 0.05 }}
                 className={`w-full rounded-t-sm relative ${
@@ -214,13 +191,10 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
                     : (isDark ? 'bg-white/10' : 'bg-gray-200')
                 }`}
               >
-                {/* Tooltip on Hover */}
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-[9px] px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-10">
                   {displayPercent}%
                 </div>
               </motion.div>
-
-              {/* X-Axis Label */}
               <span className={`text-[8px] font-bold ${
                 isActive
                   ? 'text-blue-500'
@@ -232,8 +206,6 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
           );
         })}
       </div>
-
-      {/* Contextual Text */}
       <div className={`mt-3 text-center text-xs ${isDark ? 'text-white/60' : 'text-gray-500'}`}>
         You performed better than <span className={`font-bold ${isDark ? 'text-white' : 'text-black'}`}>{calculatePercentile(userAccuracy, data)}%</span> of players.
       </div>
@@ -354,6 +326,16 @@ async function fireConfettiSafe() {
   }
 }
 
+// Rank Definitions for Legend
+const RANK_TIERS = [
+  { title: "Speaker", min: 110000 },
+  { title: "Party Whip", min: 100000 },
+  { title: "Senior Senator", min: 90000 },
+  { title: "Campaign Manager", min: 80000 },
+  { title: "Staffer", min: 70000 },
+  { title: "Intern", min: 0 },
+];
+
 /* ----------------------------- Main Application -------------------------- */
 export default function Home() {
   const [allPoliticians, setAllPoliticians] = useState([]);
@@ -408,13 +390,11 @@ export default function Home() {
     ["rgba(59, 130, 246, 0.15)", "rgba(255,255,255,0)", "rgba(239, 68, 68, 0.15)"]
   );
 
-  // JUICINESS: Stamps now Scale + Fade
   const demStampOpacity = useTransform(x, [0, -60], [0, 1]);
-  const demStampScale = useTransform(x, [0, -60], [2, 1]); // Big to small slam effect
+  const demStampScale = useTransform(x, [0, -60], [2, 1]);
   const repStampOpacity = useTransform(x, [0, 60], [0, 1]);
-  const repStampScale = useTransform(x, [0, 60], [2, 1]); // Big to small slam effect
+  const repStampScale = useTransform(x, [0, 60], [2, 1]);
 
-  // Derived Metrics
   const unlockedCount = trophies.unlocked?.length || 0;
   const unlockedSet = useMemo(() => new Set(trophies.unlocked || []), [trophies.unlocked]);
 
@@ -434,15 +414,28 @@ export default function Home() {
     return (ms / 1000).toFixed(1);
   }, [stats.responseTimes]);
 
+  // --- UPDATED RANK LOGIC ---
   const rank = useMemo(() => {
-    const s = stats.bestStreak || 0;
-    if (s >= 50) return { title: "Speaker of the House" };
-    if (s >= 30) return { title: "Party Whip" };
-    if (s >= 20) return { title: "Senior Senator" };
-    if (s >= 10) return { title: "Campaign Manager" };
-    if (s >= 5) return { title: "Staffer" };
-    return { title: "Political Intern" };
-  }, [stats.bestStreak]);
+    if (stats.total < 20) {
+      return { title: "Unranked", score: 0, nextGoal: 20 - stats.total };
+    }
+
+    const rawScore =
+      (accuracy * 1000) +
+      (stats.bestStreak * 40) +
+      (Math.log1p(stats.total) * 200);
+
+    const score = Math.round(rawScore);
+
+    let title = "Intern";
+    if (score >= 110000) title = "Speaker";
+    else if (score >= 100000) title = "Party Whip";
+    else if (score >= 90000) title = "Senior Senator";
+    else if (score >= 80000) title = "Campaign Manager";
+    else if (score >= 70000) title = "Staffer";
+
+    return { title, score };
+  }, [stats.total, accuracy, stats.bestStreak]);
 
   const bestGuessedParty = useMemo(() => {
     const demAcc = stats.demGuesses > 0 ? (stats.demCorrect / stats.demGuesses) : 0;
@@ -589,7 +582,6 @@ export default function Home() {
         else navigator.vibrate([30, 50, 30]);
       }
 
-      // Screen Shake on Error
       if (!isCorrect) {
           shakeControls.start({
               x: [0, -10, 10, -10, 10, 0],
@@ -691,7 +683,7 @@ export default function Home() {
   };
 
   const copyStats = async () => {
-    const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nAccuracy: ${accuracy}%\nBest Streak: ${stats.bestStreak}\n\nCan you beat my score?`;
+    const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nScore: ${rank.score}\nAccuracy: ${accuracy}%\nBest Streak: ${stats.bestStreak}\n\nCan you beat my score?`;
     try {
       if (typeof navigator !== "undefined" && navigator.clipboard) {
         await navigator.clipboard.writeText(text);
@@ -959,13 +951,36 @@ export default function Home() {
               <div>
                 <h2 className="text-xl font-black uppercase tracking-tighter">Performance</h2>
                 <div className="flex items-center gap-2 mt-1">
-                  <Pill className="bg-black text-white">{rank.title}</Pill>
+                  <Pill className={`bg-black text-white`}>{rank.title}</Pill>
+                  {rank.title === "Unranked" && (
+                     <span className="text-[9px] font-bold text-gray-400 tracking-widest uppercase">
+                       {rank.nextGoal} more to rank
+                     </span>
+                  )}
                 </div>
               </div>
               <IconButton onClick={() => setShowStats(false)} ariaLabel="Close">
                 <XCircle size={20} />
               </IconButton>
             </div>
+
+            {/* Political Capital Score Section */}
+             <div className="mb-4 bg-gradient-to-br from-gray-900 to-black rounded-3xl p-5 text-white relative overflow-hidden">
+                <div className="relative z-10 flex justify-between items-end">
+                  <div>
+                    <div className="text-[9px] font-black uppercase tracking-widest opacity-60 mb-1">Political Capital</div>
+                    <div className="text-4xl font-black tracking-tighter tabular-nums">
+                      {rank.score.toLocaleString()}
+                    </div>
+                  </div>
+                  <div className="h-10 w-10 bg-white/10 rounded-full flex items-center justify-center">
+                    <TrendingUp size={20} />
+                  </div>
+                </div>
+                {/* Background decoration */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+             </div>
+
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="col-span-2 bg-white rounded-3xl border border-gray-100 p-5 shadow-sm">
                 <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Total Accuracy</div>
@@ -975,17 +990,29 @@ export default function Home() {
                   <ProgressBar label="Republican" value={stats.repCorrect} total={stats.repGuesses} color="bg-red-500" />
                 </div>
               </div>
-              <div className="bg-white rounded-3xl border border-gray-100 p-4 text-center shadow-sm">
-                <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Streak</div>
-                <div className="text-2xl font-black">{stats.streak}</div>
-              </div>
-              <div className="bg-white rounded-3xl border border-gray-100 p-4 text-center shadow-sm">
-                <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Median Speed</div>
-                <div className="text-2xl font-black">{medianSpeed}s</div>
-              </div>
             </div>
 
             <Histogram userAccuracy={accuracy} totalGamesPlayed={stats.total} />
+
+            {/* Career Ladder Legend */}
+            <div className="mt-6 pt-6 border-t border-gray-100">
+               <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Career Ladder</h3>
+               <div className="space-y-2">
+                  {RANK_TIERS.map((tier) => {
+                    const isCurrent = rank.title === tier.title;
+                    const isPassed = rank.score >= tier.min;
+                    return (
+                      <div key={tier.title} className={`flex items-center justify-between text-xs ${isCurrent ? 'opacity-100' : 'opacity-40'}`}>
+                         <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${isPassed ? 'bg-black' : 'bg-gray-200'}`} />
+                            <span className="font-bold uppercase tracking-wide">{tier.title}</span>
+                         </div>
+                         <span className="font-mono text-[10px]">{tier.min > 0 ? `${(tier.min / 1000)}k+` : '0+'}</span>
+                      </div>
+                    )
+                  })}
+               </div>
+            </div>
 
             <button
               onClick={() => {
@@ -997,55 +1024,6 @@ export default function Home() {
               <Star size={16} className="text-yellow-400 fill-yellow-400" />
               <span className="font-black uppercase tracking-[0.2em] text-xs">Generate Wrapped</span>
             </button>
-          </Modal>
-        )}
-
-        {showTrophyCase && (
-          <Modal onClose={() => setShowTrophyCase(false)}>
-            <div className="flex flex-col gap-4 mb-4 pt-2">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-black uppercase tracking-tighter">Trophies</h2>
-                <IconButton onClick={() => setShowTrophyCase(false)} ariaLabel="Close">
-                  <XCircle size={20} />
-                </IconButton>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="flex-grow h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-amber-500"
-                    style={{ width: `${(unlockedCount / TROPHIES.length) * 100}%` }}
-                  />
-                </div>
-                <div className="text-[10px] font-black uppercase text-gray-400">
-                  {unlockedCount}/{TROPHIES.length}
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-2">
-              {TROPHIES.map((t) => {
-                const unlocked = unlockedSet.has(t.id);
-                return (
-                  <div
-                    key={t.id}
-                    className={`p-4 rounded-2xl border flex items-center gap-4 ${
-                      unlocked ? "bg-white border-gray-100 shadow-sm" : "bg-gray-50 border-transparent opacity-60 grayscale"
-                    }`}
-                  >
-                    <div
-                      className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${
-                        unlocked ? tierStyles(t.tier) : "bg-gray-200"
-                      }`}
-                    >
-                      {unlocked ? t.icon : <Lock size={16} />}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs font-black uppercase tracking-tight truncate">{t.title}</div>
-                      <div className="text-[10px] font-bold text-gray-400">{t.desc}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
           </Modal>
         )}
 
@@ -1074,7 +1052,8 @@ export default function Home() {
                 <div className="space-y-3">
                   <div className="bg-white/10 rounded-2xl p-4 border border-white/5">
                     <div className="text-[9px] uppercase tracking-widest opacity-50 mb-1">Rank</div>
-                    <div className="text-xl font-black uppercase">{rank.title}</div>
+                    <div className="text-xl font-black uppercase text-blue-400">{rank.title}</div>
+                    <div className="text-xs text-white/50 mt-1 font-mono">Score: {rank.score.toLocaleString()}</div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
