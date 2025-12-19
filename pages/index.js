@@ -21,6 +21,8 @@ import {
   ArrowRight,
   AlertCircle,
   RefreshCw,
+  MoveHorizontal,
+  MousePointer2
 } from "lucide-react";
 
 /* ----------------------------- Utility Components ---------------------------- */
@@ -84,7 +86,7 @@ const Toast = ({ message }) => (
     initial={{ opacity: 0, y: -20, scale: 0.9 }}
     animate={{ opacity: 1, y: 0, scale: 1 }}
     exit={{ opacity: 0, y: -20, scale: 0.9 }}
-    className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] bg-black/80 backdrop-blur text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 pointer-events-none"
+    className="fixed top-24 left-1/2 -translate-x-1/2 z-[150] bg-black/80 backdrop-blur text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 pointer-events-none"
   >
     <span className="text-xs font-bold tracking-widest uppercase">{message}</span>
   </motion.div>
@@ -126,7 +128,7 @@ function Modal({ children, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[50] bg-black/40 backdrop-blur-sm flex items-end md:items-center justify-center p-4 md:p-6"
+      className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-end md:items-center justify-center p-4 md:p-6"
       onClick={onClose}
     >
       <motion.div
@@ -145,7 +147,7 @@ function Modal({ children, onClose }) {
 /* -------------------------------- Logic & Data ------------------------------ */
 
 const TROPHY_KEY = "partyTrophies_v3";
-const INTRO_KEY = "partyHasSeenIntro_v2";
+const INTRO_KEY = "partyHasSeenIntro_v3"; // incremented version to force show new intro
 const STATS_KEY = "partyStats_v3";
 
 const TROPHIES = [
@@ -180,8 +182,6 @@ function tierStyles(tier) {
   }
 }
 
-// Your requirement: label from politicians.json category; no name/state until revealed.
-// (State is only used in revealed view here; before reveal it's just Representative/Senator/Governor.)
 function formatOffice(p, revealed) {
   const c = (p?.category ?? "").toString().trim().toLowerCase();
   let base = "Public Official";
@@ -292,6 +292,29 @@ export default function Home() {
     return { title: "Political Intern" };
   }, [stats.bestStreak]);
 
+  // Requirement 5: Accuracy Comparison
+  const bestGuessedParty = useMemo(() => {
+    const demAcc = stats.demGuesses > 0 ? (stats.demCorrect / stats.demGuesses) : 0;
+    const repAcc = stats.repGuesses > 0 ? (stats.repCorrect / stats.repGuesses) : 0;
+
+    // Default to Democrat donkey if equal or 0 to avoid empty state
+    if (demAcc >= repAcc) {
+      return {
+        name: "Democrats",
+        img: "https://upload.wikimedia.org/wikipedia/commons/9/93/Democratic_Disc.svg",
+        color: "text-blue-500",
+        value: Math.round(demAcc * 100)
+      };
+    } else {
+      return {
+        name: "Republicans",
+        img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Republican_Disc.png",
+        color: "text-red-500",
+        value: Math.round(repAcc * 100)
+      };
+    }
+  }, [stats]);
+
   const revealed = gameState === "revealed";
 
   const bgColor = useMemo(() => {
@@ -344,9 +367,7 @@ export default function Home() {
         const data = await res.json();
 
         if (!Array.isArray(data)) {
-          throw new Error(
-            `politicians.json must be a JSON array like: [{ "name": "...", "party": "...", ... }].`
-          );
+          throw new Error("politicians.json must be a JSON array.");
         }
 
         const normalized = data.map((p, idx) => {
@@ -357,13 +378,8 @@ export default function Home() {
           return { ...p, imageUrl, id };
         });
 
-        // basic validation: every record needs imageUrl + party + name
         const bad = normalized.find((p) => !p.imageUrl || !p.party || !p.name);
-        if (bad) {
-          throw new Error(
-            `Every entry must include { name, party, img }. Found missing fields in at least one entry.`
-          );
-        }
+        if (bad) throw new Error("Every entry must include name, party, and img.");
 
         setAllPoliticians(normalized);
         const shuffled = [...normalized].sort(() => 0.5 - Math.random());
@@ -532,27 +548,20 @@ export default function Home() {
     }
   };
 
-  const copyStats = () => {
+  const copyStats = async () => {
     const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nAccuracy: ${accuracy}%\nBest Streak: ${stats.bestStreak}\n\nCan you beat my score?`;
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard
-        .writeText(text)
-        .then(() => showToast("Copied!"))
-        .catch(() => showToast("Failed to copy"));
-    } else {
-      showToast("Clipboard not supported");
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(text);
+        showToast("Copied to clipboard!");
+      } else {
+        showToast("Clipboard not available");
+      }
+    } catch (err) {
+      console.error("Copy failed", err);
+      showToast("Failed to copy");
     }
   };
-
-  const mostConfusedBy = useMemo(() => {
-    if (stats.guessedDemActualRep > stats.guessedRepActualDem) {
-      return { party: "Republicans", count: stats.guessedDemActualRep, desc: "You often mistake them for Democrats" };
-    }
-    if (stats.guessedRepActualDem > stats.guessedDemActualRep) {
-      return { party: "Democrats", count: stats.guessedRepActualDem, desc: "You often mistake them for Republicans" };
-    }
-    return { party: "None", count: 0, desc: "Balanced confusion" };
-  }, [stats]);
 
   if (fatalError) return <ErrorScreen title="App failed to start" detail={fatalError} />;
   if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
@@ -610,7 +619,7 @@ export default function Home() {
         </header>
 
         {/* Main Game Area */}
-        <main className="flex-grow flex flex-col items-center justify-center relative touch-none select-none">
+        <main className="flex-grow flex flex-col items-center justify-center relative touch-none select-none py-2">
           {/* Hints */}
           {stats.total === 0 && !revealed && (
             <div className="absolute inset-0 flex items-center justify-between px-2 pointer-events-none max-w-[420px] mx-auto z-0 opacity-40">
@@ -626,179 +635,180 @@ export default function Home() {
           )}
 
           {/* Card Stack */}
-          <div className="relative w-full max-w-[400px] aspect-[3/4] max-h-[70vh]">
-            {loadingQueue[0] && (
-              <div className="absolute inset-0 w-full h-full opacity-0 pointer-events-none">
-                <Image src={loadingQueue[0].imageUrl} fill alt="preload" sizes="400px" priority />
-              </div>
-            )}
+          {/* Requirement 3: Dynamic spacing via flex grow */}
+          <div className="relative w-full max-w-[400px] flex-grow flex flex-col max-h-[75vh]">
+            <div className="relative flex-grow w-full">
+              {loadingQueue[0] && (
+                <div className="absolute inset-0 w-full h-full opacity-0 pointer-events-none">
+                  <Image src={loadingQueue[0].imageUrl} fill alt="preload" sizes="400px" priority />
+                </div>
+              )}
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={current.id}
-                drag={gameState === "guessing" ? "x" : false}
-                dragConstraints={{ left: 0, right: 0 }}
-                style={{ x, rotate }}
-                animate={revealed && !lastResult?.isCorrect ? { x: [-5, 5, -5, 5, 0], transition: { duration: 0.4 } } : {}}
-                onDragEnd={(e, i) => {
-                  if (i.offset.x < -80) handleGuess("Democrat");
-                  else if (i.offset.x > 80) handleGuess("Republican");
-                }}
-                className="absolute inset-0 rounded-[2.5rem] overflow-hidden border-[6px] border-white bg-white shadow-2xl cursor-grab active:cursor-grabbing"
-              >
-                <motion.div className="absolute inset-0 z-10 pointer-events-none" style={{ backgroundColor: swipeBg }} />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={current.id}
+                  drag={gameState === "guessing" ? "x" : false}
+                  dragConstraints={{ left: 0, right: 0 }}
+                  style={{ x, rotate }}
+                  animate={revealed && !lastResult?.isCorrect ? { x: [-5, 5, -5, 5, 0], transition: { duration: 0.4 } } : {}}
+                  onDragEnd={(e, i) => {
+                    if (i.offset.x < -80) handleGuess("Democrat");
+                    else if (i.offset.x > 80) handleGuess("Republican");
+                  }}
+                  className="absolute inset-0 rounded-[2.5rem] overflow-hidden border-[6px] border-white bg-white shadow-2xl cursor-grab active:cursor-grabbing flex flex-col"
+                >
+                  <motion.div className="absolute inset-0 z-10 pointer-events-none" style={{ backgroundColor: swipeBg }} />
 
-                {!revealed && (
-                  <>
-                    <motion.div
-                      style={{ opacity: demStampOpacity }}
-                      className="absolute top-8 right-8 z-20 pointer-events-none border-4 border-blue-500 text-blue-500 px-4 py-1 rounded-xl font-black text-3xl -rotate-12 uppercase tracking-tighter"
-                    >
-                      Dem
-                    </motion.div>
-                    <motion.div
-                      style={{ opacity: repStampOpacity }}
-                      className="absolute top-8 left-8 z-20 pointer-events-none border-4 border-red-500 text-red-500 px-4 py-1 rounded-xl font-black text-3xl rotate-12 uppercase tracking-tighter"
-                    >
-                      Rep
-                    </motion.div>
-                  </>
-                )}
-
-                <div className="relative h-[75%] bg-gray-100 overflow-hidden">
-                  {imgLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center z-30 bg-white/50 backdrop-blur-sm">
-                      <Loader2 className="animate-spin text-black/20" size={32} />
-                    </div>
-                  )}
-
-                  <Image
-                    src={current.imageUrl}
-                    onLoadingComplete={() => setImgLoading(false)}
-                    alt="Politician"
-                    fill
-                    priority
-                    className={`object-cover object-top transition-all duration-500 ${
-                      revealed ? "blur-md brightness-[0.4] scale-105" : "scale-100"
-                    }`}
-                  />
-
-                  {revealed && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="absolute inset-0 z-40 flex flex-col items-center justify-center text-center p-6 text-white"
-                    >
-                      <div
-                        className={`w-16 h-16 rounded-3xl flex items-center justify-center mb-4 shadow-xl ${
-                          lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500"
-                        }`}
+                  {!revealed && (
+                    <>
+                      <motion.div
+                        style={{ opacity: demStampOpacity }}
+                        className="absolute top-8 right-8 z-20 pointer-events-none border-4 border-blue-500 text-blue-500 px-4 py-1 rounded-xl font-black text-3xl -rotate-12 uppercase tracking-tighter"
                       >
-                        {lastResult?.isCorrect ? <Check size={36} strokeWidth={4} /> : <XCircle size={36} strokeWidth={3} />}
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="text-white/70 text-[10px] font-black uppercase tracking-[0.25em]">
-                          {formatOffice(current, true)}
-                        </div>
-                        <h2 className="text-3xl font-black uppercase tracking-tighter leading-none">{current.name}</h2>
-
-                        <div className="flex items-center justify-center gap-2 pt-2">
-                          <Pill className={`${current.party === "Democrat" ? "bg-blue-500" : "bg-red-500"} text-white border-none`}>
-                            {current.party}
-                          </Pill>
-
-                          {lastResult?.isFast && lastResult?.isCorrect && (
-                            <div className="flex items-center gap-1 px-2 py-1 bg-yellow-400 text-yellow-900 rounded-full text-[9px] font-black uppercase tracking-widest">
-                              <Zap size={10} className="fill-yellow-900" /> Fast
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </motion.div>
+                        Dem
+                      </motion.div>
+                      <motion.div
+                        style={{ opacity: repStampOpacity }}
+                        className="absolute top-8 left-8 z-20 pointer-events-none border-4 border-red-500 text-red-500 px-4 py-1 rounded-xl font-black text-3xl rotate-12 uppercase tracking-tighter"
+                      >
+                        Rep
+                      </motion.div>
+                    </>
                   )}
-                </div>
 
-                <div className="relative h-[25%] px-5 py-4 bg-white flex flex-col justify-between">
-                  <div className="grid grid-cols-2 gap-3 h-12">
-                    <button
-                      onClick={() => handleGuess("Democrat")}
-                      disabled={revealed}
-                      className="rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-black text-xs uppercase tracking-widest hover:bg-blue-100 active:scale-95 transition-all disabled:opacity-50"
-                    >
-                      Democrat
-                    </button>
-                    <button
-                      onClick={() => handleGuess("Republican")}
-                      disabled={revealed}
-                      className="rounded-xl bg-red-50 text-red-600 border border-red-100 font-black text-xs uppercase tracking-widest hover:bg-red-100 active:scale-95 transition-all disabled:opacity-50"
-                    >
-                      Republican
-                    </button>
+                  {/* Requirement 2: object-contain to ensure top/bottom fit and full portrait is visible */}
+                  <div className="relative flex-grow bg-gray-50 overflow-hidden w-full h-full">
+                    {imgLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center z-30 bg-white/50 backdrop-blur-sm">
+                        <Loader2 className="animate-spin text-black/20" size={32} />
+                      </div>
+                    )}
+
+                    <Image
+                      src={current.imageUrl}
+                      onLoadingComplete={() => setImgLoading(false)}
+                      alt="Politician"
+                      fill
+                      priority
+                      className={`object-contain transition-all duration-500 ${
+                        revealed ? "blur-md brightness-[0.4] scale-105" : "scale-100"
+                      }`}
+                    />
+
+                    {revealed && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="absolute inset-0 z-40 flex flex-col items-center justify-center text-center p-6 text-white"
+                      >
+                        <div
+                          className={`w-16 h-16 rounded-3xl flex items-center justify-center mb-4 shadow-xl ${
+                            lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500"
+                          }`}
+                        >
+                          {lastResult?.isCorrect ? <Check size={36} strokeWidth={4} /> : <XCircle size={36} strokeWidth={3} />}
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="text-white/70 text-[10px] font-black uppercase tracking-[0.25em]">
+                            {formatOffice(current, true)}
+                          </div>
+                          <h2 className="text-3xl font-black uppercase tracking-tighter leading-none">{current.name}</h2>
+
+                          <div className="flex items-center justify-center gap-2 pt-2">
+                            <Pill className={`${current.party === "Democrat" ? "bg-blue-500" : "bg-red-500"} text-white border-none`}>
+                              {current.party}
+                            </Pill>
+
+                            {lastResult?.isFast && lastResult?.isCorrect && (
+                              <div className="flex items-center gap-1 px-2 py-1 bg-yellow-400 text-yellow-900 rounded-full text-[9px] font-black uppercase tracking-widest">
+                                <Zap size={10} className="fill-yellow-900" /> Fast
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
                   </div>
 
-                  <div className="flex items-center justify-between mt-2">
-                    <button
-                      onClick={() => setShowTrophyCase(true)}
-                      className="flex items-center gap-2 text-amber-600 hover:bg-amber-50 px-3 py-2 rounded-xl transition-colors"
-                    >
-                      <Trophy size={16} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">
-                        {unlockedCount}/{TROPHIES.length}
-                      </span>
-                    </button>
-                    <button
-                      onClick={handleReset}
-                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-colors"
-                    >
-                      <RefreshCw size={16} />
-                    </button>
+                  {/* Controls */}
+                  <div className="relative shrink-0 h-32 px-5 py-4 bg-white flex flex-col justify-between z-50">
+                    <div className="grid grid-cols-2 gap-3 h-12">
+                      <button
+                        onClick={() => handleGuess("Democrat")}
+                        disabled={revealed}
+                        className="rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-black text-xs uppercase tracking-widest hover:bg-blue-100 active:scale-95 transition-all disabled:opacity-50"
+                      >
+                        Democrat
+                      </button>
+                      <button
+                        onClick={() => handleGuess("Republican")}
+                        disabled={revealed}
+                        className="rounded-xl bg-red-50 text-red-600 border border-red-100 font-black text-xs uppercase tracking-widest hover:bg-red-100 active:scale-95 transition-all disabled:opacity-50"
+                      >
+                        Republican
+                      </button>
+                    </div>
+
+                    {/* Requirement 3: Explicit clickable buttons for Trophy/Reset */}
+                    <div className="flex items-center justify-between mt-2">
+                      <button
+                        onClick={() => setShowTrophyCase(true)}
+                        className="flex items-center gap-2 bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-100/50 px-4 py-2.5 rounded-xl transition-all active:scale-95"
+                      >
+                        <Trophy size={16} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">
+                          {unlockedCount}/{TROPHIES.length}
+                        </span>
+                      </button>
+                      <button
+                        onClick={handleReset}
+                        className="p-2.5 bg-gray-100 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-xl transition-all active:scale-95"
+                      >
+                        <RefreshCw size={16} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
         </main>
       </div>
 
       <AnimatePresence>
+        {/* Requirement 1: Simplified How to Play */}
         {showInfo && (
           <Modal onClose={closeInfoModal}>
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-black uppercase tracking-tighter">How to Play</h3>
-              <IconButton onClick={closeInfoModal} ariaLabel="Close">
-                <XCircle size={20} />
-              </IconButton>
-            </div>
+            <div className="text-center space-y-6 py-4">
+               <h3 className="text-xl font-black uppercase tracking-tight leading-snug">
+                Can you guess a politician&apos;s party based on their portrait alone?
+              </h3>
 
-            <div className="bg-gray-50 rounded-3xl p-6 mb-6 flex justify-around">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-2 mx-auto">
-                  <ArrowLeft size={20} />
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-gray-50 rounded-2xl p-4 flex flex-col items-center gap-3">
+                  <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+                    <MousePointer2 size={20} className="text-black" />
+                  </div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-gray-400">Desktop</div>
+                  <div className="text-xs font-bold">Arrow Keys</div>
                 </div>
-                <span className="text-[10px] font-black uppercase text-blue-600">Democrat</span>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-2 mx-auto">
-                  <ArrowRight size={20} />
+                <div className="bg-gray-50 rounded-2xl p-4 flex flex-col items-center gap-3">
+                  <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+                    <MoveHorizontal size={20} className="text-black" />
+                  </div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-gray-400">Mobile</div>
+                  <div className="text-xs font-bold">Swipe L/R</div>
                 </div>
-                <span className="text-[10px] font-black uppercase text-red-600">Republican</span>
               </div>
-            </div>
 
-            <div className="text-xs text-gray-500 leading-relaxed">
-              <div className="font-black uppercase tracking-widest text-[10px] text-gray-400 mb-2">How it works</div>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>Swipe/drag left for Democrat, right for Republican. Arrow keys work on desktop.</li>
-                <li>The main screen stays portrait-only—details appear only after you guess.</li>
-                <li>
-                  After you guess, the game reads your <span className="font-mono">politicians.json</span> and maps{" "}
-                  <span className="font-mono">category</span> to Senator (senate), Representative (house), or Governor (gov).
-                </li>
-              </ul>
+              <button
+                onClick={closeInfoModal}
+                className="w-full py-4 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs active:scale-95 transition-transform"
+              >
+                Let's Play
+              </button>
             </div>
-
-            <p className="text-center text-xs text-gray-400 font-medium mt-6">Swipe or use arrow keys</p>
           </Modal>
         )}
 
@@ -903,7 +913,7 @@ export default function Home() {
 
         {showWrapped && (
           <div
-            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 pt-32"
+            className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 pt-32"
             onClick={() => setShowWrapped(false)}
           >
             <motion.div
@@ -942,12 +952,19 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="bg-white/10 rounded-2xl p-4 border border-white/5 flex items-center gap-3">
-                    <AlertCircle className="text-white/40" size={16} />
+                  {/* Requirement 5: Replaced Confused By with Accuracy + Images */}
+                  <div className="bg-white/10 rounded-2xl p-4 border border-white/5 flex items-center gap-4">
+                    <div className="relative h-12 w-12 shrink-0 bg-white rounded-full p-2">
+                       <img
+                        src={bestGuessedParty.img}
+                        alt={bestGuessedParty.name}
+                        className="w-full h-full object-contain"
+                       />
+                    </div>
                     <div>
-                      <div className="text-[9px] uppercase tracking-widest opacity-50">Confused By</div>
-                      <div className="text-sm font-bold">
-                        {mostConfusedBy.party} <span className="opacity-50 font-normal">({mostConfusedBy.count})</span>
+                      <div className="text-[9px] uppercase tracking-widest opacity-50">Best Accuracy</div>
+                      <div className={`text-sm font-bold ${bestGuessedParty.color}`}>
+                        {bestGuessedParty.name} <span className="opacity-50 text-white font-normal">({bestGuessedParty.value || 0}%)</span>
                       </div>
                     </div>
                   </div>
@@ -958,9 +975,12 @@ export default function Home() {
                     <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">Guess The Party</p>
                     <p className="text-[9px] font-bold opacity-30 mt-0.5">Allen Wang</p>
                   </div>
-                  <IconButton onClick={copyStats} ariaLabel="Share" className="h-8 w-8 bg-white text-black">
-                    <Share2 size={14} />
-                  </IconButton>
+                  {/* Requirement 4: Fixed Share Button (zIndex and Handler) */}
+                  <div className="relative z-50">
+                    <IconButton onClick={copyStats} ariaLabel="Share" className="h-8 w-8 bg-white text-black hover:bg-white/90">
+                      <Share2 size={14} />
+                    </IconButton>
+                  </div>
                 </div>
               </div>
             </motion.div>
