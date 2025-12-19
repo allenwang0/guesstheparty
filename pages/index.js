@@ -32,22 +32,33 @@ function calculatePercentile(userAcc, data) {
   if (!data || data.length === 0) return 0;
 
   let totalPlayers = 0;
-  let playersBeaten = 0;
+  let playersStrictlyBelow = 0;
+  let playersInSameBucket = 0;
 
-  // Calculate total players from the dataset
+  // Calculate totals
   data.forEach(d => totalPlayers += d.count);
 
-  // Calculate how many people scored in buckets strictly lower than the user's bucket
+  // Identify which bucket the user falls into (0-9)
+  // 100% accuracy gets clamped to index 9
   const userBucketIndex = Math.min(Math.floor(userAcc / 10), 9);
 
   data.forEach((d, i) => {
     if (i < userBucketIndex) {
-      playersBeaten += d.count;
+      playersStrictlyBelow += d.count;
+    } else if (i === userBucketIndex) {
+      playersInSameBucket += d.count;
     }
   });
 
   if (totalPlayers === 0) return 0;
-  return Math.round((playersBeaten / totalPlayers) * 100);
+
+  // SMOOTHED LOGIC:
+  // We count all players strictly below you, PLUS half the players in your own bucket.
+  // This ensures that if you are the only player (1/1), you get 50% instead of 0%.
+  // It also handles ties gracefully.
+  const weightedScore = playersStrictlyBelow + (playersInSameBucket * 0.5);
+
+  return Math.round((weightedScore / totalPlayers) * 100);
 }
 
 /* ----------------------------- Utility Components ---------------------------- */
