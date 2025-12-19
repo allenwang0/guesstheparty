@@ -128,6 +128,17 @@ export default function Home() {
   useEffect(() => { if (hasMounted) localStorage.setItem("partyStats", JSON.stringify(stats)); }, [stats, hasMounted]);
   useEffect(() => { if (hasMounted) localStorage.setItem(TROPHY_KEY, JSON.stringify(trophies)); }, [trophies, hasMounted]);
 
+useEffect(() => {
+  const handleKeyDown = (e) => {
+    if (gameState !== "guessing") return;
+    if (e.key === "ArrowLeft") handleGuess("Democrat");
+    if (e.key === "ArrowRight") handleGuess("Republican");
+  };
+
+  window.addEventListener("keydown", handleKeyDown);
+  return () => window.removeEventListener("keydown", handleKeyDown);
+}, [gameState, handleGuess]);
+
   const maybeUnlockTrophies = useCallback((nextStats) => {
     const nextUnlocked = new Set(trophies.unlocked || []);
     const firstUnlockedAt = { ...(trophies.firstUnlockedAt || {}) };
