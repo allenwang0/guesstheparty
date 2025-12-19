@@ -117,7 +117,7 @@ const Toast = ({ message }) => (
   </motion.div>
 );
 
-const Histogram = ({ userAccuracy, totalGamesPlayed }) => {
+const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubmit = false }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -127,8 +127,8 @@ const Histogram = ({ userAccuracy, totalGamesPlayed }) => {
     const syncStats = async () => {
       try {
         // 1. Submit the current user's score silently so they are part of the curve
-        // Only submit if they have actually played a game to prevent 0% spam on open
-        if (totalGamesPlayed > 0) {
+        // Only submit if not disabled and they have actually played a game
+        if (!disableSubmit && totalGamesPlayed > 0) {
           await fetch('/api/submit-score', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -153,16 +153,20 @@ const Histogram = ({ userAccuracy, totalGamesPlayed }) => {
     syncStats();
 
     return () => { isMounted = false; };
-  }, [userAccuracy, totalGamesPlayed]);
+  }, [userAccuracy, totalGamesPlayed, disableSubmit]);
 
-  if (loading) return <div className="text-[10px] font-black uppercase tracking-widest text-gray-300 mt-6 text-center animate-pulse">Loading global benchmarks...</div>;
+  if (loading) return (
+    <div className={`text-[10px] font-black uppercase tracking-widest mt-6 text-center animate-pulse ${isDark ? 'text-white/40' : 'text-gray-300'}`}>
+      Loading global benchmarks...
+    </div>
+  );
 
   // Find the max value to normalize bar heights
   const maxPercent = Math.max(...(data.map(d => d.percentOfPlayers) || [0]));
 
   return (
-    <div className="w-full mt-6 pt-6 border-t border-gray-100">
-      <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
+    <div className={`w-full mt-6 pt-6 border-t ${isDark ? 'border-white/10' : 'border-gray-100'}`}>
+      <h3 className={`text-[10px] font-black uppercase tracking-widest mb-4 ${isDark ? 'text-white/40' : 'text-gray-400'}`}>
         Global Player Distribution
       </h3>
 
@@ -170,8 +174,8 @@ const Histogram = ({ userAccuracy, totalGamesPlayed }) => {
         {data.map((bucket, i) => {
           const rangeStart = i * 10;
           const isUserBucket = userAccuracy >= rangeStart && userAccuracy < rangeStart + 10;
-          // Edge case for 100%
           const isUser100 = userAccuracy === 100 && i === 9;
+          const isActive = isUserBucket || isUser100;
 
           return (
             <div key={i} className="flex flex-col items-center gap-1 flex-1 group relative">
@@ -181,7 +185,9 @@ const Histogram = ({ userAccuracy, totalGamesPlayed }) => {
                 animate={{ height: `${(bucket.percentOfPlayers / (maxPercent || 1)) * 100}%` }}
                 transition={{ duration: 0.5, delay: i * 0.05 }}
                 className={`w-full rounded-t-sm relative ${
-                  (isUserBucket || isUser100) ? 'bg-blue-500' : 'bg-gray-200'
+                  isActive
+                    ? 'bg-blue-500'
+                    : (isDark ? 'bg-white/10' : 'bg-gray-200')
                 }`}
               >
                 {/* Tooltip on Hover */}
@@ -191,7 +197,11 @@ const Histogram = ({ userAccuracy, totalGamesPlayed }) => {
               </motion.div>
 
               {/* X-Axis Label */}
-              <span className={`text-[8px] font-bold ${ (isUserBucket || isUser100) ? 'text-blue-600' : 'text-gray-300'}`}>
+              <span className={`text-[8px] font-bold ${
+                isActive
+                  ? 'text-blue-500'
+                  : (isDark ? 'text-white/20' : 'text-gray-300')
+              }`}>
                 {i === 0 ? '0' : i === 9 ? '100' : ''}
               </span>
             </div>
@@ -200,8 +210,8 @@ const Histogram = ({ userAccuracy, totalGamesPlayed }) => {
       </div>
 
       {/* Contextual Text */}
-      <div className="mt-3 text-center text-xs text-gray-500">
-        You performed better than <span className="font-bold text-black">{calculatePercentile(userAccuracy, data)}%</span> of players.
+      <div className={`mt-3 text-center text-xs ${isDark ? 'text-white/60' : 'text-gray-500'}`}>
+        You performed better than <span className={`font-bold ${isDark ? 'text-white' : 'text-black'}`}>{calculatePercentile(userAccuracy, data)}%</span> of players.
       </div>
     </div>
   );
@@ -626,7 +636,7 @@ export default function Home() {
       setLastResult(resultObj);
       setGameState("revealed");
 
-      const delay = isCorrect ? 1000 : 2000;
+      const delay = isCorrect ? 2000 : 3000;
       setTimeout(advanceToNext, delay);
     },
     [gameState, current, stats, trophies, advanceToNext, shakeControls]
@@ -983,7 +993,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* HISTOGRAM ADDED HERE */}
+            {/* HISTOGRAM ADDED HERE - Default mode */}
             <Histogram userAccuracy={accuracy} totalGamesPlayed={stats.total} />
 
             <button
@@ -1105,6 +1115,14 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
+
+                  {/* HISTOGRAM ADDED HERE - Dark mode enabled & submission disabled */}
+                  <Histogram
+                    userAccuracy={accuracy}
+                    totalGamesPlayed={stats.total}
+                    isDark={true}
+                    disableSubmit={true}
+                  />
                 </div>
 
                 <div className="pt-4 border-t border-white/10 flex justify-between items-center">
