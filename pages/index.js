@@ -24,7 +24,8 @@ import {
   RefreshCw,
   TrendingUp,
   Download,
-  Copy
+  Copy,
+  HelpCircle
 } from "lucide-react";
 
 /* ----------------------------- Static Data ---------------------------- */
@@ -353,6 +354,7 @@ export default function Home() {
   const [toast, setToast] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
   const [showStats, setShowStats] = useState(false);
+  const [showScoreDetails, setShowScoreDetails] = useState(false); // NEW STATE for Score Explanation
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
   const shakeControls = useAnimation();
@@ -991,11 +993,16 @@ export default function Home() {
               </IconButton>
             </div>
 
-            {/* Political Capital Score Section */}
+            {/* Political Capital Score Section - UPDATED WITH EXPLANATION TOGGLE */}
              <div className="mb-4 bg-gradient-to-br from-gray-900 to-black rounded-3xl p-5 text-white relative overflow-hidden">
-                <div className="relative z-10 flex justify-between items-end">
+                <div className="relative z-10 flex justify-between items-start">
                   <div>
-                    <div className="text-[9px] font-black uppercase tracking-widest opacity-60 mb-1">Political Capital</div>
+                    <div className="flex items-center gap-2 mb-1">
+                       <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Political Capital</span>
+                       <button onClick={() => setShowScoreDetails(!showScoreDetails)} className="opacity-50 hover:opacity-100 transition-opacity">
+                          <HelpCircle size={12} />
+                       </button>
+                    </div>
                     <div className="text-4xl font-black tracking-tighter tabular-nums">
                       {rank.score.toLocaleString()}
                     </div>
@@ -1004,6 +1011,26 @@ export default function Home() {
                     <TrendingUp size={20} />
                   </div>
                 </div>
+
+                {/* Conditional Info Section */}
+                <AnimatePresence>
+                  {showScoreDetails && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="relative z-10 mt-3 pt-3 border-t border-white/10 text-xs text-white/70 space-y-1"
+                    >
+                      <p>Score = Accuracy + Streak + Experience.</p>
+                      <ul className="list-disc pl-4 space-y-0.5 opacity-80 text-[10px]">
+                        <li><b>Accuracy</b> gives the most points.</li>
+                        <li><b>Streaks</b> provide bonus multipliers.</li>
+                        <li><b>Total Games</b> adds a loyalty bonus.</li>
+                      </ul>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 {/* Background decoration */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
              </div>
