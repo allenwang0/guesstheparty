@@ -8,15 +8,7 @@ import {
   Flame, Star, ShieldCheck, Zap, XCircle
 } from "lucide-react";
 
-/* ----------------------------- Assets & Icons ---------------------------- */
-
-const DonkeyIcon = ({ className }) => (
-  <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Democratic_Disc.svg" alt="Dem" className={className} />
-);
-
-const ElephantIcon = ({ className }) => (
-  <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Republican_Disc.png" alt="Rep" className={className} />
-);
+/* ----------------------------- Sub-Components ---------------------------- */
 
 const Glass = ({ children, className = "" }) => (
   <div className={["rounded-3xl border border-white/70 bg-white/70 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.10)]", className].join(" ")}>{children}</div>
@@ -95,11 +87,7 @@ export default function Home() {
 
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-220, 220], [-10, 10]);
-
-  // Background Tint Logic
   const swipeBg = useTransform(x, [-120, 0, 120], ["rgba(0,174,243,0.18)", "rgba(255,255,255,0)", "rgba(232,27,35,0.18)"]);
-
-  // Tinder Stamps Opacity
   const demStampOpacity = useTransform(x, [0, -80], [0, 1]);
   const repStampOpacity = useTransform(x, [0, 80], [0, 1]);
 
@@ -132,7 +120,7 @@ export default function Home() {
       setAllPoliticians(normalized);
       const shuffled = [...normalized].sort(() => 0.5 - Math.random());
       setCurrent(shuffled[0] || null);
-      setLoadingQueue(shuffled.slice(1, 4));
+      setLoadingQueue(shuffled.slice(1, 6)); // Buffer slightly more
       setStartTime(Date.now());
     });
   }, []);
@@ -193,12 +181,25 @@ export default function Home() {
       <Head>
         <title>Guess The Party | Allen Wang</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+        {/* BROWSER PRELOAD: Tell the browser to fetch the next image ASAP */}
+        {loadingQueue[0] && (
+          <link rel="preload" as="image" href={loadingQueue[0].imageUrl} />
+        )}
       </Head>
       <Analytics />
 
-      <div className="hidden pointer-events-none opacity-0 h-0 w-0 overflow-hidden">
+      {/* OFF-SCREEN BUFFER: Force-load the next few cards in the queue */}
+      <div className="fixed -left-[9999px] top-0 h-1 w-1 overflow-hidden pointer-events-none" aria-hidden="true">
         {loadingQueue.map((p, i) => (
-          <Image key={`${p.name}-${i}`} src={p.imageUrl} alt="preload" width={400} height={500} priority={i === 0} />
+          <Image
+            key={`${p.name}-${i}`}
+            src={p.imageUrl}
+            alt="preload"
+            width={400}
+            height={500}
+            priority={i < 2}
+            quality={60}
+          />
         ))}
       </div>
 
@@ -223,7 +224,14 @@ export default function Home() {
           </Glass>
         </header>
 
-        <main className="flex justify-center">
+        <main className="flex justify-center relative">
+          {/* UNDER-CARD: Pre-renders the next image behind the active one */}
+          {loadingQueue[0] && (
+            <div className="absolute inset-0 w-full max-w-[560px] h-[68vh] md:h-[76vh] opacity-0 pointer-events-none">
+               <Image src={loadingQueue[0].imageUrl} fill alt="next" sizes="(max-width: 768px) 90vw, 560px" priority />
+            </div>
+          )}
+
           <AnimatePresence mode="wait">
             <motion.div
               key={current.name}
@@ -231,12 +239,10 @@ export default function Home() {
               dragConstraints={{ left: 0, right: 0 }}
               style={{ x, rotate }}
               onDragEnd={(e, i) => { if (i.offset.x < -80) handleGuess("Democrat"); else if (i.offset.x > 80) handleGuess("Republican"); }}
-              className="relative w-full max-w-[560px] h-[68vh] md:h-[76vh] max-h-[760px] min-h-[500px] rounded-[2.5rem] overflow-hidden border border-white bg-white shadow-[0_24px_80px_rgba(0,0,0,0.14)]"
+              className="relative z-10 w-full max-w-[560px] h-[68vh] md:h-[76vh] max-h-[760px] min-h-[500px] rounded-[2.5rem] overflow-hidden border border-white bg-white shadow-[0_24px_80px_rgba(0,0,0,0.14)]"
             >
-              {/* Swiping Tint Overlay */}
               <motion.div className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundColor: swipeBg }} />
 
-              {/* Tinder Stamps */}
               {!revealed && (
                 <>
                   <motion.div
@@ -257,7 +263,16 @@ export default function Home() {
               <div className="relative z-10 h-[75%] md:h-[78%] bg-[#fbfbfb] overflow-hidden">
                 {imgLoading && <div className="absolute inset-0 flex items-center justify-center z-20 bg-white/70 backdrop-blur"><Loader2 className="animate-spin text-blue-500" size={34} /></div>}
                 <div className="relative w-full h-full p-4">
-                  <Image src={current.imageUrl} onLoadingComplete={() => setImgLoading(false)} alt="Politician" fill priority className={`object-contain transition-all duration-700 ${revealed ? "scale-110 blur-2xl brightness-[0.35]" : "scale-100"}`} />
+                  <Image
+                    src={current.imageUrl}
+                    onLoadingComplete={() => setImgLoading(false)}
+                    alt="Politician"
+                    fill
+                    priority
+                    quality={75}
+                    sizes="(max-width: 768px) 90vw, 560px"
+                    className={`object-contain transition-all duration-700 ${revealed ? "scale-110 blur-2xl brightness-[0.35]" : "scale-100"}`}
+                  />
                 </div>
                 {revealed && (
                   <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center p-6">
