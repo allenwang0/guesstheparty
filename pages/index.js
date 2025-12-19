@@ -1,5 +1,6 @@
+"use client";
+
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import Head from "next/head";
 import Image from "next/image";
 import { Analytics } from "@vercel/analytics/react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
@@ -61,7 +62,6 @@ const Toast = ({ message, onClose }) => (
   </motion.div>
 );
 
-// MOVED UP: LoadingScreen to prevent ReferenceError
 function LoadingScreen({ message }) {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F5F5F7] gap-4">
@@ -71,9 +71,15 @@ function LoadingScreen({ message }) {
   );
 }
 
-// MOVED UP: Modal to prevent ReferenceError
 function Modal({ children, onClose }) {
-  useEffect(() => { document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = 'unset'; } }, []);
+  useEffect(() => {
+    // Safety check for document availability
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = 'unset'; }
+    }
+  }, []);
+
   return (
     <div className="fixed inset-0 z-[50] bg-black/40 backdrop-blur-sm flex items-end md:items-center justify-center p-4 md:p-6" onClick={onClose}>
       <motion.div
@@ -121,7 +127,6 @@ function formatOffice(p, revealed) {
   if (c === "senate") base = "Senator";
   if (c === "gov") base = "Governor";
 
-  // Only show state context if revealed to prevent geography bias during guess
   if (revealed && p?.description) {
      const match = p.description.match(/\b([A-Z]{2})\b/) || p.description.match(/from\s([A-Za-z\s]+)/);
      if(match) return `${base} • ${match[1] || match[0].replace('from ', '')}`;
@@ -139,8 +144,8 @@ export default function Home() {
   const containerRef = useRef(null);
 
   // Logic Refs
-  const recentIds = useRef(new Set()); // Buffer to prevent repeats
-  const startTimeRef = useRef(null); // Ref for timer to prevent stale state issues
+  const recentIds = useRef(new Set());
+  const startTimeRef = useRef(null);
 
   // UX State
   const [toast, setToast] = useState(null);
@@ -150,7 +155,7 @@ export default function Home() {
   const [showTrophyCase, setShowTrophyCase] = useState(false);
 
   // Game State
-  const [gameState, setGameState] = useState("guessing"); // guessing | revealed
+  const [gameState, setGameState] = useState("guessing");
   const [imgLoading, setImgLoading] = useState(true);
   const [lastResult, setLastResult] = useState(null);
 
@@ -164,10 +169,12 @@ export default function Home() {
     repGuesses: 0,
     demCorrect: 0,
     repCorrect: 0,
-    // Confusion Matrix:
-    guessedDemActualRep: 0, // Confused by Republicans
-    guessedRepActualDem: 0, // Confused by Democrats
-    responseTimes: [], // Array of times for median calc
+    guessedDemActualRep: 0,
+    guessedRepActualDem: 0,
+    responseTimes: [],
+    totalTime: 0, // Ensure this exists
+    demTime: 0,
+    repTime: 0
   });
 
   const [trophies, setTrophies] = useState({ unlocked: [], firstUnlockedAt: {} });
@@ -176,7 +183,6 @@ export default function Home() {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-12, 12]);
   const swipeBg = useTransform(x, [-150, 0, 150], ["rgba(0,174,243,0.15)", "rgba(255,255,255,0)", "rgba(232,27,35,0.15)"]);
-  // Stamps only visible during drag
   const demStampOpacity = useTransform(x, [0, -60], [0, 1]);
   const repStampOpacity = useTransform(x, [0, 60], [0, 1]);
 
@@ -216,34 +222,26 @@ export default function Home() {
   // --- Initialization ---
   useEffect(() => {
     setHasMounted(true);
-    // Load Stats
     const savedStats = localStorage.getItem("partyStats_v3");
     if (savedStats) try { setStats(prev => ({ ...prev, ...JSON.parse(savedStats) })); } catch {}
-    // Load Trophies
     const savedTrophies = localStorage.getItem(TROPHY_KEY);
     if (savedTrophies) try { setTrophies(prev => ({ ...prev, ...JSON.parse(savedTrophies) })); } catch {}
-    // Check Intro
     const hasSeenIntro = localStorage.getItem(INTRO_KEY);
     if (!hasSeenIntro) setShowInfo(true);
 
-    // Fetch Data
     fetch("/politicians.json").then(res => res.json()).then(data => {
-      const normalized = (data || []).map(p => ({ ...p, imageUrl: p.img || p.image_url, id: p.name + p.party })); // Simple ID gen
+      const normalized = (data || []).map(p => ({ ...p, imageUrl: p.img || p.image_url, id: p.name + p.party }));
       setAllPoliticians(normalized);
-
-      // Shuffle & Init
       const shuffled = [...normalized].sort(() => 0.5 - Math.random());
       setCurrent(shuffled[0]);
       recentIds.current.add(shuffled[0].id);
       setLoadingQueue(shuffled.slice(1, 6));
-
       startTimeRef.current = Date.now();
     });
 
     if (containerRef.current) containerRef.current.focus();
   }, []);
 
-  // Persistence
   useEffect(() => { if (hasMounted) localStorage.setItem("partyStats_v3", JSON.stringify(stats)); }, [stats, hasMounted]);
   useEffect(() => { if (hasMounted) localStorage.setItem(TROPHY_KEY, JSON.stringify(trophies)); }, [trophies, hasMounted]);
 
@@ -258,27 +256,19 @@ export default function Home() {
     if (allPoliticians.length === 0) return;
 
     setLoadingQueue(prev => {
-      // Get next card from queue
       const nextCard = prev[0];
-
-      // Refill queue with a non-duplicate
       let pool = allPoliticians;
       let candidate = pool[Math.floor(Math.random() * pool.length)];
       let attempts = 0;
-
-      // Attempt to find a card not in recent history
       while (recentIds.current.has(candidate.id) && attempts < 20) {
         candidate = pool[Math.floor(Math.random() * pool.length)];
         attempts++;
       }
-
-      // Update History Buffer (Keep last 50)
       recentIds.current.add(candidate.id);
       if (recentIds.current.size > 50) {
         const first = recentIds.current.values().next().value;
         recentIds.current.delete(first);
       }
-
       setCurrent(nextCard);
       return [...prev.slice(1), candidate].filter(Boolean);
     });
@@ -297,46 +287,37 @@ export default function Home() {
     const isCorrect = guessedParty === actualParty;
     const now = Date.now();
     const timeTaken = now - (startTimeRef.current || now);
-
-    // Valid time check (ignore idle times > 10s)
     const validTime = timeTaken < 10000 ? timeTaken : null;
     const isFast = validTime && validTime < 1000;
-
     const newStreak = isCorrect ? stats.streak + 1 : 0;
 
-    // Haptics & Confetti
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
       if (isCorrect) navigator.vibrate(10);
       else navigator.vibrate([30, 50, 30]);
     }
     if (isCorrect && newStreak > 0 && newStreak % 10 === 0) {
-      confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 }, colors: ['#00AEF3', '#E81B23', '#ffffff'] });
+      // Safe check for window/document before confetti
+      if (typeof window !== 'undefined') {
+        confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 }, colors: ['#00AEF3', '#E81B23', '#ffffff'] });
+      }
     }
 
-    // Update Stats
     const nextStats = {
       ...stats,
       total: stats.total + 1,
       correct: isCorrect ? stats.correct + 1 : stats.correct,
       streak: newStreak,
       bestStreak: Math.max(newStreak, stats.bestStreak),
-
       demGuesses: guessedParty === "Democrat" ? stats.demGuesses + 1 : stats.demGuesses,
       repGuesses: guessedParty === "Republican" ? stats.repGuesses + 1 : stats.repGuesses,
       demCorrect: actualParty === "Democrat" && isCorrect ? stats.demCorrect + 1 : stats.demCorrect,
       repCorrect: actualParty === "Republican" && isCorrect ? stats.repCorrect + 1 : stats.repCorrect,
-
-      // Corrected Confusion Matrix Logic:
-      // If I guessed Dem, but it was Rep -> I am confused by Republicans
       guessedDemActualRep: guessedParty === "Democrat" && !isCorrect ? stats.guessedDemActualRep + 1 : stats.guessedDemActualRep,
-      // If I guessed Rep, but it was Dem -> I am confused by Democrats
       guessedRepActualDem: guessedParty === "Republican" && !isCorrect ? stats.guessedRepActualDem + 1 : stats.guessedRepActualDem,
-
       totalTime: stats.totalTime + (validTime || 0),
       responseTimes: validTime ? [...stats.responseTimes, validTime] : stats.responseTimes
     };
 
-    // Trophies
     const resultObj = { isCorrect, guessedParty, correctParty: actualParty, isFast };
     const nextUnlocked = new Set(trophies.unlocked || []);
     let changed = false;
@@ -355,18 +336,15 @@ export default function Home() {
     setLastResult(resultObj);
     setGameState("revealed");
 
-    // Variable Reveal Timing
-    const delay = isCorrect ? 650 : 1400; // Fast for correct, slow for wrong
+    const delay = isCorrect ? 650 : 1400;
     setTimeout(advanceToNext, delay);
 
   }, [gameState, current, stats, trophies, advanceToNext]);
 
-  // Keyboard Handler (Corrected dependencies)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (showInfo || showStats || showTrophyCase || showWrapped) return;
       if (gameState !== "guessing") return;
-
       if (e.key === "ArrowLeft") { e.preventDefault(); handleGuess("Democrat"); }
       if (e.key === "ArrowRight") { e.preventDefault(); handleGuess("Republican"); }
     };
@@ -374,14 +352,12 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [gameState, showInfo, showStats, showTrophyCase, showWrapped, handleGuess]);
 
-  // Reset (In-App)
   const handleReset = () => {
     if(confirm("Reset run stats? (Trophies will persist)")) {
       setStats({
         correct: 0, total: 0, streak: 0, bestStreak: 0, demGuesses: 0, repGuesses: 0,
-        demCorrect: 0, repCorrect: 0, guessedDemActualRep: 0, guessedRepActualDem: 0, totalTime: 0, responseTimes: []
+        demCorrect: 0, repCorrect: 0, guessedDemActualRep: 0, guessedRepActualDem: 0, totalTime: 0, responseTimes: [], demTime: 0, repTime: 0
       });
-      // Don't reload, just reset state
       setGameState("guessing");
       x.set(0);
     }
@@ -389,11 +365,27 @@ export default function Home() {
 
   const copyStats = () => {
     const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nAccuracy: ${accuracy}%\nStreak: ${stats.bestStreak}\n\nCan you beat my score?`;
-    navigator.clipboard.writeText(text);
-    showToast("Copied to clipboard!");
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => showToast("Copied!")).catch(() => showToast("Failed to copy"));
+    } else {
+        showToast("Clipboard not supported");
+    }
   };
 
   if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
+
+  // Derived Values for Wrapped Display
+  const demBias = useMemo(() => {
+    const totalGuesses = stats.demGuesses + stats.repGuesses;
+    if (totalGuesses === 0) return 50;
+    return Math.round((stats.demGuesses / totalGuesses) * 100);
+  }, [stats]);
+
+  const mostConfusedBy = useMemo(() => {
+     if (stats.guessedDemActualRep > stats.guessedRepActualDem) return { party: "Republicans", count: stats.guessedDemActualRep, desc: "You often mistake them for Democrats" };
+     if (stats.guessedRepActualDem > stats.guessedDemActualRep) return { party: "Democrats", count: stats.guessedRepActualDem, desc: "You often mistake them for Republicans" };
+     return { party: "None", count: 0, desc: "Balanced confusion" };
+  }, [stats]);
 
   return (
     <div
@@ -401,19 +393,13 @@ export default function Home() {
       tabIndex={0}
       className={`fixed inset-0 w-full h-[100dvh] ${bgColor} text-[#1D1D1F] font-sans overflow-hidden transition-colors duration-500 overscroll-none touch-none focus:outline-none`}
     >
-      <Head>
-        <title>Guess The Party | Allen Wang</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-        {loadingQueue[0] && <link rel="preload" as="image" href={loadingQueue[0].imageUrl} />}
-      </Head>
+      <title>Guess The Party | Allen Wang</title>
       <Analytics />
 
-      {/* Noise Texture */}
       <div className="absolute inset-0 opacity-40 pointer-events-none mix-blend-soft-light"
            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}>
       </div>
 
-      {/* Toast Layer */}
       <AnimatePresence>
         {toast && <Toast message={toast} />}
       </AnimatePresence>
@@ -443,7 +429,7 @@ export default function Home() {
         {/* Main Game Area */}
         <main className="flex-grow flex flex-col items-center justify-center relative touch-none select-none">
 
-           {/* Hints (Anchored to card container) */}
+           {/* Hints */}
            {stats.total === 0 && !revealed && (
             <div className="absolute inset-0 flex items-center justify-between px-2 pointer-events-none max-w-[420px] mx-auto z-0 opacity-40">
                 <div className="flex flex-col items-center gap-2"><ArrowLeft size={24} /><span className="text-[9px] font-black uppercase tracking-widest">Dem</span></div>
@@ -451,7 +437,7 @@ export default function Home() {
             </div>
            )}
 
-          {/* Streak Popup (Toast style, not overlapping card) */}
+          {/* Streak Popup */}
           <AnimatePresence>
             {stats.streak >= 2 && gameState === 'revealed' && lastResult?.isCorrect && (
               <motion.div
@@ -488,10 +474,8 @@ export default function Home() {
                 onDragEnd={(e, i) => { if (i.offset.x < -80) handleGuess("Democrat"); else if (i.offset.x > 80) handleGuess("Republican"); }}
                 className="absolute inset-0 rounded-[2.5rem] overflow-hidden border-[6px] border-white bg-white shadow-2xl cursor-grab active:cursor-grabbing"
               >
-                {/* Swipe Overlay Tints */}
                 <motion.div className="absolute inset-0 z-10 pointer-events-none" style={{ backgroundColor: swipeBg }} />
 
-                {/* Drag Stamps (Only visible when dragging) */}
                 {!revealed && (
                   <>
                     <motion.div style={{ opacity: demStampOpacity }} className="absolute top-8 right-8 z-20 pointer-events-none border-4 border-blue-500 text-blue-500 px-4 py-1 rounded-xl font-black text-3xl -rotate-12 uppercase tracking-tighter">Dem</motion.div>
@@ -499,7 +483,6 @@ export default function Home() {
                   </>
                 )}
 
-                {/* Image Layer */}
                 <div className="relative h-[75%] bg-gray-100 overflow-hidden">
                   {imgLoading && <div className="absolute inset-0 flex items-center justify-center z-30 bg-white/50 backdrop-blur-sm"><Loader2 className="animate-spin text-black/20" size={32} /></div>}
                   <Image
@@ -511,7 +494,6 @@ export default function Home() {
                     className={`object-cover object-top transition-all duration-500 ${revealed ? "blur-md brightness-[0.4] scale-105" : "scale-100"}`}
                   />
 
-                  {/* Reveal Overlay */}
                   {revealed && (
                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="absolute inset-0 z-40 flex flex-col items-center justify-center text-center p-6 text-white">
                       <div className={`w-16 h-16 rounded-3xl flex items-center justify-center mb-4 shadow-xl ${lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500"}`}>
@@ -533,7 +515,6 @@ export default function Home() {
                   )}
                 </div>
 
-                {/* Card Actions Footer */}
                 <div className="relative h-[25%] px-5 py-4 bg-white flex flex-col justify-between">
                   <div className="grid grid-cols-2 gap-3 h-12">
                     <button onClick={() => handleGuess("Democrat")} disabled={revealed} className="rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-black text-xs uppercase tracking-widest hover:bg-blue-100 active:scale-95 transition-all disabled:opacity-50">Democrat</button>
@@ -553,7 +534,6 @@ export default function Home() {
         </main>
       </div>
 
-      {/* Modals Container */}
       <AnimatePresence>
         {showInfo && <Modal onClose={closeInfoModal}>
           <div className="flex justify-between items-center mb-6">
