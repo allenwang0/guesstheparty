@@ -13,7 +13,7 @@ import {
 /* ----------------------------- Sub-Components ---------------------------- */
 
 const Glass = ({ children, className = "" }) => (
-  <div className={["rounded-3xl border border-white/70 bg-white/70 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.10)]", className].join(" ")}>{children}</div>
+  <div className={["rounded-3xl border border-white/60 bg-white/60 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.08)]", className].join(" ")}>{children}</div>
 );
 
 const Pill = ({ children, className = "" }) => (
@@ -26,7 +26,7 @@ const IconButton = ({ onClick, ariaLabel, children, className = "" }) => (
     aria-label={ariaLabel}
     className={[
       "h-9 w-9 md:h-11 md:w-11 rounded-xl md:rounded-2xl",
-      "bg-white/70 border border-black/10 backdrop-blur shadow-sm active:scale-95 transition-transform flex items-center justify-center",
+      "bg-white/60 border border-black/5 backdrop-blur shadow-sm active:scale-95 transition-transform flex items-center justify-center hover:bg-white/80",
       className
     ].join(" ")}
   >
@@ -98,6 +98,7 @@ export default function Home() {
   const [current, setCurrent] = useState(null);
   const [loadingQueue, setLoadingQueue] = useState([]);
   const [hasMounted, setHasMounted] = useState(false);
+  const containerRef = useRef(null);
 
   // EXPANDED STATS STRUCTURE
   const [stats, setStats] = useState({
@@ -169,8 +170,8 @@ export default function Home() {
   // Dynamic Background based on result
   const bgColor = useMemo(() => {
     if (gameState === "revealed" && lastResult) {
-      if (lastResult.correctParty === "Democrat") return "bg-blue-50/50";
-      if (lastResult.correctParty === "Republican") return "bg-red-50/50";
+      if (lastResult.correctParty === "Democrat") return "bg-blue-50/30";
+      if (lastResult.correctParty === "Republican") return "bg-red-50/30";
     }
     return "bg-[#F5F5F7]";
   }, [gameState, lastResult]);
@@ -196,6 +197,9 @@ export default function Home() {
       setLoadingQueue(shuffled.slice(1, 6));
       setStartTime(Date.now());
     });
+
+    // Ensure focus for keyboard events
+    if (containerRef.current) containerRef.current.focus();
   }, []);
 
   useEffect(() => { if (hasMounted) localStorage.setItem("partyStats_v2", JSON.stringify(stats)); }, [stats, hasMounted]);
@@ -209,11 +213,11 @@ export default function Home() {
       if (gameState !== "guessing") return;
 
       if (e.key === "ArrowLeft") {
-        e.preventDefault(); // Prevent scroll
+        e.preventDefault();
         handleGuess("Democrat");
       }
       if (e.key === "ArrowRight") {
-        e.preventDefault(); // Prevent scroll
+        e.preventDefault();
         handleGuess("Republican");
       }
     };
@@ -336,13 +340,12 @@ export default function Home() {
 
   if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
 
-  // Background Pattern for "Mesh" effect to avoid plain white ugliness
-  const patternOverlay = `
-    radial-gradient(#000 1px, transparent 1px)
-  `;
-
   return (
-    <div className={`fixed inset-0 w-full h-[100dvh] ${bgColor} text-[#1D1D1F] font-sans overflow-hidden transition-colors duration-700`}>
+    <div
+      ref={containerRef}
+      tabIndex={0} // Allows this div to capture keyboard events if clicked
+      className={`fixed inset-0 w-full h-[100dvh] ${bgColor} text-[#1D1D1F] font-sans overflow-hidden transition-colors duration-700 overscroll-none touch-none focus:outline-none`}
+    >
       <Head>
         <title>Guess The Party | Allen Wang</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
@@ -352,8 +355,10 @@ export default function Home() {
       </Head>
       <Analytics />
 
-      {/* Subtle Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: patternOverlay, backgroundSize: '24px 24px' }}></div>
+      {/* Subtle Noise Texture for Premium Feel */}
+      <div className="absolute inset-0 opacity-40 pointer-events-none mix-blend-soft-light"
+           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}>
+      </div>
 
       {/* Preload Buffer */}
       <div className="fixed -left-[9999px] top-0 h-1 w-1 overflow-hidden pointer-events-none" aria-hidden="true">
@@ -362,19 +367,22 @@ export default function Home() {
         ))}
       </div>
 
-      <div className="mx-auto max-w-4xl px-4 md:px-8 pt-4 pb-6 md:pt-8 h-full flex flex-col">
+      <div className="mx-auto max-w-4xl px-4 md:px-8 pt-4 pb-6 md:pt-8 h-full flex flex-col relative z-10">
         <header className="mb-4 md:mb-8 shrink-0">
           <Glass className="px-4 py-3 md:px-5 md:py-4 rounded-[2rem] md:rounded-[2.25rem]">
             <div className="flex items-center justify-between">
-              <div className="flex flex-col items-start min-w-0 pr-4">
-                <h1 className="text-xs md:text-xl font-black uppercase tracking-tighter leading-none whitespace-nowrap">🇺🇸 Guess the Party</h1>
-                {/* Spaced out Name */}
+              {/* HEADER TITLE LOGIC */}
+              <div className="flex flex-col items-start pr-4">
+                 {/* Main Title - whitespace-nowrap prevents truncation logic issues on some browsers */}
+                <h1 className="text-sm md:text-xl font-black uppercase tracking-tighter leading-none whitespace-nowrap">🇺🇸 Guess the Party</h1>
+                {/* Spaced out Name - Using Justify Between to perfectly align edges */}
                 <div className="w-full flex justify-between px-[1px] mt-1 opacity-40">
                     {"ALLEN WANG".split("").map((char, i) => (
-                       <span key={i} className="text-[9px] md:text-[10px] font-black">{char}</span>
+                       <span key={i} className="text-[9px] md:text-[10px] font-black">{char === " " ? "\u00A0" : char}</span>
                     ))}
                 </div>
               </div>
+
               <div className="flex items-center gap-2 shrink-0">
                 {/* PERSISTENT STREAK */}
                 {stats.streak > 0 && (
@@ -672,7 +680,7 @@ export default function Home() {
                 </div>
 
                 <div className="mt-8">
-                   <h3 className="text-4xl font-black tracking-tighter leading-none mb-2">MY<br/>PARTY<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-red-400">IQ</span></h3>
+                   <h3 className="text-2xl font-black tracking-tighter leading-none mb-2">MY<br/>PARTY<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-red-400">IQ</span></h3>
                 </div>
 
                 <div className="flex-grow flex flex-col justify-center gap-3">
@@ -731,32 +739,6 @@ export default function Home() {
           </div>
         )}
       </AnimatePresence>
-    </div>
-  );
-}
-
-function LoadingScreen({ message }) {
-  return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F5F5F7] gap-4">
-      <Loader2 className="animate-spin text-blue-600" size={52} />
-      <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">{message}</p>
-    </div>
-  );
-}
-
-function Modal({ children, onClose, maxW = "max-w-xl" }) {
-  // Prevent body scroll when modal is open
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = 'unset'; }
-  }, []);
-
-  // Added pt-24 for the "lower top" effect requested
-  return (
-    <div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-xl flex items-center justify-center p-4 md:p-6 pt-24" onClick={onClose}>
-      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className={`w-full ${maxW} max-h-[90vh] overflow-y-auto rounded-[2.5rem] bg-[#F5F5F7] shadow-2xl p-7 md:p-10`} onClick={e => e.stopPropagation()}>
-        {children}
-      </motion.div>
     </div>
   );
 }
