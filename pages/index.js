@@ -621,7 +621,7 @@ export default function Home() {
       setLastResult(resultObj);
       setGameState("revealed");
 
-      const delay = isCorrect ? 400 : 1600;
+      const delay = isCorrect ? 2000 : 3000;
       setTimeout(advanceToNext, delay);
     },
     [gameState, current, stats, trophies, advanceToNext, shakeControls]
