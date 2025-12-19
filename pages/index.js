@@ -193,30 +193,17 @@ function tierStyles(tier) {
 
 /* ------------------------------ Office label ----------------------------- */
 /**
- * Must be derived from politicians.json fields.
- * Expect office/chamber to be: "house" | "senate" | "gov" (or close variants).
- * Do NOT use/display name/office/state until after guess (handled in UI below).
+ * REQUIRED: derive role label ONLY from politicians.json `category` field:
+ *  - "house"  -> "Representative"
+ *  - "senate" -> "Senator"
+ *  - "gov"    -> "Governor"
+ * Anything else -> "Public Official" (data issue)
  */
 function formatOffice(p) {
-  const raw = (p?.office ?? p?.chamber ?? p?.level ?? "").toString().trim().toLowerCase();
-
-  // normalize common variants
-  const v = raw
-    .replaceAll(".", "")
-    .replaceAll("_", "")
-    .replaceAll("-", "")
-    .replace(/\s+/g, "");
-
-  if (v === "senate" || v === "us_senate" || v === "ussenate") return "Senator";
-  if (v === "house" || v === "us_house" || v === "ushouse" || v === "representative" || v === "rep")
-    return "Representative";
-  if (v === "gov" || v === "governor") return "Governor";
-
-  // best-effort fallback (still based on JSON fields, just looser matching)
-  if (v.includes("senat")) return "Senator";
-  if (v.includes("hous") || v.includes("rep")) return "Representative";
-  if (v.includes("gov")) return "Governor";
-
+  const c = (p?.category ?? "").toString().trim().toLowerCase();
+  if (c === "house") return "Representative";
+  if (c === "senate") return "Senator";
+  if (c === "gov") return "Governor";
   return "Public Official";
 }
 
@@ -285,6 +272,8 @@ export default function Home() {
     if (s >= 5) return { title: "Staffer", color: "text-amber-700" };
     return { title: "Political Intern", color: "text-gray-600" };
   }, [stats.bestStreak]);
+
+  const revealed = gameState === "revealed";
 
   /* ----------------------------- Load + Persist --------------------------- */
 
@@ -465,7 +454,6 @@ export default function Home() {
   if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
 
   const officeLabel = formatOffice(current);
-  const revealed = gameState === "revealed";
 
   return (
     <div className="min-h-screen w-full bg-[#F5F5F7] text-[#1D1D1F] font-sans">
@@ -475,17 +463,15 @@ export default function Home() {
       </Head>
       <Analytics />
 
-      {/* Minimal top bar */}
       <div className="mx-auto max-w-4xl px-4 md:px-8 py-6">
+        {/* Minimal top bar */}
         <header className="mb-6">
           <Glass className="px-5 py-4 rounded-[2.25rem]">
             <div className="flex items-center justify-between gap-4">
               <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <h1 className="text-lg md:text-xl font-black tracking-tighter uppercase truncate">
-                    🇺🇸 Guess the Party
-                  </h1>
-                </div>
+                <h1 className="text-lg md:text-xl font-black tracking-tighter uppercase truncate">
+                  🇺🇸 Guess the Party
+                </h1>
                 <div className="mt-1 text-[10px] font-black uppercase tracking-[0.28em] text-gray-400">
                   Allen Wang
                 </div>
@@ -565,14 +551,18 @@ export default function Home() {
                   alt={revealed ? current.name : "Portrait"}
                 />
 
-                {/* IMPORTANT: Do not show name/office/state until AFTER guess */}
+                {/* IMPORTANT: do NOT show name/role/state until AFTER guess */}
                 {revealed ? (
                   <div className="absolute left-5 right-5 bottom-5 z-10">
                     <div className="inline-flex flex-col gap-2 rounded-3xl bg-white/70 backdrop-blur-xl border border-white/70 shadow-sm px-4 py-3">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <Pill className="bg-black/5 text-gray-700 border border-black/10">{officeLabel}</Pill>
+                        <Pill className="bg-black/5 text-gray-700 border border-black/10">
+                          {officeLabel}
+                        </Pill>
                         {current?.state ? (
-                          <Pill className="bg-white text-gray-700 border border-black/10">{current.state}</Pill>
+                          <Pill className="bg-white text-gray-700 border border-black/10">
+                            {current.state}
+                          </Pill>
                         ) : null}
                       </div>
                       <div className="text-xl md:text-2xl font-black tracking-tight leading-none">
@@ -690,9 +680,22 @@ export default function Home() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h3 className="text-2xl font-black uppercase tracking-tighter">How it works</h3>
+
                 <div className="mt-2 text-sm font-bold text-gray-700 leading-relaxed">
-                  Swipe/drag left for Democrat, right for Republican. Arrow keys work on desktop. The main screen stays
-                  portrait-only—details appear only after you guess.
+                  You’re shown a portrait of a U.S. politician. Your job is to guess whether they’re a{" "}
+                  <span className="font-black">Democrat</span> or{" "}
+                  <span className="font-black">Republican</span>.
+                </div>
+
+                <div className="mt-3 text-sm font-bold text-gray-700 leading-relaxed">
+                  Swipe or drag <span className="font-black">left</span> for Democrat,{" "}
+                  <span className="font-black">right</span> for Republican. On desktop, you can also use{" "}
+                  <span className="font-black">← / →</span>.
+                </div>
+
+                <div className="mt-3 text-sm font-bold text-gray-700 leading-relaxed">
+                  While you’re guessing, the screen stays portrait-only. The politician’s name, role, state, and party
+                  are revealed <span className="font-black">only after you guess</span>.
                 </div>
               </div>
 
@@ -704,7 +707,7 @@ export default function Home() {
             <div className="mt-6 grid grid-cols-2 gap-3">
               <div className="rounded-3xl bg-white border border-black/10 p-5">
                 <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Controls</div>
-                <div className="mt-2 text-sm font-bold text-gray-700">Drag or ← / →</div>
+                <div className="mt-2 text-sm font-bold text-gray-700">Swipe/Drag or ← / →</div>
               </div>
               <div className="rounded-3xl bg-white border border-black/10 p-5">
                 <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Reset</div>
@@ -715,11 +718,10 @@ export default function Home() {
             <div className="mt-6 rounded-3xl bg-white border border-black/10 p-5">
               <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Role label</div>
               <div className="mt-2 text-sm font-bold text-gray-700">
-                After you guess, the game reads your <code className="px-1 py-0.5 bg-black/5 rounded">politicians.json</code>{" "}
-                and maps <code className="px-1 py-0.5 bg-black/5 rounded">office</code> /{" "}
-                <code className="px-1 py-0.5 bg-black/5 rounded">chamber</code> to{" "}
-                <span className="font-black">Senator</span> (senate), <span className="font-black">Representative</span>{" "}
-                (house), or <span className="font-black">Governor</span> (gov).
+                After you guess, the game shows whether the person is a{" "}
+                <span className="font-black">Representative</span>,{" "}
+                <span className="font-black">Senator</span>, or{" "}
+                <span className="font-black">Governor</span>.
               </div>
             </div>
           </Modal>
@@ -855,6 +857,7 @@ export default function Home() {
                             {t.tier}
                           </span>
                         </div>
+
                         <div className="mt-1 text-sm font-bold text-gray-600">{t.desc}</div>
 
                         {unlocked && unlockedAt ? (
