@@ -836,7 +836,7 @@ export default function Home() {
                       alt="Politician"
                       fill
                       priority
-                      className={`object-contain transition-all duration-500 ${
+                      className={`object-cover transition-all duration-500 ${
                         revealed ? "scale-105" : "scale-100"
                       }`}
                     />
