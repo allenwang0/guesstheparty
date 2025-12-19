@@ -354,7 +354,7 @@ export default function Home() {
   const [toast, setToast] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
   const [showStats, setShowStats] = useState(false);
-  const [showScoreDetails, setShowScoreDetails] = useState(false); // NEW STATE for Score Explanation
+  const [showScoreDetails, setShowScoreDetails] = useState(false);
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
   const shakeControls = useAnimation();
@@ -481,29 +481,69 @@ export default function Home() {
     }
   }, []);
 
-  // --- DOWNLOAD LOGIC ---
+  // --- DOWNLOAD LOGIC (Updated for CORS + Mobile Share) ---
   const handleDownloadWrapped = async () => {
     if (!wrappedRef.current) return;
     try {
         showToast("Generating image...");
+
+        // Wait 100ms to ensure all images/fonts are settled
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         const canvas = await html2canvas(wrappedRef.current, {
-            scale: 2, // Higher resolution
+            scale: 2,
             useCORS: true,
-            backgroundColor: null, // Transparent background if possible, though we have a gradient
+            allowTaint: false,
+            backgroundColor: null,
             logging: false,
         });
 
+        // 1. Try Native Sharing (Best for Mobile)
+        canvas.toBlob(async (blob) => {
+            if (!blob) throw new Error("Canvas is empty");
+            const file = new File([blob], "GuessTheParty-Wrapped.png", { type: "image/png" });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: 'My Party IQ',
+                        text: 'Can you beat my score?',
+                    });
+                    showToast("Shared successfully!");
+                } catch (shareError) {
+                    if (shareError.name !== 'AbortError') {
+                        console.error(shareError);
+                        triggerDownload(canvas); // Fallback if share actually fails
+                    }
+                }
+            } else {
+                 // 2. Fallback to classic download (Desktop)
+                triggerDownload(canvas);
+            }
+        }, 'image/png');
+
+    } catch (e) {
+        console.error("Export failed", e);
+        showToast("Download failed. Screenshot instead?");
+    }
+  };
+
+  const triggerDownload = (canvas) => {
+      try {
         const image = canvas.toDataURL("image/png");
         const link = document.createElement("a");
         link.href = image;
         link.download = `GuessTheParty-Wrapped-2025.png`;
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
         showToast("Saved to Photos");
-    } catch (e) {
-        console.error("Download failed", e);
-        showToast("Download failed");
-    }
-  };
+      } catch(e) {
+         console.error("DataURL failed", e);
+         showToast("Save failed. Try screenshotting.");
+      }
+  }
 
   // --- Initialization ---
   useEffect(() => {
@@ -1081,55 +1121,6 @@ export default function Home() {
           </Modal>
         )}
 
-        {showTrophyCase && (
-          <Modal onClose={() => setShowTrophyCase(false)}>
-            <div className="flex flex-col gap-4 mb-4 pt-2">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-black uppercase tracking-tighter">Trophies</h2>
-                <IconButton onClick={() => setShowTrophyCase(false)} ariaLabel="Close">
-                  <XCircle size={20} />
-                </IconButton>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="flex-grow h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-amber-500"
-                    style={{ width: `${(unlockedCount / TROPHIES.length) * 100}%` }}
-                  />
-                </div>
-                <div className="text-[10px] font-black uppercase text-gray-400">
-                  {unlockedCount}/{TROPHIES.length}
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-2">
-              {TROPHIES.map((t) => {
-                const unlocked = unlockedSet.has(t.id);
-                return (
-                  <div
-                    key={t.id}
-                    className={`p-4 rounded-2xl border flex items-center gap-4 ${
-                      unlocked ? "bg-white border-gray-100 shadow-sm" : "bg-gray-50 border-transparent opacity-60 grayscale"
-                    }`}
-                  >
-                    <div
-                      className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${
-                        unlocked ? tierStyles(t.tier) : "bg-gray-200"
-                      }`}
-                    >
-                      {unlocked ? t.icon : <Lock size={16} />}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs font-black uppercase tracking-tight truncate">{t.title}</div>
-                      <div className="text-[10px] font-bold text-gray-400">{t.desc}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Modal>
-        )}
-
         {showWrapped && (
           <div
             className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
@@ -1172,10 +1163,15 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* Best Party */}
+                    {/* Best Party - IMAGE FIX APPLIED HERE (crossOrigin="anonymous") */}
                     <div className="bg-white/5 rounded-xl p-3 border border-white/5 flex items-center gap-3">
                         <div className="relative h-10 w-10 shrink-0 bg-white rounded-full p-1.5">
-                            <img src={bestGuessedParty.img} alt={bestGuessedParty.name} className="w-full h-full object-contain" />
+                            <img
+                              src={bestGuessedParty.img}
+                              alt={bestGuessedParty.name}
+                              className="w-full h-full object-contain"
+                              crossOrigin="anonymous" // <--- CRITICAL FIX FOR DOWNLOAD
+                            />
                         </div>
                         <div>
                             <div className="text-[8px] uppercase tracking-widest opacity-50">Best Read</div>
