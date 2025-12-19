@@ -145,16 +145,15 @@ const Toast = ({ message }) => (
 /* ----------------------------- Histogram Component ---------------------------- */
 
 const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubmit = false }) => {
-  // Initialize with FAKE_DISTRIBUTION so it's never empty on load
+  // 1. Initialize with FAKE_DISTRIBUTION so the chart is visible immediately
   const [data, setData] = useState(FAKE_DISTRIBUTION);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
 
     const syncStats = async () => {
       try {
-        // 1. Submit the current user's score silently
+        // Only submit if allowed and the user has actually played
         if (!disableSubmit && totalGamesPlayed > 0) {
           await fetch('/api/submit-score', {
             method: 'POST',
@@ -163,13 +162,11 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
           });
         }
 
-        // 2. Fetch the real global distribution
         const response = await fetch('/api/get-distribution');
         const result = await response.json();
 
-        // Only overwrite fake data if we actually have real data
-        if (isMounted && result.distribution && result.distribution.length > 0) {
-          // Check if total players is 0 (database initialized but empty)
+        if (isMounted && result.distribution) {
+          // Check if we actually have data counts
           const totalRealPlayers = result.distribution.reduce((acc, curr) => acc + curr.count, 0);
 
           if (totalRealPlayers > 0) {
@@ -178,8 +175,6 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
         }
       } catch (error) {
         console.error("Failed to sync stats", error);
-      } finally {
-        if (isMounted) setLoading(false);
       }
     };
 
@@ -188,14 +183,9 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
     return () => { isMounted = false; };
   }, [userAccuracy, totalGamesPlayed, disableSubmit]);
 
-  if (loading) return (
-    <div className={`text-[10px] font-black uppercase tracking-widest mt-6 text-center animate-pulse ${isDark ? 'text-white/40' : 'text-gray-300'}`}>
-      Loading global benchmarks...
-    </div>
-  );
-
-  // Safely calculate max percent
-  const maxPercent = Math.max(...data.map(d => d.percentOfPlayers), 0);
+  // 2. Calculate heights purely from counts (Robust Fix)
+  // This ensures bars appear even if the backend percentage math is skewed/zero
+  const maxCount = Math.max(...data.map(d => d.count), 0);
 
   return (
     <div className={`w-full mt-6 pt-6 border-t ${isDark ? 'border-white/10' : 'border-gray-100'}`}>
@@ -210,12 +200,19 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
           const isUser100 = userAccuracy === 100 && i === 9;
           const isActive = isUserBucket || isUser100;
 
+          // Calculate height relative to the largest bar
+          const barHeight = maxCount > 0 ? (bucket.count / maxCount) * 100 : 0;
+
+          // Calculate display percentage for the tooltip
+          const totalCount = data.reduce((acc, curr) => acc + curr.count, 0);
+          const displayPercent = totalCount > 0 ? Math.round((bucket.count / totalCount) * 100) : 0;
+
           return (
             <div key={i} className="flex flex-col items-center gap-1 flex-1 group relative">
               {/* The Bar */}
               <motion.div
                 initial={{ height: 0 }}
-                animate={{ height: `${(bucket.percentOfPlayers / (maxPercent || 1)) * 100}%` }}
+                animate={{ height: `${barHeight}%` }}
                 transition={{ duration: 0.5, delay: i * 0.05 }}
                 className={`w-full rounded-t-sm relative ${
                   isActive
@@ -225,7 +222,7 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
               >
                 {/* Tooltip on Hover */}
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-[9px] px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-10">
-                  {bucket.percentOfPlayers}%
+                  {displayPercent}%
                 </div>
               </motion.div>
 
