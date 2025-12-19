@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { Analytics } from "@vercel/analytics/react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import confetti from "canvas-confetti"; // Make sure to npm install canvas-confetti
 import {
   Loader2, Check, Info, Timer, Target, Award, Trophy,
   Flame, Star, ShieldCheck, Zap, XCircle, Lock, MousePointer2
@@ -30,6 +31,22 @@ const IconButton = ({ onClick, ariaLabel, children, className = "" }) => (
   >
     {children}
   </button>
+);
+
+const ProgressBar = ({ label, value, color, total }) => (
+  <div className="w-full">
+    <div className="flex justify-between mb-1">
+      <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">{label}</span>
+      <span className="text-[9px] font-black text-gray-600">{Math.round((value / (total || 1)) * 100)}%</span>
+    </div>
+    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+      <motion.div
+        initial={{ width: 0 }}
+        animate={{ width: `${(value / (total || 1)) * 100}%` }}
+        className={`h-full ${color}`}
+      />
+    </div>
+  </div>
 );
 
 /* -------------------------------- Trophies ------------------------------ */
@@ -121,7 +138,6 @@ export default function Home() {
     const savedTrophies = localStorage.getItem(TROPHY_KEY);
     if (savedTrophies) try { setTrophies(prev => ({ ...prev, ...JSON.parse(savedTrophies) })); } catch {}
 
-    // 1. Check if user has seen intro before
     const hasSeenIntro = localStorage.getItem(INTRO_KEY);
     if (!hasSeenIntro) {
       setShowInfo(true);
@@ -198,12 +214,24 @@ export default function Home() {
     }
 
     const timeTaken = Date.now() - startTime;
+    const newStreak = isCorrect ? stats.streak + 1 : 0;
+
+    // Confetti on milestones (every 10 streak)
+    if (isCorrect && newStreak > 0 && newStreak % 10 === 0) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#00AEF3', '#E81B23', '#ffffff'] // R, W, B
+      });
+    }
+
     const nextStats = {
       ...stats,
       total: stats.total + 1,
       correct: isCorrect ? stats.correct + 1 : stats.correct,
-      streak: isCorrect ? stats.streak + 1 : 0,
-      bestStreak: isCorrect ? Math.max(stats.streak + 1, stats.bestStreak) : stats.bestStreak,
+      streak: newStreak,
+      bestStreak: Math.max(newStreak, stats.bestStreak),
       demGuesses: current.party === "Democrat" ? stats.demGuesses + 1 : stats.demGuesses,
       repGuesses: current.party !== "Democrat" ? stats.repGuesses + 1 : stats.repGuesses,
       demCorrect: current.party === "Democrat" && isCorrect ? stats.demCorrect + 1 : stats.demCorrect,
@@ -263,6 +291,14 @@ export default function Home() {
                 <div className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Allen Wang</div>
               </div>
               <div className="flex items-center gap-2">
+                {/* PERSISTENT SMALL STREAK INDICATOR */}
+                {stats.streak > 0 && (
+                  <div className="h-9 md:h-11 px-3 rounded-xl md:rounded-2xl bg-orange-50 border border-orange-100 flex items-center gap-1.5 text-orange-600 shadow-sm">
+                    <Flame size={14} className="fill-orange-600" />
+                    <span className="text-[10px] font-black">{stats.streak}</span>
+                  </div>
+                )}
+
                 <IconButton onClick={() => setShowInfo(true)} ariaLabel="Info"><Info size={16} /></IconButton>
                 <button
                   onClick={() => setShowStats(true)}
@@ -277,28 +313,27 @@ export default function Home() {
 
         <main className="flex justify-center relative">
 
-          {/* --- STREAK DISPLAY --- */}
-          {/* Placed here so it sits on top of the card but inside the relative container */}
+          {/* TRANSIENT COMBO STREAK POPUP */}
           <AnimatePresence>
-            {stats.streak >= 3 && (
+            {stats.streak >= 3 && gameState === 'revealed' && lastResult?.isCorrect && (
               <motion.div
-                key={stats.streak} // Key triggers the "pop" animation on change
-                initial={{ scale: 0.5, opacity: 0, y: 50 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 1.5, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 400, damping: 15 }}
-                className="absolute top-[-20px] md:top-[-30px] z-50 pointer-events-none flex flex-col items-center justify-center"
+                key={`streak-${stats.streak}`}
+                initial={{ scale: 0.5, opacity: 0, y: 20 }}
+                animate={{ scale: 1.1, opacity: 1, y: -60 }}
+                exit={{ scale: 1.5, opacity: 0, filter: "blur(10px)" }}
+                transition={{ duration: 0.5, ease: "backOut" }}
+                className="absolute top-1/2 left-0 right-0 z-50 pointer-events-none flex flex-col items-center justify-center"
               >
-                 <div className="relative flex flex-col items-center">
-                    <Flame className="w-16 h-16 md:w-20 md:h-20 text-orange-500 fill-orange-500 drop-shadow-lg animate-pulse" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-2 text-4xl md:text-5xl font-black text-white drop-shadow-md stroke-black"
-                         style={{ textShadow: "0 2px 0 #c2410c" }}>
-                        {stats.streak}
-                    </div>
-                 </div>
-                 <div className="bg-orange-500 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg mt-[-10px] border-2 border-white">
-                    On Fire!
-                 </div>
+                <div className="relative">
+                  <span className="absolute -inset-2 bg-orange-500 blur-xl opacity-30 rounded-full"></span>
+                  <div className="relative text-6xl md:text-8xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-orange-400 to-red-600 drop-shadow-sm stroke-white"
+                       style={{ WebkitTextStroke: "2px white" }}>
+                    {stats.streak}
+                  </div>
+                </div>
+                <div className="mt-2 text-orange-500 font-black uppercase tracking-[0.5em] text-[10px] bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow-xl">
+                  Combo!
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -396,7 +431,6 @@ export default function Home() {
             <IconButton onClick={closeInfoModal}><XCircle size={20} /></IconButton>
           </div>
 
-          {/* IMPROVED DIRECTIONS UI */}
           <div className="bg-white rounded-3xl border border-black/5 p-4 mb-6 shadow-sm">
              <div className="flex items-center justify-center gap-8 py-4">
                 <div className="text-center">
@@ -423,22 +457,60 @@ export default function Home() {
           </div>
         </Modal>}
 
-        {/* STATS MODAL */}
+        {/* STATS MODAL (BENTO GRID) */}
         {showStats && <Modal onClose={() => setShowStats(false)} maxW="max-w-2xl">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h2 className="text-2xl font-black uppercase tracking-tighter">Your Stats</h2>
-              <Pill className="mt-2 bg-black text-white">{rank.title}</Pill>
+              <h2 className="text-2xl font-black uppercase tracking-tighter">Performance</h2>
+              <div className="flex items-center gap-2 mt-2">
+                 <Pill className="bg-black text-white">{rank.title}</Pill>
+                 <span className="text-[10px] font-bold text-gray-400">Top Streak: {stats.bestStreak}</span>
+              </div>
             </div>
             <IconButton onClick={() => setShowStats(false)}><XCircle size={20} /></IconButton>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <StatCard label="Total" value={stats.total} />
-            <StatCard label="Accuracy" value={`${accuracy}%`} />
-            <StatCard label="Streak" value={stats.bestStreak} />
-            <StatCard label="Avg Speed" value={`${avgSpeed}s`} />
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            {/* Large Accuracy Block */}
+            <div className="col-span-2 row-span-2 bg-white rounded-[2rem] border border-black/5 p-6 flex flex-col justify-between shadow-sm relative overflow-hidden">
+               <div className="relative z-10">
+                  <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Total Accuracy</div>
+                  <div className="text-6xl font-black tracking-tighter text-[#1D1D1F]">{accuracy}<span className="text-2xl text-gray-300">%</span></div>
+               </div>
+               <div className="relative z-10 space-y-3 mt-4">
+                  <ProgressBar label="Democrat" value={stats.demCorrect} total={stats.demGuesses} color="bg-blue-500" />
+                  <ProgressBar label="Republican" value={stats.repCorrect} total={stats.repGuesses} color="bg-red-500" />
+               </div>
+               {/* Decor */}
+               <Target className="absolute -bottom-4 -right-4 text-gray-50 opacity-50" size={120} />
+            </div>
+
+            {/* Small Metric Blocks */}
+            <div className="col-span-1 bg-white rounded-[2rem] border border-black/5 p-4 flex flex-col justify-center items-center text-center shadow-sm">
+                <div className="mb-2 p-2 bg-orange-50 text-orange-500 rounded-xl"><Flame size={20} /></div>
+                <div className="text-2xl font-black">{stats.streak}</div>
+                <div className="text-[8px] font-black uppercase tracking-widest text-gray-400">Current</div>
+            </div>
+            <div className="col-span-1 bg-white rounded-[2rem] border border-black/5 p-4 flex flex-col justify-center items-center text-center shadow-sm">
+                <div className="mb-2 p-2 bg-blue-50 text-blue-500 rounded-xl"><Timer size={20} /></div>
+                <div className="text-2xl font-black">{avgSpeed}s</div>
+                <div className="text-[8px] font-black uppercase tracking-widest text-gray-400">Avg Speed</div>
+            </div>
+            <div className="col-span-2 bg-white rounded-[2rem] border border-black/5 p-5 flex items-center justify-between shadow-sm">
+                <div>
+                   <div className="text-[9px] font-black uppercase tracking-widest text-gray-400">Cards Seen</div>
+                   <div className="text-3xl font-black">{stats.total}</div>
+                </div>
+                <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
+                    <span className="text-xs font-black">🇺🇸</span>
+                </div>
+            </div>
           </div>
-          <button onClick={() => { setShowStats(false); setShowWrapped(true); }} className="w-full mt-6 h-12 rounded-2xl bg-black text-white font-black uppercase tracking-[0.2em] text-[11px]">View Political Wrapped</button>
+
+          <button onClick={() => { setShowStats(false); setShowWrapped(true); }} className="group w-full h-14 rounded-[1.5rem] bg-[#1d1d1f] text-white flex items-center justify-center gap-2 active:scale-95 transition-transform">
+             <Star size={16} className="text-yellow-400 fill-yellow-400 group-hover:rotate-180 transition-transform duration-500" />
+             <span className="font-black uppercase tracking-[0.2em] text-[11px]">Generate Wrapped</span>
+          </button>
         </Modal>}
 
         {/* TROPHY CASE MODAL */}
@@ -482,28 +554,57 @@ export default function Home() {
           </div>
         </Modal>}
 
-        {/* WRAPPED */}
+        {/* WRAPPED (GLOSSY CARD) */}
         {showWrapped && (
-          <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-6" onClick={() => setShowWrapped(false)}>
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative w-full max-w-sm aspect-[9/16] bg-gradient-to-b from-[#1c1c1e] to-black rounded-[3rem] p-10 flex flex-col border border-white/10" onClick={e => e.stopPropagation()}>
-              <button onClick={() => setShowWrapped(false)} className="absolute top-8 right-8 h-10 w-10 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center z-[110] active:scale-90 transition-transform">
-                <XCircle size={20} className="text-white" />
-              </button>
-              <div className="flex-grow pt-10 text-white">
-                <h3 className="text-5xl font-black leading-[0.85] tracking-tighter mb-10">POLITICAL<br/><span className="text-blue-500 italic font-serif text-4xl">wrapped</span></h3>
-                <div className="space-y-8">
-                  <div><p className="text-[10px] font-black text-white/40 uppercase mb-2 tracking-widest">Identity</p><p className="text-3xl font-black uppercase">{rank.title}</p></div>
-                  <div className="grid grid-cols-2 gap-y-8 gap-x-4">
-                    <div><p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-widest">Accuracy</p><p className="text-3xl font-black">{accuracy}%</p></div>
-                    <div><p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-widest">Streak</p><p className="text-3xl font-black text-blue-500">{stats.bestStreak}</p></div>
-                    <div className="col-span-2">
-                      <p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-widest">Trophies Unlocked</p>
-                      <p className="text-3xl font-black text-amber-500">{unlockedCount} / {TROPHIES.length}</p>
-                    </div>
-                  </div>
+          <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowWrapped(false)}>
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0, rotateX: 20 }}
+              animate={{ scale: 1, opacity: 1, rotateX: 0 }}
+              className="relative w-full max-w-sm aspect-[9/16] rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/20 select-none"
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Dynamic Background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-black"></div>
+              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
+
+              {/* Content */}
+              <div className="relative z-10 h-full flex flex-col p-8 text-white">
+                <div className="flex justify-between items-start">
+                   <div className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">2025 Review</div>
+                   <Star className="text-yellow-400 fill-yellow-400 animate-spin-slow" size={24} />
+                </div>
+
+                <div className="mt-8">
+                   <h3 className="text-6xl font-black tracking-tighter leading-none mb-2">MY<br/>PARTY<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-red-400">IQ</span></h3>
+                </div>
+
+                <div className="flex-grow flex flex-col justify-center gap-6">
+                   <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/10">
+                      <div className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">Rank Achieved</div>
+                      <div className="text-2xl font-black uppercase tracking-tight">{rank.title}</div>
+                   </div>
+
+                   <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/10">
+                         <div className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">Accuracy</div>
+                         <div className="text-3xl font-black">{accuracy}%</div>
+                      </div>
+                      <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/10">
+                         <div className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">Top Streak</div>
+                         <div className="text-3xl font-black text-orange-400">{stats.bestStreak}</div>
+                      </div>
+                   </div>
+                </div>
+
+                <div className="mt-auto pt-6 border-t border-white/10 text-center">
+                    <p className="text-[9px] font-black uppercase tracking-[0.3em] opacity-40">Guess The Party</p>
+                    <p className="text-[9px] font-bold opacity-30 mt-1">Allen Wang</p>
                 </div>
               </div>
-              <p className="text-center text-[8px] font-black text-white/20 uppercase tracking-[0.4em]">🇺🇸 Guess the Party • Allen Wang</p>
+
+              <button onClick={() => setShowWrapped(false)} className="absolute top-4 right-4 h-8 w-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur z-20 transition-colors">
+                <XCircle size={16} className="text-white" />
+              </button>
             </motion.div>
           </div>
         )}
@@ -517,15 +618,6 @@ function LoadingScreen({ message }) {
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F5F5F7] gap-4">
       <Loader2 className="animate-spin text-blue-600" size={52} />
       <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">{message}</p>
-    </div>
-  );
-}
-
-function StatCard({ label, value }) {
-  return (
-    <div className="rounded-3xl bg-white border border-black/10 p-5 text-center">
-      <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2">{label}</div>
-      <div className="text-2xl font-black tabular-nums">{value}</div>
     </div>
   );
 }
