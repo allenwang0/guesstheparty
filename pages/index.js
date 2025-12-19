@@ -647,10 +647,12 @@ export default function Home() {
       setLastResult(resultObj);
       setGameState("revealed");
 
-      const base = lastResult?.isCorrect ? 1200 : 2100;
-      const fastBonus = lastResult?.isCorrect && lastResult?.isFast ? -250 : 0;
-      const confettiBonus = lastResult?.isCorrect && newStreak % 10 === 0 ? 300 : 0;
+      const base = isCorrect ? 1200 : 2100;
+      const fastBonus = isCorrect && isFast ? -250 : 0;
+      const confettiBonus = isCorrect && newStreak % 10 === 0 ? 300 : 0;
       const delay = Math.max(700, base + fastBonus + confettiBonus);
+
+      setTimeout(advanceToNext, delay);
     },
     [gameState, current, stats, trophies, advanceToNext, shakeControls]
   );
