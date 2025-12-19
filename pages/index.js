@@ -4,8 +4,8 @@ import Image from "next/image";
 import { Analytics } from "@vercel/analytics/react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import {
-  Loader2, Check, Info, Share2, Timer, Target, Award, Trophy,
-  Flame, Star, ShieldCheck, Zap, XCircle
+  Loader2, Check, Info, Timer, Target, Award, Trophy,
+  Flame, Star, ShieldCheck, Zap, XCircle, Lock, MousePointer2
 } from "lucide-react";
 
 /* ----------------------------- Sub-Components ---------------------------- */
@@ -35,6 +35,8 @@ const IconButton = ({ onClick, ariaLabel, children, className = "" }) => (
 /* -------------------------------- Trophies ------------------------------ */
 
 const TROPHY_KEY = "partyTrophies_v1";
+const INTRO_KEY = "partyHasSeenIntro_v1";
+
 const TROPHIES = [
   { id: "first_correct", title: "First Blood", desc: "First correct guess.", icon: <Star size={18} />, tier: "bronze", check: ({ stats }) => (stats.correct || 0) >= 1 },
   { id: "streak_5", title: "Warm Streak", desc: "Best streak ≥ 5.", icon: <Flame size={18} />, tier: "bronze", check: ({ stats }) => (stats.bestStreak || 0) >= 5 },
@@ -50,11 +52,11 @@ const TROPHIES = [
 
 function tierStyles(tier) {
   switch (tier) {
-    case "bronze": return "bg-amber-50 text-amber-800 border-amber-200";
-    case "silver": return "bg-slate-50 text-slate-800 border-slate-200";
-    case "gold": return "bg-yellow-50 text-yellow-900 border-yellow-200";
-    case "platinum": return "bg-indigo-50 text-indigo-800 border-indigo-200";
-    default: return "bg-gray-50 text-gray-700 border-gray-200";
+    case "bronze": return "bg-amber-100 text-amber-900 border-amber-300";
+    case "silver": return "bg-slate-100 text-slate-900 border-slate-300";
+    case "gold": return "bg-yellow-100 text-yellow-900 border-yellow-300";
+    case "platinum": return "bg-indigo-100 text-indigo-900 border-indigo-300";
+    default: return "bg-gray-100 text-gray-700 border-gray-300";
   }
 }
 
@@ -78,10 +80,13 @@ export default function Home() {
   const [gameState, setGameState] = useState("guessing");
   const [imgLoading, setImgLoading] = useState(true);
   const [startTime, setStartTime] = useState(null);
+
+  // Modals
   const [showInfo, setShowInfo] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
+
   const [lastResult, setLastResult] = useState(null);
   const revealTimeoutRef = useRef(null);
 
@@ -108,6 +113,7 @@ export default function Home() {
 
   const revealed = gameState === "revealed";
 
+  // Initial Load & Data Fetch
   useEffect(() => {
     setHasMounted(true);
     const savedStats = localStorage.getItem("partyStats");
@@ -115,12 +121,18 @@ export default function Home() {
     const savedTrophies = localStorage.getItem(TROPHY_KEY);
     if (savedTrophies) try { setTrophies(prev => ({ ...prev, ...JSON.parse(savedTrophies) })); } catch {}
 
+    // 1. Check if user has seen intro before
+    const hasSeenIntro = localStorage.getItem(INTRO_KEY);
+    if (!hasSeenIntro) {
+      setShowInfo(true);
+    }
+
     fetch("/politicians.json").then(res => res.json()).then(data => {
       const normalized = (data || []).map(p => ({ ...p, imageUrl: p.img || p.image_url }));
       setAllPoliticians(normalized);
       const shuffled = [...normalized].sort(() => 0.5 - Math.random());
       setCurrent(shuffled[0] || null);
-      setLoadingQueue(shuffled.slice(1, 6)); // Buffer slightly more
+      setLoadingQueue(shuffled.slice(1, 6));
       setStartTime(Date.now());
     });
   }, []);
@@ -128,16 +140,19 @@ export default function Home() {
   useEffect(() => { if (hasMounted) localStorage.setItem("partyStats", JSON.stringify(stats)); }, [stats, hasMounted]);
   useEffect(() => { if (hasMounted) localStorage.setItem(TROPHY_KEY, JSON.stringify(trophies)); }, [trophies, hasMounted]);
 
-useEffect(() => {
-  const handleKeyDown = (e) => {
-    if (gameState !== "guessing") return;
-    if (e.key === "ArrowLeft") handleGuess("Democrat");
-    if (e.key === "ArrowRight") handleGuess("Republican");
-  };
+  // Keyboard Handlers
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (showInfo || showStats || showTrophyCase || showWrapped) return;
+      if (gameState !== "guessing") return;
 
-  window.addEventListener("keydown", handleKeyDown);
-  return () => window.removeEventListener("keydown", handleKeyDown);
-}, [gameState, handleGuess]);
+      if (e.key === "ArrowLeft") handleGuess("Democrat");
+      if (e.key === "ArrowRight") handleGuess("Republican");
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [gameState, showInfo, showStats, showTrophyCase, showWrapped]);
 
   const maybeUnlockTrophies = useCallback((nextStats) => {
     const nextUnlocked = new Set(trophies.unlocked || []);
@@ -155,7 +170,14 @@ useEffect(() => {
 
   const advanceToNext = useCallback(() => {
     const next = loadingQueue[0];
-    if (!next) return;
+    if (!next) {
+       if (allPoliticians.length > 0) {
+         const random = allPoliticians[Math.floor(Math.random() * allPoliticians.length)];
+         setCurrent(random);
+       }
+       return;
+    }
+
     setCurrent(next);
     setLoadingQueue(prev => {
       const nextCard = allPoliticians[Math.floor(Math.random() * allPoliticians.length)];
@@ -166,7 +188,15 @@ useEffect(() => {
 
   const handleGuess = useCallback((party) => {
     if (gameState !== "guessing" || !current) return;
+
     const isCorrect = party === current.party;
+
+    // Haptic feedback
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      if (isCorrect) navigator.vibrate(10);
+      else navigator.vibrate([30, 50, 30]);
+    }
+
     const timeTaken = Date.now() - startTime;
     const nextStats = {
       ...stats,
@@ -180,10 +210,29 @@ useEffect(() => {
       repCorrect: current.party !== "Democrat" && isCorrect ? stats.repCorrect + 1 : stats.repCorrect,
       totalTime: stats.totalTime + timeTaken,
     };
-    setStats(nextStats); maybeUnlockTrophies(nextStats); setLastResult({ isCorrect, guessedParty: party, correctParty: current.party }); setGameState("revealed");
+
+    setStats(nextStats);
+    maybeUnlockTrophies(nextStats);
+    setLastResult({ isCorrect, guessedParty: party, correctParty: current.party });
+    setGameState("revealed");
+
     if (revealTimeoutRef.current) clearTimeout(revealTimeoutRef.current);
     revealTimeoutRef.current = setTimeout(advanceToNext, 1100);
   }, [gameState, current, startTime, stats, maybeUnlockTrophies, advanceToNext]);
+
+  const closeInfoModal = () => {
+    setShowInfo(false);
+    localStorage.setItem(INTRO_KEY, "true");
+  };
+
+  const handleReset = () => {
+    if(confirm("Reset all stats and trophies?")) {
+      setStats({ correct: 0, total: 0, streak: 0, bestStreak: 0, demGuesses: 0, repGuesses: 0, demCorrect: 0, repCorrect: 0, totalTime: 0 });
+      setTrophies({ unlocked: [], firstUnlockedAt: {} });
+      localStorage.removeItem(INTRO_KEY);
+      window.location.reload();
+    }
+  }
 
   if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
 
@@ -192,25 +241,16 @@ useEffect(() => {
       <Head>
         <title>Guess The Party | Allen Wang</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-        {/* BROWSER PRELOAD: Tell the browser to fetch the next image ASAP */}
         {loadingQueue[0] && (
           <link rel="preload" as="image" href={loadingQueue[0].imageUrl} />
         )}
       </Head>
       <Analytics />
 
-      {/* OFF-SCREEN BUFFER: Force-load the next few cards in the queue */}
+      {/* Preload Buffer */}
       <div className="fixed -left-[9999px] top-0 h-1 w-1 overflow-hidden pointer-events-none" aria-hidden="true">
         {loadingQueue.map((p, i) => (
-          <Image
-            key={`${p.name}-${i}`}
-            src={p.imageUrl}
-            alt="preload"
-            width={400}
-            height={500}
-            priority={i < 2}
-            quality={60}
-          />
+          <Image key={`${p.name}-${i}`} src={p.imageUrl} alt="preload" width={400} height={500} priority={i < 2} quality={60} />
         ))}
       </div>
 
@@ -236,7 +276,33 @@ useEffect(() => {
         </header>
 
         <main className="flex justify-center relative">
-          {/* UNDER-CARD: Pre-renders the next image behind the active one */}
+
+          {/* --- STREAK DISPLAY --- */}
+          {/* Placed here so it sits on top of the card but inside the relative container */}
+          <AnimatePresence>
+            {stats.streak >= 3 && (
+              <motion.div
+                key={stats.streak} // Key triggers the "pop" animation on change
+                initial={{ scale: 0.5, opacity: 0, y: 50 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 1.5, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                className="absolute top-[-20px] md:top-[-30px] z-50 pointer-events-none flex flex-col items-center justify-center"
+              >
+                 <div className="relative flex flex-col items-center">
+                    <Flame className="w-16 h-16 md:w-20 md:h-20 text-orange-500 fill-orange-500 drop-shadow-lg animate-pulse" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-2 text-4xl md:text-5xl font-black text-white drop-shadow-md stroke-black"
+                         style={{ textShadow: "0 2px 0 #c2410c" }}>
+                        {stats.streak}
+                    </div>
+                 </div>
+                 <div className="bg-orange-500 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg mt-[-10px] border-2 border-white">
+                    On Fire!
+                 </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {loadingQueue[0] && (
             <div className="absolute inset-0 w-full max-w-[560px] h-[68vh] md:h-[76vh] opacity-0 pointer-events-none">
                <Image src={loadingQueue[0].imageUrl} fill alt="next" sizes="(max-width: 768px) 90vw, 560px" priority />
@@ -310,7 +376,7 @@ useEffect(() => {
                     <span className="text-[9px] font-black uppercase tracking-[0.18em]">{unlockedCount}/{TROPHIES.length}</span>
                   </button>
                   <button
-                    onClick={() => { if(confirm("Reset stats?")) setStats({ correct: 0, total: 0, streak: 0, bestStreak: 0, demGuesses: 0, repGuesses: 0, demCorrect: 0, repCorrect: 0, totalTime: 0 }); }}
+                    onClick={handleReset}
                     className="h-8 rounded-xl px-3 bg-white border border-black/10 shadow-sm active:scale-95 transition-transform text-[9px] font-black uppercase tracking-[0.18em] text-gray-500"
                   >
                     Reset
@@ -323,18 +389,41 @@ useEffect(() => {
       </div>
 
       <AnimatePresence>
-        {showInfo && <Modal onClose={() => setShowInfo(false)} maxW="max-w-lg">
+        {/* INFO MODAL */}
+        {showInfo && <Modal onClose={closeInfoModal} maxW="max-w-lg">
           <div className="flex justify-between items-start mb-6">
             <h3 className="text-2xl font-black uppercase tracking-tighter">How to Play</h3>
-            <IconButton onClick={() => setShowInfo(false)}><XCircle size={20} /></IconButton>
+            <IconButton onClick={closeInfoModal}><XCircle size={20} /></IconButton>
           </div>
-          <div className="space-y-4 text-sm font-bold text-gray-700 leading-relaxed">
-            <p>A portrait will appear. Your goal is to identify their political party.</p>
-            <p>Drag <span className="text-blue-500 font-black">left</span> for Democrat, or <span className="text-red-500 font-black">right</span> for Republican.</p>
-            <p className="text-[10px] uppercase tracking-widest text-gray-400 pt-4 text-center">Data via public records</p>
+
+          {/* IMPROVED DIRECTIONS UI */}
+          <div className="bg-white rounded-3xl border border-black/5 p-4 mb-6 shadow-sm">
+             <div className="flex items-center justify-center gap-8 py-4">
+                <div className="text-center">
+                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white mb-2 mx-auto">
+                        <MousePointer2 className="rotate-[-90deg]" size={20} />
+                    </div>
+                    <div className="text-[10px] font-black uppercase tracking-widest text-blue-600">Democrat</div>
+                </div>
+                <div className="h-12 w-[1px] bg-gray-200"></div>
+                <div className="text-center">
+                    <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white mb-2 mx-auto">
+                         <MousePointer2 className="rotate-[90deg]" size={20} />
+                    </div>
+                    <div className="text-[10px] font-black uppercase tracking-widest text-red-600">Republican</div>
+                </div>
+             </div>
+             <p className="text-xs text-center font-bold text-gray-500 leading-relaxed px-4">
+                Swipe card or use arrow keys
+             </p>
+          </div>
+
+          <div className="text-center">
+            <p className="text-[10px] uppercase tracking-widest text-gray-400">Data via public records</p>
           </div>
         </Modal>}
 
+        {/* STATS MODAL */}
         {showStats && <Modal onClose={() => setShowStats(false)} maxW="max-w-2xl">
           <div className="flex justify-between items-start mb-6">
             <div>
@@ -352,27 +441,48 @@ useEffect(() => {
           <button onClick={() => { setShowStats(false); setShowWrapped(true); }} className="w-full mt-6 h-12 rounded-2xl bg-black text-white font-black uppercase tracking-[0.2em] text-[11px]">View Political Wrapped</button>
         </Modal>}
 
+        {/* TROPHY CASE MODAL */}
         {showTrophyCase && <Modal onClose={() => setShowTrophyCase(false)} maxW="max-w-3xl">
-          <div className="flex justify-between items-start mb-6">
-            <h2 className="text-2xl font-black uppercase tracking-tighter">Trophies</h2>
-            <IconButton onClick={() => setShowTrophyCase(false)}><XCircle size={20} /></IconButton>
+          <div className="flex flex-col gap-2 mb-6">
+            <div className="flex justify-between items-start">
+               <h2 className="text-2xl font-black uppercase tracking-tighter">Trophies</h2>
+               <IconButton onClick={() => setShowTrophyCase(false)}><XCircle size={20} /></IconButton>
+            </div>
+            {/* PROGRESS BAR */}
+            <div className="flex items-center gap-3">
+               <div className="flex-grow h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-amber-500" style={{ width: `${(unlockedCount / TROPHIES.length) * 100}%` }}></div>
+               </div>
+               <div className="text-[10px] font-black uppercase text-gray-400">{unlockedCount}/{TROPHIES.length}</div>
+            </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-2">
             {TROPHIES.map(t => {
               const unlocked = unlockedSet.has(t.id);
               return (
-                <div key={t.id} className={`p-4 rounded-[2rem] border flex items-center gap-4 ${unlocked ? "bg-white border-black/10" : "bg-black/5 border-transparent opacity-60"}`}>
-                  <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${unlocked ? tierStyles(t.tier) : "bg-gray-200"}`}>{t.icon}</div>
-                  <div className="min-w-0">
-                    <div className="text-sm font-black uppercase tracking-tight truncate">{t.title}</div>
-                    <div className="text-[11px] font-bold text-gray-500 line-clamp-1">{t.desc}</div>
+                <div key={t.id} className={`relative p-4 rounded-[2rem] border transition-all ${unlocked ? "bg-white border-black/10 shadow-sm" : "bg-gray-50 border-transparent"}`}>
+                  <div className={`flex items-center gap-4 ${unlocked ? "opacity-100" : "opacity-40 grayscale blur-[0.5px]"}`}>
+                    <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${unlocked ? tierStyles(t.tier) : "bg-gray-200"}`}>
+                        {unlocked ? t.icon : <Lock size={18} />}
+                    </div>
+                    <div className="min-w-0">
+                        <div className="text-sm font-black uppercase tracking-tight truncate">{t.title}</div>
+                        <div className="text-[11px] font-bold text-gray-500 line-clamp-1">{t.desc}</div>
+                    </div>
                   </div>
+                  {unlocked && (
+                     <div className="absolute top-4 right-4">
+                        <div className={`w-2 h-2 rounded-full ${t.tier === 'platinum' ? 'bg-indigo-400' : 'bg-amber-400'}`}></div>
+                     </div>
+                  )}
                 </div>
               );
             })}
           </div>
         </Modal>}
 
+        {/* WRAPPED */}
         {showWrapped && (
           <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-6" onClick={() => setShowWrapped(false)}>
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative w-full max-w-sm aspect-[9/16] bg-gradient-to-b from-[#1c1c1e] to-black rounded-[3rem] p-10 flex flex-col border border-white/10" onClick={e => e.stopPropagation()}>
