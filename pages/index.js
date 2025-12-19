@@ -41,6 +41,107 @@ const FAKE_DISTRIBUTION = [
   { range: '90-100', count: 1, percentOfPlayers: 1 }
 ];
 
+/* ----------------------------- Fixed Component ---------------------------- */
+
+const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubmit = false }) => {
+  // 1. Initialize with FAKE_DISTRIBUTION so the chart is visible immediately
+  const [data, setData] = useState(FAKE_DISTRIBUTION);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const syncStats = async () => {
+      try {
+        // Only submit if allowed and the user has actually played
+        if (!disableSubmit && totalGamesPlayed > 0) {
+          await fetch('/api/submit-score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accuracy: userAccuracy }),
+          });
+        }
+
+        const response = await fetch('/api/get-distribution');
+        const result = await response.json();
+
+        if (isMounted && result.distribution) {
+          // 2. CHECK: Only switch to real data if the database has recorded games.
+          // If total count is 0, we keep showing FAKE_DISTRIBUTION to avoid a blank chart.
+          const totalRealPlayers = result.distribution.reduce((acc, curr) => acc + curr.count, 0);
+
+          if (totalRealPlayers > 0) {
+            setData(result.distribution);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to sync stats", error);
+      }
+    };
+
+    syncStats();
+
+    return () => { isMounted = false; };
+  }, [userAccuracy, totalGamesPlayed, disableSubmit]);
+
+  // 3. Removed the "if (loading) return..." block entirely.
+  // We want to show the chart immediately (using fake data) while real data fetches in the background.
+
+  // Find the max value to normalize bar heights
+  const maxPercent = Math.max(...(data.map(d => d.percentOfPlayers) || [0]));
+
+  return (
+    <div className={`w-full mt-6 pt-6 border-t ${isDark ? 'border-white/10' : 'border-gray-100'}`}>
+      <h3 className={`text-[10px] font-black uppercase tracking-widest mb-4 ${isDark ? 'text-white/40' : 'text-gray-400'}`}>
+        Global Player Distribution
+      </h3>
+
+      <div className="flex items-end justify-between h-32 gap-1 mb-2">
+        {data.map((bucket, i) => {
+          const rangeStart = i * 10;
+          const isUserBucket = userAccuracy >= rangeStart && userAccuracy < rangeStart + 10;
+          const isUser100 = userAccuracy === 100 && i === 9;
+          const isActive = isUserBucket || isUser100;
+
+          return (
+            <div key={i} className="flex flex-col items-center gap-1 flex-1 group relative">
+              {/* The Bar */}
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: `${(bucket.percentOfPlayers / (maxPercent || 1)) * 100}%` }}
+                transition={{ duration: 0.5, delay: i * 0.05 }}
+                className={`w-full rounded-t-sm relative ${
+                  isActive
+                    ? 'bg-blue-500'
+                    : (isDark ? 'bg-white/10' : 'bg-gray-200')
+                }`}
+              >
+                {/* Tooltip on Hover */}
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-[9px] px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-10">
+                  {bucket.percentOfPlayers}%
+                </div>
+              </motion.div>
+
+              {/* X-Axis Label */}
+              <span className={`text-[8px] font-bold ${
+                isActive
+                  ? 'text-blue-500'
+                  : (isDark ? 'text-white/20' : 'text-gray-300')
+              }`}>
+                {i === 0 ? '0' : i === 9 ? '100' : ''}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Contextual Text */}
+      <div className={`mt-3 text-center text-xs ${isDark ? 'text-white/60' : 'text-gray-500'}`}>
+        You performed better than <span className={`font-bold ${isDark ? 'text-white' : 'text-black'}`}>{calculatePercentile(userAccuracy, data)}%</span> of players.
+      </div>
+    </div>
+  );
+};
+
 /* ----------------------------- Utility Helper ---------------------------- */
 
 // Helper to calculate percentile ranking based on dynamic data
@@ -1030,7 +1131,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* HISTOGRAM ADDED HERE - Default mode */}
             <Histogram userAccuracy={accuracy} totalGamesPlayed={stats.total} />
 
             <button
@@ -1153,7 +1253,6 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* HISTOGRAM ADDED HERE - Dark mode enabled & submission disabled */}
                   <Histogram
                     userAccuracy={accuracy}
                     totalGamesPlayed={stats.total}
