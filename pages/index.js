@@ -811,27 +811,6 @@ export default function Home() {
                  </div>
               </div>
 
-              <div className="space-y-3">
-                <div className="bg-gray-50 rounded-xl p-3 text-xs text-gray-500 font-medium leading-relaxed">
-                  <p>You can also tap the buttons below.</p>
-                  <p className="mt-2">
-                    Names & details reveal <strong>after</strong> you guess.
-                    <br/>
-                    The next portrait loads automatically.
-                  </p>
-                </div>
-
-                <div className="text-[10px] text-gray-400 font-medium max-w-xs mx-auto leading-normal">
-                  Stats track your streak & speed.
-                  <br />
-                  Resetting clears stats, but <strong>Trophies persist</strong>.
-                </div>
-              </div>
-
-              <p className="text-[9px] text-gray-300 uppercase tracking-widest">
-                Just for fun • Portraits vary by source
-              </p>
-
               <button
                 onClick={closeInfoModal}
                 className="w-full py-4 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs active:scale-95 transition-transform shadow-xl"
@@ -839,9 +818,6 @@ export default function Home() {
                 Let's Play
               </button>
 
-              <div className="text-[9px] text-gray-300 font-bold uppercase tracking-widest pt-1">
-                Tap (i) to view rules anytime
-              </div>
             </div>
           </Modal>
         )}
