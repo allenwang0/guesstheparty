@@ -61,14 +61,12 @@ export default function Home() {
       bestStreak: newBest
     }));
 
-    setTimeout(newQuestion, 1800);
+    setTimeout(newQuestion, 1600);
   };
 
-  const resetGame = () => {
-    if (confirm("Reset your current session and streak?")) {
-      setStats({ ...stats, correct: 0, total: 0, streak: 0 });
-      newQuestion();
-    }
+  const handleSkip = () => {
+    if (gameState !== 'guessing') return;
+    newQuestion();
   };
 
   const toggleCategory = (cat) => {
@@ -81,7 +79,7 @@ export default function Home() {
 
   if (loading) return (
     <div className="h-screen flex items-center justify-center bg-[#F5F5F7]">
-      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
@@ -93,41 +91,37 @@ export default function Home() {
       </Head>
       <Analytics />
 
-      {/* Header */}
-      <header className="px-6 pt-8 pb-2 shrink-0">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-2xl font-black tracking-tighter text-black leading-none">
-              GUESS <span className="text-blue-600 font-serif italic">the</span> PARTY
-            </h1>
-            <button
-              onClick={resetGame}
-              className="text-[9px] text-gray-400 font-bold tracking-widest uppercase mt-2 hover:text-red-500 transition-colors"
-            >
-              Reset Session
-            </button>
-          </div>
-          <div className="text-right">
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Accuracy</p>
-            <p className="text-2xl font-black text-black leading-none">{accuracy}%</p>
+      {/* Header - Compact */}
+      <header className="px-6 pt-6 pb-2 shrink-0">
+        <div className="flex justify-between items-end">
+          <h1 className="text-xl font-black tracking-tighter text-black leading-none">
+            GUESS <span className="text-blue-600 font-serif italic">the</span> PARTY
+          </h1>
+          <div className="flex gap-4">
+            <div className="text-right">
+              <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Accuracy</p>
+              <p className="text-lg font-black text-black">{accuracy}%</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Streak</p>
+              <p className="text-lg font-black text-blue-600">{stats.streak}</p>
+            </div>
           </div>
         </div>
 
-        {/* Toggles with Checkbox Indicators */}
-        <div className="flex gap-2 mt-5 overflow-x-auto pb-2 no-scrollbar">
+        {/* Categories */}
+        <div className="flex gap-2 mt-4 no-scrollbar">
           {['Senate', 'House', 'Governor'].map(cat => {
             const isActive = activeCategories.includes(cat.toLowerCase());
             return (
               <button
                 key={cat}
                 onClick={() => toggleCategory(cat.toLowerCase())}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border ${
-                  isActive ? 'bg-black border-black text-white shadow-lg' : 'bg-white border-gray-200 text-gray-400'
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all border ${
+                  isActive ? 'bg-black border-black text-white' : 'bg-white border-gray-200 text-gray-400'
                 }`}
               >
-                <div className={`w-3 h-3 rounded border flex items-center justify-center transition-colors ${isActive ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}`}>
-                  {isActive && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
-                </div>
+                <div className={`w-2 h-2 rounded-sm border transition-colors ${isActive ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}`} />
                 {cat}
               </button>
             );
@@ -136,74 +130,71 @@ export default function Home() {
       </header>
 
       {/* Main Game Card */}
-      <main className="flex-grow flex flex-col items-center justify-center px-6 min-h-0 py-4">
+      <main className="flex-grow flex flex-col items-center justify-center px-4 min-h-0 pt-2 pb-2">
         {current && (
-          <div className="relative w-full max-w-[400px] h-full bg-white rounded-[2.5rem] shadow-2xl border border-white overflow-hidden flex flex-col">
+          <div className="relative w-full max-w-[400px] h-full bg-white rounded-[2rem] shadow-xl border border-white overflow-hidden flex flex-col">
             <div className="relative flex-grow min-h-0 overflow-hidden bg-gray-100">
               <img
                 src={current.imageUrl}
-                className={`w-full h-full object-cover transition-all duration-700 ${gameState === 'revealed' ? 'scale-110 blur-md brightness-50' : 'scale-100'}`}
+                className={`w-full h-full object-cover object-top transition-all duration-700 ${gameState === 'revealed' ? 'scale-110 blur-sm brightness-50' : 'scale-100'}`}
                 alt="Politician"
               />
 
+              {/* Skip Button - Floating */}
+              {gameState === 'guessing' && (
+                <button
+                  onClick={handleSkip}
+                  className="absolute top-4 right-4 bg-black/20 hover:bg-black/40 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full transition-all uppercase tracking-widest border border-white/10"
+                >
+                  Skip
+                </button>
+              )}
+
+              {/* Reveal Overlay */}
               {gameState === 'revealed' && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 animate-in fade-in zoom-in duration-300">
-                  <div className={`mb-4 rounded-full w-16 h-16 flex items-center justify-center text-white text-3xl shadow-xl ${feedback === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
+                  <div className={`mb-4 rounded-full w-14 h-14 flex items-center justify-center text-white text-2xl shadow-xl ${feedback === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
                     {feedback === 'success' ? '✓' : '✕'}
                   </div>
-                  <h2 className="text-3xl font-black text-white mb-1 leading-tight">{current.name}</h2>
-                  <p className="text-white/80 font-bold uppercase tracking-widest text-sm">
+                  <h2 className="text-2xl font-black text-white leading-tight">{current.name}</h2>
+                  <p className="text-white/80 font-bold uppercase tracking-widest text-[10px] mt-1">
                     {current.party} • {current.state}
                   </p>
                 </div>
               )}
-
-              {stats.total === 0 && gameState === 'guessing' && (
-                <div className="absolute inset-x-0 bottom-6 flex justify-center animate-bounce">
-                  <div className="bg-black/60 backdrop-blur-md text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/20">
-                    Choose a party
-                  </div>
-                </div>
-              )}
             </div>
 
-            {/* Buttons */}
-            <div className="p-4 grid grid-cols-2 gap-3 bg-white shrink-0">
-              <button
-                onClick={() => handleGuess('Democrat')}
-                disabled={gameState === 'revealed'}
-                className="h-16 rounded-2xl bg-[#00AEF3] text-white font-black text-xs uppercase tracking-widest active:scale-95 transition-all disabled:opacity-20"
-              >
-                Democrat
-              </button>
+            {/* Action Buttons - Left Rep / Right Dem */}
+            <div className="p-3 grid grid-cols-2 gap-2 bg-white shrink-0">
               <button
                 onClick={() => handleGuess('Republican')}
                 disabled={gameState === 'revealed'}
-                className="h-16 rounded-2xl bg-[#E81B23] text-white font-black text-xs uppercase tracking-widest active:scale-95 transition-all disabled:opacity-20"
+                className="h-14 rounded-xl bg-[#E81B23] text-white font-black text-[10px] uppercase tracking-[0.2em] active:scale-95 transition-all disabled:opacity-10"
               >
                 Republican
+              </button>
+              <button
+                onClick={() => handleGuess('Democrat')}
+                disabled={gameState === 'revealed'}
+                className="h-14 rounded-xl bg-[#00AEF3] text-white font-black text-[10px] uppercase tracking-[0.2em] active:scale-95 transition-all disabled:opacity-10"
+              >
+                Democrat
               </button>
             </div>
           </div>
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="px-8 pt-4 pb-10 flex justify-between items-center shrink-0 border-t border-gray-100 bg-white/80 backdrop-blur-md">
-        <div className="flex gap-8">
-          <div className="text-center">
-            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Streak</p>
-            <p className="text-xl font-black">{stats.streak}</p>
-          </div>
-          <div className="text-center">
-            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Best</p>
-            <p className="text-xl font-black text-blue-600">{stats.bestStreak}</p>
-          </div>
+      {/* Footer - Minimalistic */}
+      <footer className="px-6 py-4 flex justify-between items-center shrink-0 text-gray-400">
+        <div className="flex gap-4 items-center">
+            <span className="text-[9px] font-black uppercase tracking-widest">Best: {stats.bestStreak}</span>
+            <span className="w-1 h-1 bg-gray-200 rounded-full" />
+            <span className="text-[9px] font-black uppercase tracking-widest">Total: {stats.total}</span>
         </div>
-        <div className="text-right">
-            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Designed by</p>
-            <p className="text-sm font-black text-gray-800 tracking-tight">Allen Wang</p>
-        </div>
+        <p className="text-[9px] font-black uppercase tracking-tighter">
+            By <span className="text-gray-900">Allen Wang</span>
+        </p>
       </footer>
     </div>
   );
