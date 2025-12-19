@@ -130,9 +130,14 @@ export default function Home() {
   const [lastResult, setLastResult] = useState(null);
   const revealTimeoutRef = useRef(null);
 
+  // Motion Values for Tinder-style swiping indicators
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-220, 220], [-10, 10]);
-  const swipeBg = useTransform(x, [-160, 0, 160], ["rgba(0,174,243,0.10)", "rgba(0,0,0,0)", "rgba(232,27,35,0.10)"]);
+  const swipeBg = useTransform(
+    x,
+    [-160, 0, 160],
+    ["rgba(0,174,243,0.18)", "rgba(255,255,255,0)", "rgba(232,27,35,0.18)"]
+  );
 
   const unlockedCount = trophies.unlocked?.length || 0;
   const unlockedSet = useMemo(() => new Set(trophies.unlocked || []), [trophies.unlocked]);
@@ -227,7 +232,7 @@ export default function Home() {
 
       <div className="mx-auto max-w-4xl px-4 md:px-8 pt-4 pb-6 md:pt-8">
         <header className="mb-4 md:mb-8">
-          <Glass className="px-4 py-3 md:px-5 md:py-4 rounded-[2rem] md:rounded-[2.5rem]">
+          <Glass className="px-4 py-3 md:px-5 md:py-4 rounded-[2rem] md:rounded-[2.25rem]">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <h1 className="text-base md:text-xl font-black tracking-tighter uppercase truncate">🇺🇸 Guess the Party</h1>
@@ -253,10 +258,13 @@ export default function Home() {
               onDragEnd={(e, i) => { if (i.offset.x < -80) handleGuess("Democrat"); else if (i.offset.x > 80) handleGuess("Republican"); }}
               className="relative w-full max-w-[560px] h-[68vh] md:h-[76vh] max-h-[760px] min-h-[500px] rounded-[2.5rem] overflow-hidden border border-white bg-white shadow-[0_24px_80px_rgba(0,0,0,0.14)]"
             >
-              <motion.div className="absolute inset-0 z-0" style={{ backgroundColor: swipeBg }} />
+              {/* Swiping Tint Layer */}
+              <motion.div className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundColor: swipeBg }} />
+
               <div className="relative z-10 h-[75%] md:h-[78%] bg-[#fbfbfb] overflow-hidden">
                 {imgLoading && <div className="absolute inset-0 flex items-center justify-center z-20 bg-white/70 backdrop-blur"><Loader2 className="animate-spin text-blue-500" size={34} /></div>}
                 <img src={current.imageUrl} onLoad={() => setImgLoading(false)} className={`absolute inset-0 w-full h-full object-contain p-4 transition-all duration-700 ${revealed ? "scale-110 blur-2xl brightness-[0.35]" : "scale-100"}`} alt="Portrait" />
+
                 {revealed && (
                   <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center p-6">
                     <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-4 md:mb-6 shadow-xl ${lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500"}`}>
@@ -298,8 +306,8 @@ export default function Home() {
           </div>
           <div className="space-y-4 text-sm font-bold text-gray-700 leading-relaxed">
             <p>A portrait will appear. Your goal is to identify their political party.</p>
-            <p>Drag <span className="text-blue-500">left</span> for Democrat, or <span className="text-red-500">right</span> for Republican.</p>
-            <p className="text-[10px] uppercase tracking-widest text-gray-400 pt-4">Data via public records</p>
+            <p>Drag <span className="text-blue-500 font-black">left</span> for Democrat, or <span className="text-red-500 font-black">right</span> for Republican.</p>
+            <p className="text-[10px] uppercase tracking-widest text-gray-400 pt-4 text-center">Data via public records</p>
           </div>
         </Modal>}
 
@@ -319,7 +327,7 @@ export default function Home() {
           </div>
           <button onClick={() => { setShowStats(false); setShowWrapped(true); }} className="w-full mt-6 h-12 rounded-2xl bg-black text-white font-black uppercase tracking-[0.2em] text-[11px]">View Political Wrapped</button>
         </Modal>}
-        
+
         {showTrophyCase && <Modal onClose={() => setShowTrophyCase(false)} maxW="max-w-3xl">
           <div className="flex justify-between items-start mb-6">
             <h2 className="text-2xl font-black uppercase tracking-tighter">Trophies</h2>
@@ -340,17 +348,37 @@ export default function Home() {
             })}
           </div>
         </Modal>}
-        
+
         {showWrapped && (
           <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-6" onClick={() => setShowWrapped(false)}>
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative w-full max-w-sm aspect-[9/16] bg-gradient-to-b from-[#1c1c1e] to-black rounded-[3rem] p-10 flex flex-col border border-white/10" onClick={e => e.stopPropagation()}>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="relative w-full max-w-sm aspect-[9/16] bg-gradient-to-b from-[#1c1c1e] to-black rounded-[3rem] p-10 flex flex-col border border-white/10"
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowWrapped(false)}
+                className="absolute top-8 right-8 h-10 w-10 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center z-[110] active:scale-90 transition-transform"
+              >
+                <XCircle size={20} className="text-white" />
+              </button>
+
               <div className="flex-grow pt-10 text-white">
                 <h3 className="text-5xl font-black leading-[0.85] tracking-tighter mb-10">POLITICAL<br/><span className="text-blue-500 italic font-serif text-4xl">wrapped</span></h3>
                 <div className="space-y-8">
-                  <div><p className="text-[10px] font-black text-white/40 uppercase mb-2 tracking-widest">Identity</p><p className="text-3xl font-black uppercase">{rank.title}</p></div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-[10px] font-black text-white/40 uppercase mb-2 tracking-widest">Identity</p>
+                    <p className="text-3xl font-black uppercase">{rank.title}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-y-8 gap-x-4">
                     <div><p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-widest">Accuracy</p><p className="text-3xl font-black">{accuracy}%</p></div>
                     <div><p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-widest">Streak</p><p className="text-3xl font-black text-blue-500">{stats.bestStreak}</p></div>
+                    {/* Added Trophies to Wrapped */}
+                    <div className="col-span-2">
+                      <p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-widest">Trophies Unlocked</p>
+                      <p className="text-3xl font-black text-amber-500">{unlockedCount} / {TROPHIES.length}</p>
+                    </div>
                   </div>
                 </div>
               </div>
