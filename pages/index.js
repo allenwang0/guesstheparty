@@ -204,11 +204,18 @@ export default function Home() {
   // Keyboard Handlers
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // Return early if any modal is open
       if (showInfo || showStats || showTrophyCase || showWrapped) return;
       if (gameState !== "guessing") return;
 
-      if (e.key === "ArrowLeft") handleGuess("Democrat");
-      if (e.key === "ArrowRight") handleGuess("Republican");
+      if (e.key === "ArrowLeft") {
+        e.preventDefault(); // Prevent scroll
+        handleGuess("Democrat");
+      }
+      if (e.key === "ArrowRight") {
+        e.preventDefault(); // Prevent scroll
+        handleGuess("Republican");
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -329,8 +336,13 @@ export default function Home() {
 
   if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
 
+  // Background Pattern for "Mesh" effect to avoid plain white ugliness
+  const patternOverlay = `
+    radial-gradient(#000 1px, transparent 1px)
+  `;
+
   return (
-    <div className={`min-h-screen w-full ${bgColor} text-[#1D1D1F] font-sans overflow-x-hidden transition-colors duration-700`}>
+    <div className={`fixed inset-0 w-full h-[100dvh] ${bgColor} text-[#1D1D1F] font-sans overflow-hidden transition-colors duration-700`}>
       <Head>
         <title>Guess The Party | Allen Wang</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
@@ -340,6 +352,9 @@ export default function Home() {
       </Head>
       <Analytics />
 
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: patternOverlay, backgroundSize: '24px 24px' }}></div>
+
       {/* Preload Buffer */}
       <div className="fixed -left-[9999px] top-0 h-1 w-1 overflow-hidden pointer-events-none" aria-hidden="true">
         {loadingQueue.map((p, i) => (
@@ -347,15 +362,20 @@ export default function Home() {
         ))}
       </div>
 
-      <div className="mx-auto max-w-4xl px-4 md:px-8 pt-4 pb-6 md:pt-8">
-        <header className="mb-4 md:mb-8">
+      <div className="mx-auto max-w-4xl px-4 md:px-8 pt-4 pb-6 md:pt-8 h-full flex flex-col">
+        <header className="mb-4 md:mb-8 shrink-0">
           <Glass className="px-4 py-3 md:px-5 md:py-4 rounded-[2rem] md:rounded-[2.25rem]">
             <div className="flex items-center justify-between">
-              <div className="min-w-0">
-                <h1 className="text-base md:text-xl font-black tracking-tighter uppercase truncate">🇺🇸 Guess the Party</h1>
-                <div className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Allen Wang</div>
+              <div className="flex flex-col items-start min-w-0 pr-4">
+                <h1 className="text-xs md:text-xl font-black uppercase tracking-tighter leading-none whitespace-nowrap">🇺🇸 Guess the Party</h1>
+                {/* Spaced out Name */}
+                <div className="w-full flex justify-between px-[1px] mt-1 opacity-40">
+                    {"ALLEN WANG".split("").map((char, i) => (
+                       <span key={i} className="text-[9px] md:text-[10px] font-black">{char}</span>
+                    ))}
+                </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 {/* PERSISTENT STREAK */}
                 {stats.streak > 0 && (
                   <div className="h-9 md:h-11 px-3 rounded-xl md:rounded-2xl bg-orange-50 border border-orange-100 flex items-center gap-1.5 text-orange-600 shadow-sm">
@@ -376,7 +396,7 @@ export default function Home() {
           </Glass>
         </header>
 
-        <main className="flex justify-center relative">
+        <main className="flex-grow flex justify-center relative touch-none select-none">
 
            {/* DESKTOP KEYBOARD HINTS */}
            {stats.total === 0 && !revealed && (
@@ -392,7 +412,7 @@ export default function Home() {
             </>
            )}
 
-          {/* IMPROVED STREAK POPUP */}
+          {/* STREAK POPUP - High position */}
           <AnimatePresence>
             {stats.streak >= 2 && gameState === 'revealed' && lastResult?.isCorrect && (
               <motion.div
@@ -401,11 +421,11 @@ export default function Home() {
                 animate={{ scale: 1, opacity: 1, y: -20 }}
                 exit={{ scale: 1.5, opacity: 0, y: -40 }}
                 transition={{ duration: 0.4, ease: "backOut" }}
-                className="absolute top-[-20px] md:top-[-40px] z-50 pointer-events-none flex items-center justify-center gap-2 w-full"
+                className="absolute top-[2%] z-50 pointer-events-none flex items-center justify-center gap-2 w-full"
               >
                  <span className="text-4xl md:text-5xl">🔥</span>
                  <span className="text-5xl md:text-6xl font-black italic tracking-tighter text-white drop-shadow-xl stroke-black"
-                       style={{ WebkitTextStroke: "2.5px black" }}>
+                       style={{ WebkitTextStroke: "2px black" }}>
                     {stats.streak}
                  </span>
               </motion.div>
@@ -413,7 +433,7 @@ export default function Home() {
           </AnimatePresence>
 
           {loadingQueue[0] && (
-            <div className="absolute inset-0 w-full max-w-[560px] h-[68vh] md:h-[76vh] opacity-0 pointer-events-none">
+            <div className="absolute inset-0 w-full max-w-[560px] h-full max-h-[76vh] opacity-0 pointer-events-none">
                <Image src={loadingQueue[0].imageUrl} fill alt="next" sizes="(max-width: 768px) 90vw, 560px" priority />
             </div>
           )}
@@ -426,7 +446,7 @@ export default function Home() {
               style={{ x, rotate }}
               animate={revealed && !lastResult?.isCorrect ? { x: [-5, 5, -5, 5, 0], transition: { duration: 0.4 } } : {}}
               onDragEnd={(e, i) => { if (i.offset.x < -80) handleGuess("Democrat"); else if (i.offset.x > 80) handleGuess("Republican"); }}
-              className="relative z-10 w-full max-w-[560px] h-[68vh] md:h-[76vh] max-h-[760px] min-h-[500px] rounded-[2.5rem] overflow-hidden border border-white bg-white shadow-[0_24px_80px_rgba(0,0,0,0.14)] touch-none"
+              className="relative z-10 w-full max-w-[560px] h-full max-h-[72vh] min-h-[400px] rounded-[2.5rem] overflow-hidden border border-white bg-white shadow-[0_24px_80px_rgba(0,0,0,0.14)] touch-none"
             >
               <motion.div className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundColor: swipeBg }} />
 
@@ -447,9 +467,9 @@ export default function Home() {
                 </>
               )}
 
-              <div className="relative z-10 h-[75%] md:h-[78%] bg-[#fbfbfb] overflow-hidden">
+              <div className="relative z-10 h-[75%] bg-[#fbfbfb] overflow-hidden">
                 {imgLoading && <div className="absolute inset-0 flex items-center justify-center z-20 bg-white/70 backdrop-blur"><Loader2 className="animate-spin text-blue-500" size={34} /></div>}
-                <div className="relative w-full h-full p-4">
+                <div className="relative w-full h-full p-6">
                   <Image
                     src={current.imageUrl}
                     onLoadingComplete={() => setImgLoading(false)}
@@ -482,7 +502,7 @@ export default function Home() {
                 )}
               </div>
 
-              <div className="relative z-10 h-[25%] md:h-[22%] px-4 md:px-6 py-4 bg-white border-t border-black/5">
+              <div className="relative z-10 h-[25%] px-4 md:px-6 py-4 bg-white border-t border-black/5">
                 <div className="grid grid-cols-2 gap-3 md:gap-4 h-[60%]">
                   <button onClick={() => handleGuess("Democrat")} disabled={revealed} className="rounded-2xl bg-[#00AEF3] text-white font-black text-[10px] md:text-xs uppercase tracking-widest active:scale-95 transition-transform disabled:opacity-60">Democrat</button>
                   <button onClick={() => handleGuess("Republican")} disabled={revealed} className="rounded-2xl bg-[#E81B23] text-white font-black text-[10px] md:text-xs uppercase tracking-widest active:scale-95 transition-transform disabled:opacity-60">Republican</button>
@@ -636,7 +656,7 @@ export default function Home() {
 
         {/* WRAPPED */}
         {showWrapped && (
-          <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowWrapped(false)}>
+          <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 pt-24" onClick={() => setShowWrapped(false)}>
             <motion.div
               initial={{ scale: 0.8, opacity: 0, rotateX: 20 }}
               animate={{ scale: 1, opacity: 1, rotateX: 0 }}
@@ -651,8 +671,8 @@ export default function Home() {
                    <div className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">2025 Review</div>
                 </div>
 
-                <div className="mt-6">
-                   <h3 className="text-6xl font-black tracking-tighter leading-none mb-2">MY<br/>PARTY<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-red-400">IQ</span></h3>
+                <div className="mt-8">
+                   <h3 className="text-4xl font-black tracking-tighter leading-none mb-2">MY<br/>PARTY<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-red-400">IQ</span></h3>
                 </div>
 
                 <div className="flex-grow flex flex-col justify-center gap-3">
@@ -731,8 +751,9 @@ function Modal({ children, onClose, maxW = "max-w-xl" }) {
     return () => { document.body.style.overflow = 'unset'; }
   }, []);
 
+  // Added pt-24 for the "lower top" effect requested
   return (
-    <div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-xl flex items-center justify-center p-4 md:p-6" onClick={onClose}>
+    <div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-xl flex items-center justify-center p-4 md:p-6 pt-24" onClick={onClose}>
       <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className={`w-full ${maxW} max-h-[90vh] overflow-y-auto rounded-[2.5rem] bg-[#F5F5F7] shadow-2xl p-7 md:p-10`} onClick={e => e.stopPropagation()}>
         {children}
       </motion.div>
