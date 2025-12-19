@@ -1,63 +1,29 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Head from "next/head";
+import Image from "next/image";
 import { Analytics } from "@vercel/analytics/react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import {
-  Loader2,
-  Check,
-  Info,
-  Share2,
-  Timer,
-  Target,
-  Award,
-  Trophy,
-  Flame,
-  Star,
-  ShieldCheck,
-  Zap,
-  XCircle,
+  Loader2, Check, Info, Share2, Timer, Target, Award, Trophy,
+  Flame, Star, ShieldCheck, Zap, XCircle
 } from "lucide-react";
 
 /* ----------------------------- Assets & Icons ---------------------------- */
 
 const DonkeyIcon = ({ className }) => (
-  <img
-    src="https://upload.wikimedia.org/wikipedia/commons/9/93/Democratic_Disc.svg"
-    alt="Democratic Logo"
-    className={className}
-  />
+  <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Democratic_Disc.svg" alt="Dem" className={className} />
 );
 
 const ElephantIcon = ({ className }) => (
-  <img
-    src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Republican_Disc.png"
-    alt="Republican Logo"
-    className={className}
-  />
+  <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Republican_Disc.png" alt="Rep" className={className} />
 );
 
 const Glass = ({ children, className = "" }) => (
-  <div
-    className={[
-      "rounded-3xl border border-white/70 bg-white/70 backdrop-blur-xl",
-      "shadow-[0_18px_60px_rgba(0,0,0,0.10)]",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
+  <div className={["rounded-3xl border border-white/70 bg-white/70 backdrop-blur-xl shadow-[0_18px_60px_rgba(0,0,0,0.10)]", className].join(" ")}>{children}</div>
 );
 
 const Pill = ({ children, className = "" }) => (
-  <span
-    className={[
-      "inline-flex items-center gap-2 rounded-full px-3 py-1",
-      "text-[10px] font-black uppercase tracking-[0.20em]",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </span>
+  <span className={["inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.20em]", className].join(" ")}>{children}</span>
 );
 
 const IconButton = ({ onClick, ariaLabel, children, className = "" }) => (
@@ -65,11 +31,9 @@ const IconButton = ({ onClick, ariaLabel, children, className = "" }) => (
     onClick={onClick}
     aria-label={ariaLabel}
     className={[
-      "h-10 w-10 rounded-full",
-      "bg-white/70 border border-black/10 backdrop-blur",
-      "shadow-sm active:scale-95 transition-transform",
-      "flex items-center justify-center",
-      className,
+      "h-9 w-9 md:h-11 md:w-11 rounded-xl md:rounded-2xl",
+      "bg-white/70 border border-black/10 backdrop-blur shadow-sm active:scale-95 transition-transform flex items-center justify-center",
+      className
     ].join(" ")}
   >
     {children}
@@ -79,7 +43,6 @@ const IconButton = ({ onClick, ariaLabel, children, className = "" }) => (
 /* -------------------------------- Trophies ------------------------------ */
 
 const TROPHY_KEY = "partyTrophies_v1";
-
 const TROPHIES = [
   { id: "first_correct", title: "First Blood", desc: "First correct guess.", icon: <Star size={18} />, tier: "bronze", check: ({ stats }) => (stats.correct || 0) >= 1 },
   { id: "streak_5", title: "Warm Streak", desc: "Best streak ≥ 5.", icon: <Flame size={18} />, tier: "bronze", check: ({ stats }) => (stats.bestStreak || 0) >= 5 },
@@ -130,14 +93,15 @@ export default function Home() {
   const [lastResult, setLastResult] = useState(null);
   const revealTimeoutRef = useRef(null);
 
-  // Motion Values for Tinder-style swiping indicators
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-220, 220], [-10, 10]);
-  const swipeBg = useTransform(
-    x,
-    [-160, 0, 160],
-    ["rgba(0,174,243,0.18)", "rgba(255,255,255,0)", "rgba(232,27,35,0.18)"]
-  );
+
+  // Background Tint Logic
+  const swipeBg = useTransform(x, [-120, 0, 120], ["rgba(0,174,243,0.18)", "rgba(255,255,255,0)", "rgba(232,27,35,0.18)"]);
+
+  // Tinder Stamps Opacity
+  const demStampOpacity = useTransform(x, [0, -80], [0, 1]);
+  const repStampOpacity = useTransform(x, [0, 80], [0, 1]);
 
   const unlockedCount = trophies.unlocked?.length || 0;
   const unlockedSet = useMemo(() => new Set(trophies.unlocked || []), [trophies.unlocked]);
@@ -168,7 +132,7 @@ export default function Home() {
       setAllPoliticians(normalized);
       const shuffled = [...normalized].sort(() => 0.5 - Math.random());
       setCurrent(shuffled[0] || null);
-      setLoadingQueue(shuffled.slice(1, 11));
+      setLoadingQueue(shuffled.slice(1, 4));
       setStartTime(Date.now());
     });
   }, []);
@@ -194,14 +158,16 @@ export default function Home() {
     const next = loadingQueue[0];
     if (!next) return;
     setCurrent(next);
-    setLoadingQueue(prev => [...prev.slice(1), allPoliticians[Math.floor(Math.random() * allPoliticians.length)]].filter(Boolean));
+    setLoadingQueue(prev => {
+      const nextCard = allPoliticians[Math.floor(Math.random() * allPoliticians.length)];
+      return [...prev.slice(1), nextCard].filter(Boolean);
+    });
     setGameState("guessing"); setImgLoading(true); setStartTime(Date.now()); setLastResult(null); x.set(0);
   }, [loadingQueue, allPoliticians, x]);
 
   const handleGuess = useCallback((party) => {
     if (gameState !== "guessing" || !current) return;
     const isCorrect = party === current.party;
-    const isDem = current.party === "Democrat";
     const timeTaken = Date.now() - startTime;
     const nextStats = {
       ...stats,
@@ -209,10 +175,10 @@ export default function Home() {
       correct: isCorrect ? stats.correct + 1 : stats.correct,
       streak: isCorrect ? stats.streak + 1 : 0,
       bestStreak: isCorrect ? Math.max(stats.streak + 1, stats.bestStreak) : stats.bestStreak,
-      demGuesses: isDem ? stats.demGuesses + 1 : stats.demGuesses,
-      repGuesses: !isDem ? stats.repGuesses + 1 : stats.repGuesses,
-      demCorrect: isDem && isCorrect ? stats.demCorrect + 1 : stats.demCorrect,
-      repCorrect: !isDem && isCorrect ? stats.repCorrect + 1 : stats.repCorrect,
+      demGuesses: current.party === "Democrat" ? stats.demGuesses + 1 : stats.demGuesses,
+      repGuesses: current.party !== "Democrat" ? stats.repGuesses + 1 : stats.repGuesses,
+      demCorrect: current.party === "Democrat" && isCorrect ? stats.demCorrect + 1 : stats.demCorrect,
+      repCorrect: current.party !== "Democrat" && isCorrect ? stats.repCorrect + 1 : stats.repCorrect,
       totalTime: stats.totalTime + timeTaken,
     };
     setStats(nextStats); maybeUnlockTrophies(nextStats); setLastResult({ isCorrect, guessedParty: party, correctParty: current.party }); setGameState("revealed");
@@ -230,6 +196,12 @@ export default function Home() {
       </Head>
       <Analytics />
 
+      <div className="hidden pointer-events-none opacity-0 h-0 w-0 overflow-hidden">
+        {loadingQueue.map((p, i) => (
+          <Image key={`${p.name}-${i}`} src={p.imageUrl} alt="preload" width={400} height={500} priority={i === 0} />
+        ))}
+      </div>
+
       <div className="mx-auto max-w-4xl px-4 md:px-8 pt-4 pb-6 md:pt-8">
         <header className="mb-4 md:mb-8">
           <Glass className="px-4 py-3 md:px-5 md:py-4 rounded-[2rem] md:rounded-[2.25rem]">
@@ -239,8 +211,11 @@ export default function Home() {
                 <div className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Allen Wang</div>
               </div>
               <div className="flex items-center gap-2">
-                <IconButton onClick={() => setShowInfo(true)} ariaLabel="Info" className="h-9 w-9 md:h-11 md:w-11"><Info size={16} /></IconButton>
-                <button onClick={() => setShowStats(true)} className="h-9 md:h-11 rounded-xl md:rounded-2xl px-4 md:px-6 bg-black text-white shadow-sm active:scale-95 transition-transform">
+                <IconButton onClick={() => setShowInfo(true)} ariaLabel="Info"><Info size={16} /></IconButton>
+                <button
+                  onClick={() => setShowStats(true)}
+                  className="h-9 md:h-11 rounded-xl md:rounded-2xl px-4 md:px-6 bg-black text-white shadow-sm active:scale-95 transition-transform flex items-center justify-center"
+                >
                   <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em]">Stats</span>
                 </button>
               </div>
@@ -258,13 +233,32 @@ export default function Home() {
               onDragEnd={(e, i) => { if (i.offset.x < -80) handleGuess("Democrat"); else if (i.offset.x > 80) handleGuess("Republican"); }}
               className="relative w-full max-w-[560px] h-[68vh] md:h-[76vh] max-h-[760px] min-h-[500px] rounded-[2.5rem] overflow-hidden border border-white bg-white shadow-[0_24px_80px_rgba(0,0,0,0.14)]"
             >
-              {/* Swiping Tint Layer */}
+              {/* Swiping Tint Overlay */}
               <motion.div className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundColor: swipeBg }} />
+
+              {/* Tinder Stamps */}
+              {!revealed && (
+                <>
+                  <motion.div
+                    style={{ opacity: demStampOpacity }}
+                    className="absolute top-10 right-10 z-50 pointer-events-none border-4 border-[#00AEF3] text-[#00AEF3] px-4 py-1 rounded-xl font-black text-2xl md:text-4xl -rotate-12 uppercase tracking-tighter"
+                  >
+                    Democrat
+                  </motion.div>
+                  <motion.div
+                    style={{ opacity: repStampOpacity }}
+                    className="absolute top-10 left-10 z-50 pointer-events-none border-4 border-[#E81B23] text-[#E81B23] px-4 py-1 rounded-xl font-black text-2xl md:text-4xl rotate-12 uppercase tracking-tighter"
+                  >
+                    Republican
+                  </motion.div>
+                </>
+              )}
 
               <div className="relative z-10 h-[75%] md:h-[78%] bg-[#fbfbfb] overflow-hidden">
                 {imgLoading && <div className="absolute inset-0 flex items-center justify-center z-20 bg-white/70 backdrop-blur"><Loader2 className="animate-spin text-blue-500" size={34} /></div>}
-                <img src={current.imageUrl} onLoad={() => setImgLoading(false)} className={`absolute inset-0 w-full h-full object-contain p-4 transition-all duration-700 ${revealed ? "scale-110 blur-2xl brightness-[0.35]" : "scale-100"}`} alt="Portrait" />
-
+                <div className="relative w-full h-full p-4">
+                  <Image src={current.imageUrl} onLoadingComplete={() => setImgLoading(false)} alt="Politician" fill priority className={`object-contain transition-all duration-700 ${revealed ? "scale-110 blur-2xl brightness-[0.35]" : "scale-100"}`} />
+                </div>
                 {revealed && (
                   <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center p-6">
                     <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-4 md:mb-6 shadow-xl ${lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500"}`}>
@@ -289,7 +283,12 @@ export default function Home() {
                     <Trophy size={14} className="text-amber-600" />
                     <span className="text-[9px] font-black uppercase tracking-[0.18em]">{unlockedCount}/{TROPHIES.length}</span>
                   </button>
-                  <button onClick={() => { if(confirm("Reset stats?")) setStats({ correct: 0, total: 0, streak: 0, bestStreak: 0, demGuesses: 0, repGuesses: 0, demCorrect: 0, repCorrect: 0, totalTime: 0 }); }} className="h-8 rounded-xl px-3 text-[9px] font-black uppercase tracking-[0.18em] text-gray-400">Reset</button>
+                  <button
+                    onClick={() => { if(confirm("Reset stats?")) setStats({ correct: 0, total: 0, streak: 0, bestStreak: 0, demGuesses: 0, repGuesses: 0, demCorrect: 0, repCorrect: 0, totalTime: 0 }); }}
+                    className="h-8 rounded-xl px-3 bg-white border border-black/10 shadow-sm active:scale-95 transition-transform text-[9px] font-black uppercase tracking-[0.18em] text-gray-500"
+                  >
+                    Reset
+                  </button>
                 </div>
               </div>
             </motion.div>
@@ -297,7 +296,6 @@ export default function Home() {
         </main>
       </div>
 
-      {/* Modals & Screens */}
       <AnimatePresence>
         {showInfo && <Modal onClose={() => setShowInfo(false)} maxW="max-w-lg">
           <div className="flex justify-between items-start mb-6">
@@ -351,30 +349,17 @@ export default function Home() {
 
         {showWrapped && (
           <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-6" onClick={() => setShowWrapped(false)}>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="relative w-full max-w-sm aspect-[9/16] bg-gradient-to-b from-[#1c1c1e] to-black rounded-[3rem] p-10 flex flex-col border border-white/10"
-              onClick={e => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setShowWrapped(false)}
-                className="absolute top-8 right-8 h-10 w-10 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center z-[110] active:scale-90 transition-transform"
-              >
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative w-full max-w-sm aspect-[9/16] bg-gradient-to-b from-[#1c1c1e] to-black rounded-[3rem] p-10 flex flex-col border border-white/10" onClick={e => e.stopPropagation()}>
+              <button onClick={() => setShowWrapped(false)} className="absolute top-8 right-8 h-10 w-10 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center z-[110] active:scale-90 transition-transform">
                 <XCircle size={20} className="text-white" />
               </button>
-
               <div className="flex-grow pt-10 text-white">
                 <h3 className="text-5xl font-black leading-[0.85] tracking-tighter mb-10">POLITICAL<br/><span className="text-blue-500 italic font-serif text-4xl">wrapped</span></h3>
                 <div className="space-y-8">
-                  <div>
-                    <p className="text-[10px] font-black text-white/40 uppercase mb-2 tracking-widest">Identity</p>
-                    <p className="text-3xl font-black uppercase">{rank.title}</p>
-                  </div>
+                  <div><p className="text-[10px] font-black text-white/40 uppercase mb-2 tracking-widest">Identity</p><p className="text-3xl font-black uppercase">{rank.title}</p></div>
                   <div className="grid grid-cols-2 gap-y-8 gap-x-4">
                     <div><p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-widest">Accuracy</p><p className="text-3xl font-black">{accuracy}%</p></div>
                     <div><p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-widest">Streak</p><p className="text-3xl font-black text-blue-500">{stats.bestStreak}</p></div>
-                    {/* Added Trophies to Wrapped */}
                     <div className="col-span-2">
                       <p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-widest">Trophies Unlocked</p>
                       <p className="text-3xl font-black text-amber-500">{unlockedCount} / {TROPHIES.length}</p>
