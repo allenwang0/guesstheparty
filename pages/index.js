@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { Analytics } from "@vercel/analytics/react";
-import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation } from "framer-motion";
 import {
   Loader2,
   Check,
@@ -24,6 +24,45 @@ import {
   MoveHorizontal,
   MousePointer2
 } from "lucide-react";
+
+/* ----------------------------- Static Data (Fake It 'Til You Make It) ---------------------------- */
+
+// Simulating a Bell Curve distribution of player scores
+const FAKE_DISTRIBUTION = [
+  { range: '0-10', count: 2 },
+  { range: '10-20', count: 5 },
+  { range: '20-30', count: 12 },
+  { range: '30-40', count: 20 },
+  { range: '40-50', count: 45 }, // Peak difficulty
+  { range: '50-60', count: 60 },
+  { range: '60-70', count: 40 },
+  { range: '70-80', count: 25 },
+  { range: '80-90', count: 10 },
+  { range: '90-100', count: 3 }
+];
+
+// Helper to calculate percentile ranking
+function calculatePercentile(userAcc, data) {
+  if (!data || data.length === 0) return 0;
+
+  let totalPlayers = 0;
+  let playersBeaten = 0;
+
+  // Calculate total players
+  data.forEach(d => totalPlayers += d.count);
+
+  // Calculate how many people scored in buckets strictly lower than the user's bucket
+  const userBucketIndex = Math.min(Math.floor(userAcc / 10), 9);
+
+  data.forEach((d, i) => {
+    if (i < userBucketIndex) {
+      playersBeaten += d.count;
+    }
+  });
+
+  if (totalPlayers === 0) return 0;
+  return Math.round((playersBeaten / totalPlayers) * 100);
+}
 
 /* ----------------------------- Utility Components ---------------------------- */
 
@@ -91,6 +130,77 @@ const Toast = ({ message }) => (
     <span className="text-xs font-bold tracking-widest uppercase">{message}</span>
   </motion.div>
 );
+
+const Histogram = ({ userAccuracy }) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate API fetch delay for realism
+    const timer = setTimeout(() => {
+      // Process the raw counts into percentages for the UI
+      const total = FAKE_DISTRIBUTION.reduce((acc, curr) => acc + curr.count, 0);
+      const processed = FAKE_DISTRIBUTION.map(d => ({
+        ...d,
+        percentOfPlayers: Math.round((d.count / total) * 100)
+      }));
+      setData(processed);
+      setLoading(false);
+    }, 600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) return <div className="text-[10px] font-black uppercase tracking-widest text-gray-300 mt-6 text-center animate-pulse">Loading global benchmarks...</div>;
+
+  // Find the max value to normalize bar heights
+  const maxPercent = Math.max(...data.map(d => d.percentOfPlayers));
+
+  return (
+    <div className="w-full mt-6 pt-6 border-t border-gray-100">
+      <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
+        Global Player Distribution
+      </h3>
+
+      <div className="flex items-end justify-between h-32 gap-1 mb-2">
+        {data.map((bucket, i) => {
+          const rangeStart = i * 10;
+          const isUserBucket = userAccuracy >= rangeStart && userAccuracy < rangeStart + 10;
+          // Edge case for 100%
+          const isUser100 = userAccuracy === 100 && i === 9;
+
+          return (
+            <div key={i} className="flex flex-col items-center gap-1 flex-1 group relative">
+              {/* The Bar */}
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: `${(bucket.percentOfPlayers / maxPercent) * 100}%` }}
+                transition={{ duration: 0.5, delay: i * 0.05 }}
+                className={`w-full rounded-t-sm relative ${
+                  (isUserBucket || isUser100) ? 'bg-blue-500' : 'bg-gray-200'
+                }`}
+              >
+                {/* Tooltip on Hover */}
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-[9px] px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-10">
+                  {bucket.percentOfPlayers}%
+                </div>
+              </motion.div>
+
+              {/* X-Axis Label */}
+              <span className={`text-[8px] font-bold ${ (isUserBucket || isUser100) ? 'text-blue-600' : 'text-gray-300'}`}>
+                {i === 0 ? '0' : i === 9 ? '100' : ''}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Contextual Text */}
+      <div className="mt-3 text-center text-xs text-gray-500">
+        You performed better than <span className="font-bold text-black">{calculatePercentile(userAccuracy, FAKE_DISTRIBUTION)}%</span> of players.
+      </div>
+    </div>
+  );
+};
 
 function LoadingScreen({ message }) {
   return (
@@ -226,6 +336,7 @@ export default function Home() {
   const [showStats, setShowStats] = useState(false);
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
+  const shakeControls = useAnimation(); // For Screen Shake
 
   // Game State
   const [gameState, setGameState] = useState("guessing");
@@ -258,10 +369,15 @@ export default function Home() {
   const swipeBg = useTransform(
     x,
     [-150, 0, 150],
-    ["rgba(0,174,243,0.15)", "rgba(255,255,255,0)", "rgba(232,27,35,0.15)"]
+    ["rgba(59, 130, 246, 0.15)", "rgba(255,255,255,0)", "rgba(239, 68, 68, 0.15)"]
   );
+
+  // JUICINESS: Stamps now Scale + Fade
   const demStampOpacity = useTransform(x, [0, -60], [0, 1]);
+  const demStampScale = useTransform(x, [0, -60], [2, 1]); // Big to small slam effect
+
   const repStampOpacity = useTransform(x, [0, 60], [0, 1]);
+  const repStampScale = useTransform(x, [0, 60], [2, 1]); // Big to small slam effect
 
   // Derived Metrics
   const unlockedCount = trophies.unlocked?.length || 0;
@@ -451,6 +567,14 @@ export default function Home() {
         else navigator.vibrate([30, 50, 30]);
       }
 
+      // Screen Shake on Error
+      if (!isCorrect) {
+         shakeControls.start({
+             x: [0, -10, 10, -10, 10, 0],
+             transition: { duration: 0.4 }
+         });
+      }
+
       if (isCorrect && newStreak > 0 && newStreak % 10 === 0) {
         await fireConfettiSafe();
       }
@@ -497,10 +621,10 @@ export default function Home() {
       setLastResult(resultObj);
       setGameState("revealed");
 
-      const delay = isCorrect ? 650 : 1400;
+      const delay = isCorrect ? 400 : 1600;
       setTimeout(advanceToNext, delay);
     },
-    [gameState, current, stats, trophies, advanceToNext]
+    [gameState, current, stats, trophies, advanceToNext, shakeControls]
   );
 
   useEffect(() => {
@@ -647,7 +771,7 @@ export default function Home() {
                   drag={gameState === "guessing" ? "x" : false}
                   dragConstraints={{ left: 0, right: 0 }}
                   style={{ x, rotate }}
-                  animate={revealed && !lastResult?.isCorrect ? { x: [-5, 5, -5, 5, 0], transition: { duration: 0.4 } } : {}}
+                  animate={revealed && !lastResult?.isCorrect ? shakeControls : {}}
                   onDragEnd={(e, i) => {
                     if (i.offset.x < -80) handleGuess("Democrat");
                     else if (i.offset.x > 80) handleGuess("Republican");
@@ -659,13 +783,13 @@ export default function Home() {
                   {!revealed && (
                     <>
                       <motion.div
-                        style={{ opacity: demStampOpacity }}
+                        style={{ opacity: demStampOpacity, scale: demStampScale }}
                         className="absolute top-8 right-8 z-20 pointer-events-none border-4 border-blue-500 text-blue-500 px-4 py-1 rounded-xl font-black text-3xl -rotate-12 uppercase tracking-tighter"
                       >
                         Dem
                       </motion.div>
                       <motion.div
-                        style={{ opacity: repStampOpacity }}
+                        style={{ opacity: repStampOpacity, scale: repStampScale }}
                         className="absolute top-8 left-8 z-20 pointer-events-none border-4 border-red-500 text-red-500 px-4 py-1 rounded-xl font-black text-3xl rotate-12 uppercase tracking-tighter"
                       >
                         Rep
@@ -687,29 +811,29 @@ export default function Home() {
                       fill
                       priority
                       className={`object-contain transition-all duration-500 ${
-                        revealed ? "blur-md brightness-[0.4] scale-105" : "scale-100"
+                        revealed ? "scale-105" : "scale-100"
                       }`}
                     />
 
                     {revealed && (
                       <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="absolute inset-0 z-40 flex flex-col items-center justify-center text-center p-6 text-white"
+                        initial={{ opacity: 0, y: 100 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute inset-x-0 bottom-0 z-40 flex flex-col items-center justify-end text-center pb-8 pt-32 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white"
                       >
                         <div
-                          className={`w-16 h-16 rounded-3xl flex items-center justify-center mb-4 shadow-xl ${
+                          className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-3 shadow-lg ${
                             lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500"
                           }`}
                         >
-                          {lastResult?.isCorrect ? <Check size={36} strokeWidth={4} /> : <XCircle size={36} strokeWidth={3} />}
+                          {lastResult?.isCorrect ? <Check size={32} strokeWidth={4} /> : <XCircle size={32} strokeWidth={3} />}
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="space-y-1">
                           <div className="text-white/70 text-[10px] font-black uppercase tracking-[0.25em]">
                             {formatOffice(current, true)}
                           </div>
-                          <h2 className="text-3xl font-black uppercase tracking-tighter leading-none">{current.name}</h2>
+                          <h2 className="text-3xl font-black uppercase tracking-tighter leading-none px-4">{current.name}</h2>
 
                           <div className="flex items-center justify-center gap-2 pt-2">
                             <Pill className={`${current.party === "Democrat" ? "bg-blue-500" : "bg-red-500"} text-white border-none`}>
@@ -854,12 +978,15 @@ export default function Home() {
               </div>
             </div>
 
+            {/* HISTOGRAM ADDED HERE */}
+            <Histogram userAccuracy={accuracy} />
+
             <button
               onClick={() => {
                 setShowStats(false);
                 setShowWrapped(true);
               }}
-              className="w-full h-14 rounded-2xl bg-black text-white flex items-center justify-center gap-2 active:scale-95 transition-transform"
+              className="w-full h-14 mt-6 rounded-2xl bg-black text-white flex items-center justify-center gap-2 active:scale-95 transition-transform"
             >
               <Star size={16} className="text-yellow-400 fill-yellow-400" />
               <span className="font-black uppercase tracking-[0.2em] text-xs">Generate Wrapped</span>
