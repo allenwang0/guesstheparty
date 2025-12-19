@@ -26,7 +26,6 @@ import {
 } from "lucide-react";
 
 /* ----------------------------- Static Data ---------------------------- */
-
 // Fallback data so the chart is never empty
 const FAKE_DISTRIBUTION = [
   { range: '0-10', count: 2, percentOfPlayers: 1 },
@@ -42,11 +41,9 @@ const FAKE_DISTRIBUTION = [
 ];
 
 /* ----------------------------- Utility Helper ---------------------------- */
-
 // Helper to calculate percentile ranking based on dynamic data
 function calculatePercentile(userAcc, data) {
   if (!data || data.length === 0) return 0;
-
   let totalPlayers = 0;
   let playersStrictlyBelow = 0;
   let playersInSameBucket = 0;
@@ -71,12 +68,10 @@ function calculatePercentile(userAcc, data) {
   // SMOOTHED LOGIC:
   // We count all players strictly below you, PLUS half the players in your own bucket.
   const weightedScore = playersStrictlyBelow + (playersInSameBucket * 0.5);
-
   return Math.round((weightedScore / totalPlayers) * 100);
 }
 
 /* ----------------------------- Utility Components ---------------------------- */
-
 const Glass = ({ children, className = "" }) => (
   <div
     className={[
@@ -143,14 +138,12 @@ const Toast = ({ message }) => (
 );
 
 /* ----------------------------- Histogram Component ---------------------------- */
-
 const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubmit = false }) => {
   // 1. Initialize with FAKE_DISTRIBUTION so the chart is visible immediately
   const [data, setData] = useState(FAKE_DISTRIBUTION);
 
   useEffect(() => {
     let isMounted = true;
-
     const syncStats = async () => {
       try {
         // Only submit if allowed and the user has actually played
@@ -161,14 +154,11 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
             body: JSON.stringify({ accuracy: userAccuracy }),
           });
         }
-
         const response = await fetch('/api/get-distribution');
         const result = await response.json();
-
         if (isMounted && result.distribution) {
           // Check if we actually have data counts
           const totalRealPlayers = result.distribution.reduce((acc, curr) => acc + curr.count, 0);
-
           if (totalRealPlayers > 0) {
             setData(result.distribution);
           }
@@ -177,9 +167,7 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
         console.error("Failed to sync stats", error);
       }
     };
-
     syncStats();
-
     return () => { isMounted = false; };
   }, [userAccuracy, totalGamesPlayed, disableSubmit]);
 
@@ -193,6 +181,7 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
         Global Player Distribution
       </h3>
 
+      {/* Container: h-32 */}
       <div className="flex items-end justify-between h-32 gap-1 mb-2">
         {data.map((bucket, i) => {
           const rangeStart = i * 10;
@@ -208,10 +197,15 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
           const displayPercent = totalCount > 0 ? Math.round((bucket.count / totalCount) * 100) : 0;
 
           return (
-            <div key={i} className="flex flex-col items-center gap-1 flex-1 group relative">
+            <div
+              key={i}
+              // FIX APPLIED HERE: Added 'h-full' and 'justify-end'
+              className="h-full flex flex-col justify-end items-center gap-1 flex-1 group relative"
+            >
               {/* The Bar */}
               <motion.div
                 initial={{ height: 0 }}
+                // Percentage height now works because parent is h-full
                 animate={{ height: `${barHeight}%` }}
                 transition={{ duration: 0.5, delay: i * 0.05 }}
                 className={`w-full rounded-t-sm relative ${
@@ -248,7 +242,6 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
 };
 
 /* ----------------------------- Helper Screens ---------------------------- */
-
 function LoadingScreen({ message }) {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F5F5F7] gap-4">
@@ -282,7 +275,6 @@ function Modal({ children, onClose }) {
       };
     }
   }, []);
-
   return (
     <div
       className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 md:p-6"
@@ -302,7 +294,6 @@ function Modal({ children, onClose }) {
 }
 
 /* -------------------------------- Logic & Data ------------------------------ */
-
 const TROPHY_KEY = "partyTrophies_v3";
 const INTRO_KEY = "partyHasSeenIntro_v3";
 const STATS_KEY = "partyStats_v3";
@@ -364,7 +355,6 @@ async function fireConfettiSafe() {
 }
 
 /* ----------------------------- Main Application -------------------------- */
-
 export default function Home() {
   const [allPoliticians, setAllPoliticians] = useState([]);
   const [current, setCurrent] = useState(null);
@@ -407,7 +397,6 @@ export default function Home() {
     demTime: 0,
     repTime: 0,
   });
-
   const [trophies, setTrophies] = useState({ unlocked: [], firstUnlockedAt: {} });
 
   // Motion
@@ -422,13 +411,13 @@ export default function Home() {
   // JUICINESS: Stamps now Scale + Fade
   const demStampOpacity = useTransform(x, [0, -60], [0, 1]);
   const demStampScale = useTransform(x, [0, -60], [2, 1]); // Big to small slam effect
-
   const repStampOpacity = useTransform(x, [0, 60], [0, 1]);
   const repStampScale = useTransform(x, [0, 60], [2, 1]); // Big to small slam effect
 
   // Derived Metrics
   const unlockedCount = trophies.unlocked?.length || 0;
   const unlockedSet = useMemo(() => new Set(trophies.unlocked || []), [trophies.unlocked]);
+
   const accuracy = useMemo(
     () => (stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100)),
     [stats]
@@ -458,7 +447,6 @@ export default function Home() {
   const bestGuessedParty = useMemo(() => {
     const demAcc = stats.demGuesses > 0 ? (stats.demCorrect / stats.demGuesses) : 0;
     const repAcc = stats.repGuesses > 0 ? (stats.repCorrect / stats.repGuesses) : 0;
-
     if (demAcc >= repAcc) {
       return {
         name: "Democrats",
@@ -477,7 +465,6 @@ export default function Home() {
   }, [stats]);
 
   const revealed = gameState === "revealed";
-
   const bgColor = useMemo(() => {
     if (revealed && lastResult) {
       if (lastResult.correctParty === "Democrat") return "bg-blue-50/40";
@@ -503,34 +490,28 @@ export default function Home() {
   // --- Initialization ---
   useEffect(() => {
     setHasMounted(true);
-
     try {
       const savedStats = localStorage.getItem(STATS_KEY);
       if (savedStats) setStats((prev) => ({ ...prev, ...JSON.parse(savedStats) }));
     } catch {}
-
     try {
       const savedTrophies = localStorage.getItem(TROPHY_KEY);
       if (savedTrophies) setTrophies((prev) => ({ ...prev, ...JSON.parse(savedTrophies) }));
     } catch {}
-
     try {
       const hasSeenIntro = localStorage.getItem(INTRO_KEY);
       if (!hasSeenIntro) setShowInfo(true);
     } catch {
       setShowInfo(true);
     }
-
     (async () => {
       try {
         const res = await fetch("/politicians.json", { cache: "no-store" });
         if (!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
         const data = await res.json();
-
         if (!Array.isArray(data)) {
           throw new Error("politicians.json must be a JSON array.");
         }
-
         const normalized = data.map((p, idx) => {
           const imageUrl = p?.img || p?.image_url || p?.imageUrl;
           const name = p?.name || `Unknown #${idx + 1}`;
@@ -538,10 +519,8 @@ export default function Home() {
           const id = `${name}-${party}-${p?.state || ""}-${idx}`;
           return { ...p, imageUrl, id };
         });
-
         const bad = normalized.find((p) => !p.imageUrl || !p.party || !p.name);
         if (bad) throw new Error("Every entry must include name, party, and img.");
-
         setAllPoliticians(normalized);
         const shuffled = [...normalized].sort(() => 0.5 - Math.random());
         setCurrent(shuffled[0]);
@@ -552,7 +531,6 @@ export default function Home() {
         setFatalError(e?.message || "Failed to load politicians.");
       }
     })();
-
     if (containerRef.current) containerRef.current.focus();
   }, []);
 
@@ -572,7 +550,6 @@ export default function Home() {
 
   const advanceToNext = useCallback(() => {
     if (allPoliticians.length === 0) return;
-
     setLoadingQueue((prev) => {
       const nextCard = prev[0];
       let candidate = allPoliticians[Math.floor(Math.random() * allPoliticians.length)];
@@ -589,7 +566,6 @@ export default function Home() {
       setCurrent(nextCard);
       return [...prev.slice(1), candidate].filter(Boolean);
     });
-
     setGameState("guessing");
     setImgLoading(true);
     startTimeRef.current = Date.now();
@@ -600,7 +576,6 @@ export default function Home() {
   const handleGuess = useCallback(
     async (guessedParty) => {
       if (gameState !== "guessing" || !current) return;
-
       const actualParty = current.party;
       const isCorrect = guessedParty === actualParty;
       const now = Date.now();
@@ -648,7 +623,6 @@ export default function Home() {
 
       const nextUnlocked = new Set(trophies.unlocked || []);
       let unlockedSomething = false;
-
       for (const t of TROPHIES) {
         if (!nextUnlocked.has(t.id) && t.check({ stats: nextStats, lastResult: resultObj })) {
           nextUnlocked.add(t.id);
@@ -687,7 +661,6 @@ export default function Home() {
         handleGuess("Republican");
       }
     };
-
     if (typeof window !== "undefined") {
       window.addEventListener("keydown", onKeyDown);
       return () => window.removeEventListener("keydown", onKeyDown);
@@ -749,9 +722,7 @@ export default function Home() {
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇺🇸</text></svg>"
         />
       </Head>
-
       <Analytics />
-
       <div
         className="absolute inset-0 opacity-40 pointer-events-none mix-blend-soft-light"
         style={{
@@ -815,7 +786,6 @@ export default function Home() {
                   <Image src={loadingQueue[0].imageUrl} fill alt="preload" sizes="400px" priority />
                 </div>
               )}
-
               <AnimatePresence mode="wait">
                 <motion.div
                   key={current.id}
@@ -854,7 +824,6 @@ export default function Home() {
                         <Loader2 className="animate-spin text-black/20" size={32} />
                       </div>
                     )}
-
                     <Image
                       src={current.imageUrl}
                       onLoadingComplete={() => setImgLoading(false)}
@@ -865,7 +834,6 @@ export default function Home() {
                         revealed ? "scale-105" : "scale-100"
                       }`}
                     />
-
                     {revealed && (
                       <motion.div
                         initial={{ opacity: 0, y: 100 }}
@@ -879,18 +847,15 @@ export default function Home() {
                         >
                           {lastResult?.isCorrect ? <Check size={32} strokeWidth={4} /> : <XCircle size={32} strokeWidth={3} />}
                         </div>
-
                         <div className="space-y-1">
                           <div className="text-white/70 text-[10px] font-black uppercase tracking-[0.25em]">
                             {formatOffice(current, true)}
                           </div>
                           <h2 className="text-3xl font-black uppercase tracking-tighter leading-none px-4">{current.name}</h2>
-
                           <div className="flex items-center justify-center gap-2 pt-2">
                             <Pill className={`${current.party === "Democrat" ? "bg-blue-500" : "bg-red-500"} text-white border-none`}>
                               {current.party}
                             </Pill>
-
                             {lastResult?.isFast && lastResult?.isCorrect && (
                               <div className="flex items-center gap-1 px-2 py-1 bg-yellow-400 text-yellow-900 rounded-full text-[9px] font-black uppercase tracking-widest">
                                 <Zap size={10} className="fill-yellow-900" /> Fast
@@ -920,7 +885,6 @@ export default function Home() {
                         Republican
                       </button>
                     </div>
-
                     <div className="flex items-center justify-between mt-2">
                       <button
                         onClick={() => setShowTrophyCase(true)}
@@ -953,12 +917,10 @@ export default function Home() {
               <h3 className="text-xl font-black uppercase tracking-tight leading-none">
                 Can you tell political leanings from a picture?
               </h3>
-
               <p className="text-sm font-medium text-gray-600 max-w-[260px] mx-auto leading-relaxed">
                 Swipe or use arrow keys to guess.
                 <br />
               </p>
-
               <div className="grid grid-cols-2 gap-4">
                  {/* Left Tile */}
                  <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex flex-col items-center gap-2">
@@ -970,7 +932,6 @@ export default function Home() {
                       <div className="text-sm font-black uppercase text-blue-600">Democrat</div>
                     </div>
                  </div>
-
                  {/* Right Tile */}
                  <div className="bg-red-50/50 border border-red-100 rounded-2xl p-4 flex flex-col items-center gap-2">
                     <div className="h-8 w-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-sm">
@@ -982,14 +943,12 @@ export default function Home() {
                     </div>
                  </div>
               </div>
-
               <button
                 onClick={closeInfoModal}
                 className="w-full py-4 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs active:scale-95 transition-transform shadow-xl"
               >
                 Let's Play
               </button>
-
             </div>
           </Modal>
         )}
@@ -1007,7 +966,6 @@ export default function Home() {
                 <XCircle size={20} />
               </IconButton>
             </div>
-
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="col-span-2 bg-white rounded-3xl border border-gray-100 p-5 shadow-sm">
                 <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Total Accuracy</div>
@@ -1017,19 +975,16 @@ export default function Home() {
                   <ProgressBar label="Republican" value={stats.repCorrect} total={stats.repGuesses} color="bg-red-500" />
                 </div>
               </div>
-
               <div className="bg-white rounded-3xl border border-gray-100 p-4 text-center shadow-sm">
                 <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Streak</div>
                 <div className="text-2xl font-black">{stats.streak}</div>
               </div>
-
               <div className="bg-white rounded-3xl border border-gray-100 p-4 text-center shadow-sm">
                 <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Median Speed</div>
                 <div className="text-2xl font-black">{medianSpeed}s</div>
               </div>
             </div>
 
-            {/* HISTOGRAM ADDED HERE - Default mode */}
             <Histogram userAccuracy={accuracy} totalGamesPlayed={stats.total} />
 
             <button
@@ -1054,7 +1009,6 @@ export default function Home() {
                   <XCircle size={20} />
                 </IconButton>
               </div>
-
               <div className="flex items-center gap-3">
                 <div className="flex-grow h-2 bg-gray-100 rounded-full overflow-hidden">
                   <div
@@ -1067,7 +1021,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
             <div className="grid grid-cols-1 gap-2">
               {TROPHIES.map((t) => {
                 const unlocked = unlockedSet.has(t.id);
@@ -1114,7 +1067,6 @@ export default function Home() {
                     <XCircle size={20} />
                   </button>
                 </div>
-
                 <h3 className="text-3xl font-black tracking-tighter uppercase leading-none">
                   My Party <span className="text-blue-400">IQ</span>
                 </h3>
@@ -1152,7 +1104,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* HISTOGRAM ADDED HERE - Dark mode enabled & submission disabled */}
+                  {/* HISTOGRAM - Dark Mode */}
                   <Histogram
                     userAccuracy={accuracy}
                     totalGamesPlayed={stats.total}
