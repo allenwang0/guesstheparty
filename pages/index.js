@@ -1,4 +1,3 @@
-// pages/index.js
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Head from "next/head";
 import { Analytics } from "@vercel/analytics/react";
@@ -82,123 +81,28 @@ const IconButton = ({ onClick, ariaLabel, children, className = "" }) => (
 const TROPHY_KEY = "partyTrophies_v1";
 
 const TROPHIES = [
-  {
-    id: "first_correct",
-    title: "First Blood",
-    desc: "First correct guess.",
-    icon: <Star size={18} />,
-    tier: "bronze",
-    check: ({ stats }) => (stats.correct || 0) >= 1,
-  },
-  {
-    id: "streak_5",
-    title: "Warm Streak",
-    desc: "Best streak ≥ 5.",
-    icon: <Flame size={18} />,
-    tier: "bronze",
-    check: ({ stats }) => (stats.bestStreak || 0) >= 5,
-  },
-  {
-    id: "streak_10",
-    title: "Campaign Staff",
-    desc: "Best streak ≥ 10.",
-    icon: <Award size={18} />,
-    tier: "silver",
-    check: ({ stats }) => (stats.bestStreak || 0) >= 10,
-  },
-  {
-    id: "streak_25",
-    title: "Party Operator",
-    desc: "Best streak ≥ 25.",
-    icon: <ShieldCheck size={18} />,
-    tier: "gold",
-    check: ({ stats }) => (stats.bestStreak || 0) >= 25,
-  },
-  {
-    id: "streak_50",
-    title: "Floor Leader",
-    desc: "Best streak ≥ 50.",
-    icon: <Trophy size={18} />,
-    tier: "platinum",
-    check: ({ stats }) => (stats.bestStreak || 0) >= 50,
-  },
-  {
-    id: "seen_50",
-    title: "Caucus Regular",
-    desc: "Seen ≥ 50.",
-    icon: <Target size={18} />,
-    tier: "bronze",
-    check: ({ stats }) => (stats.total || 0) >= 50,
-  },
-  {
-    id: "seen_200",
-    title: "Capitol Fixture",
-    desc: "Seen ≥ 200.",
-    icon: <Trophy size={18} />,
-    tier: "gold",
-    check: ({ stats }) => (stats.total || 0) >= 200,
-  },
-  {
-    id: "accuracy_80_50",
-    title: "Solid Read",
-    desc: "≥80% accuracy with ≥50 seen.",
-    icon: <Award size={18} />,
-    tier: "silver",
-    check: ({ stats }) => {
-      const total = stats.total || 0;
-      const acc = total ? (stats.correct || 0) / total : 0;
-      return total >= 50 && acc >= 0.8;
-    },
-  },
-  {
-    id: "accuracy_90_100",
-    title: "Polling Wizard",
-    desc: "≥90% accuracy with ≥100 seen.",
-    icon: <Trophy size={18} />,
-    tier: "platinum",
-    check: ({ stats }) => {
-      const total = stats.total || 0;
-      const acc = total ? (stats.correct || 0) / total : 0;
-      return total >= 100 && acc >= 0.9;
-    },
-  },
-  {
-    id: "speed_2s_50",
-    title: "Rapid Fire",
-    desc: "Avg <2.0s with ≥50 seen.",
-    icon: <Zap size={18} />,
-    tier: "gold",
-    check: ({ stats }) => {
-      const total = stats.total || 0;
-      const avg = total ? (stats.totalTime || 0) / total / 1000 : Infinity;
-      return total >= 50 && avg < 2.0;
-    },
-  },
+  { id: "first_correct", title: "First Blood", desc: "First correct guess.", icon: <Star size={18} />, tier: "bronze", check: ({ stats }) => (stats.correct || 0) >= 1 },
+  { id: "streak_5", title: "Warm Streak", desc: "Best streak ≥ 5.", icon: <Flame size={18} />, tier: "bronze", check: ({ stats }) => (stats.bestStreak || 0) >= 5 },
+  { id: "streak_10", title: "Campaign Staff", desc: "Best streak ≥ 10.", icon: <Award size={18} />, tier: "silver", check: ({ stats }) => (stats.bestStreak || 0) >= 10 },
+  { id: "streak_25", title: "Party Operator", desc: "Best streak ≥ 25.", icon: <ShieldCheck size={18} />, tier: "gold", check: ({ stats }) => (stats.bestStreak || 0) >= 25 },
+  { id: "streak_50", title: "Floor Leader", desc: "Best streak ≥ 50.", icon: <Trophy size={18} />, tier: "platinum", check: ({ stats }) => (stats.bestStreak || 0) >= 50 },
+  { id: "seen_50", title: "Caucus Regular", desc: "Seen ≥ 50.", icon: <Target size={18} />, tier: "bronze", check: ({ stats }) => (stats.total || 0) >= 50 },
+  { id: "seen_200", title: "Capitol Fixture", desc: "Seen ≥ 200.", icon: <Trophy size={18} />, tier: "gold", check: ({ stats }) => (stats.total || 0) >= 200 },
+  { id: "accuracy_80_50", title: "Solid Read", desc: "≥80% accuracy with ≥50 seen.", icon: <Award size={18} />, tier: "silver", check: ({ stats }) => { const t = stats.total || 0; return t >= 50 && (stats.correct / t) >= 0.8; } },
+  { id: "accuracy_90_100", title: "Polling Wizard", desc: "≥90% accuracy with ≥100 seen.", icon: <Trophy size={18} />, tier: "platinum", check: ({ stats }) => { const t = stats.total || 0; return t >= 100 && (stats.correct / t) >= 0.9; } },
+  { id: "speed_2s_50", title: "Rapid Fire", desc: "Avg <2.0s with ≥50 seen.", icon: <Zap size={18} />, tier: "gold", check: ({ stats }) => { const t = stats.total || 0; return t >= 50 && (stats.totalTime / t / 1000) < 2.0; } },
 ];
 
 function tierStyles(tier) {
   switch (tier) {
-    case "bronze":
-      return "bg-amber-50 text-amber-800 border-amber-200";
-    case "silver":
-      return "bg-slate-50 text-slate-800 border-slate-200";
-    case "gold":
-      return "bg-yellow-50 text-yellow-900 border-yellow-200";
-    case "platinum":
-      return "bg-indigo-50 text-indigo-800 border-indigo-200";
-    default:
-      return "bg-gray-50 text-gray-700 border-gray-200";
+    case "bronze": return "bg-amber-50 text-amber-800 border-amber-200";
+    case "silver": return "bg-slate-50 text-slate-800 border-slate-200";
+    case "gold": return "bg-yellow-50 text-yellow-900 border-yellow-200";
+    case "platinum": return "bg-indigo-50 text-indigo-800 border-indigo-200";
+    default: return "bg-gray-50 text-gray-700 border-gray-200";
   }
 }
 
-/* ------------------------------ Office label ----------------------------- */
-/**
- * REQUIRED: derive role label ONLY from politicians.json `category` field:
- *  - "house"  -> "Representative"
- *  - "senate" -> "Senator"
- *  - "gov"    -> "Governor"
- * Anything else -> "Public Official" (data issue)
- */
 function formatOffice(p) {
   const c = (p?.category ?? "").toString().trim().toLowerCase();
   if (c === "house") return "Representative";
@@ -214,54 +118,26 @@ export default function Home() {
   const [current, setCurrent] = useState(null);
   const [loadingQueue, setLoadingQueue] = useState([]);
   const [hasMounted, setHasMounted] = useState(false);
-
-  const [stats, setStats] = useState({
-    correct: 0,
-    total: 0,
-    streak: 0,
-    bestStreak: 0,
-    demGuesses: 0,
-    repGuesses: 0,
-    demCorrect: 0,
-    repCorrect: 0,
-    totalTime: 0,
-  });
-
-  // trophies persist even if you reset stats
+  const [stats, setStats] = useState({ correct: 0, total: 0, streak: 0, bestStreak: 0, demGuesses: 0, repGuesses: 0, demCorrect: 0, repCorrect: 0, totalTime: 0 });
   const [trophies, setTrophies] = useState({ unlocked: [], firstUnlockedAt: {} });
-
   const [gameState, setGameState] = useState("guessing");
   const [imgLoading, setImgLoading] = useState(true);
   const [startTime, setStartTime] = useState(null);
-
   const [showInfo, setShowInfo] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
-
-  const [lastResult, setLastResult] = useState(null); // { isCorrect, guessedParty, correctParty }
+  const [lastResult, setLastResult] = useState(null);
   const revealTimeoutRef = useRef(null);
 
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-220, 220], [-10, 10]);
-  const swipeBg = useTransform(
-    x,
-    [-160, 0, 160],
-    ["rgba(0,174,243,0.10)", "rgba(0,0,0,0)", "rgba(232,27,35,0.10)"]
-  );
+  const swipeBg = useTransform(x, [-160, 0, 160], ["rgba(0,174,243,0.10)", "rgba(0,0,0,0)", "rgba(232,27,35,0.10)"]);
 
   const unlockedCount = trophies.unlocked?.length || 0;
   const unlockedSet = useMemo(() => new Set(trophies.unlocked || []), [trophies.unlocked]);
-
-  const accuracy = useMemo(() => {
-    const total = stats.total || 0;
-    return total === 0 ? 0 : Math.round(((stats.correct || 0) / total) * 100);
-  }, [stats]);
-
-  const avgSpeed = useMemo(() => {
-    const total = stats.total || 0;
-    return total === 0 ? 0 : ((stats.totalTime || 0) / total / 1000).toFixed(1);
-  }, [stats]);
+  const accuracy = useMemo(() => (stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100)), [stats]);
+  const avgSpeed = useMemo(() => (stats.total === 0 ? 0 : (stats.totalTime / stats.total / 1000).toFixed(1)), [stats]);
 
   const rank = useMemo(() => {
     const s = stats.bestStreak || 0;
@@ -275,240 +151,98 @@ export default function Home() {
 
   const revealed = gameState === "revealed";
 
-  /* ----------------------------- Load + Persist --------------------------- */
-
   useEffect(() => {
     setHasMounted(true);
-
     const savedStats = localStorage.getItem("partyStats");
-    if (savedStats) {
-      try {
-        setStats((prev) => ({ ...prev, ...JSON.parse(savedStats) }));
-      } catch {}
-    }
-
+    if (savedStats) try { setStats(prev => ({ ...prev, ...JSON.parse(savedStats) })); } catch {}
     const savedTrophies = localStorage.getItem(TROPHY_KEY);
-    if (savedTrophies) {
-      try {
-        setTrophies((prev) => ({ ...prev, ...JSON.parse(savedTrophies) }));
-      } catch {}
-    }
+    if (savedTrophies) try { setTrophies(prev => ({ ...prev, ...JSON.parse(savedTrophies) })); } catch {}
 
-    fetch("/politicians.json")
-      .then((res) => res.json())
-      .then((data) => {
-        const normalized = (data || []).map((p) => ({
-          ...p,
-          imageUrl: p.img || p.image_url,
-        }));
-
-        setAllPoliticians(normalized);
-
-        const shuffled = [...normalized].sort(() => 0.5 - Math.random());
-        setCurrent(shuffled[0] || null);
-        setLoadingQueue(shuffled.slice(1, 11));
-        setStartTime(Date.now());
-      });
-  }, []);
-
-  useEffect(() => {
-    if (!hasMounted) return;
-    localStorage.setItem("partyStats", JSON.stringify(stats));
-  }, [stats, hasMounted]);
-
-  useEffect(() => {
-    if (!hasMounted) return;
-    localStorage.setItem(TROPHY_KEY, JSON.stringify(trophies));
-  }, [trophies, hasMounted]);
-
-  useEffect(() => {
-    if (!loadingQueue?.length) return;
-    loadingQueue.forEach((p) => {
-      if (!p?.imageUrl) return;
-      const img = new Image();
-      img.src = p.imageUrl;
+    fetch("/politicians.json").then(res => res.json()).then(data => {
+      const normalized = (data || []).map(p => ({ ...p, imageUrl: p.img || p.image_url }));
+      setAllPoliticians(normalized);
+      const shuffled = [...normalized].sort(() => 0.5 - Math.random());
+      setCurrent(shuffled[0] || null);
+      setLoadingQueue(shuffled.slice(1, 11));
+      setStartTime(Date.now());
     });
-  }, [loadingQueue]);
-
-  useEffect(() => {
-    return () => {
-      if (revealTimeoutRef.current) clearTimeout(revealTimeoutRef.current);
-    };
   }, []);
 
-  /* ----------------------------- Trophy unlock ---------------------------- */
+  useEffect(() => { if (hasMounted) localStorage.setItem("partyStats", JSON.stringify(stats)); }, [stats, hasMounted]);
+  useEffect(() => { if (hasMounted) localStorage.setItem(TROPHY_KEY, JSON.stringify(trophies)); }, [trophies, hasMounted]);
 
-  const maybeUnlockTrophies = useCallback(
-    (nextStats) => {
-      const nextUnlocked = new Set(trophies.unlocked || []);
-      const firstUnlockedAt = { ...(trophies.firstUnlockedAt || {}) };
-      const now = Date.now();
-      let changed = false;
-
-      for (const t of TROPHIES) {
-        if (nextUnlocked.has(t.id)) continue;
-        if (t.check({ stats: nextStats })) {
-          nextUnlocked.add(t.id);
-          firstUnlockedAt[t.id] = now;
-          changed = true;
-        }
+  const maybeUnlockTrophies = useCallback((nextStats) => {
+    const nextUnlocked = new Set(trophies.unlocked || []);
+    const firstUnlockedAt = { ...(trophies.firstUnlockedAt || {}) };
+    let changed = false;
+    TROPHIES.forEach(t => {
+      if (!nextUnlocked.has(t.id) && t.check({ stats: nextStats })) {
+        nextUnlocked.add(t.id);
+        firstUnlockedAt[t.id] = Date.now();
+        changed = true;
       }
-
-      if (changed) setTrophies({ unlocked: Array.from(nextUnlocked), firstUnlockedAt });
-    },
-    [trophies.unlocked, trophies.firstUnlockedAt]
-  );
-
-  /* ------------------------------- Game logic ----------------------------- */
+    });
+    if (changed) setTrophies({ unlocked: Array.from(nextUnlocked), firstUnlockedAt });
+  }, [trophies]);
 
   const advanceToNext = useCallback(() => {
     const next = loadingQueue[0];
     if (!next) return;
-
     setCurrent(next);
-    setLoadingQueue((prev) => {
-      const tail = prev.slice(1);
-      const random =
-        allPoliticians.length > 0
-          ? allPoliticians[Math.floor(Math.random() * allPoliticians.length)]
-          : null;
-      return [...tail, random].filter(Boolean);
-    });
-
-    setGameState("guessing");
-    setImgLoading(true);
-    setStartTime(Date.now());
-    setLastResult(null);
-    x.set(0);
+    setLoadingQueue(prev => [...prev.slice(1), allPoliticians[Math.floor(Math.random() * allPoliticians.length)]].filter(Boolean));
+    setGameState("guessing"); setImgLoading(true); setStartTime(Date.now()); setLastResult(null); x.set(0);
   }, [loadingQueue, allPoliticians, x]);
 
-  const handleGuess = useCallback(
-    (party) => {
-      if (gameState !== "guessing" || !current) return;
-
-      const correctParty = current.party;
-      const isCorrect = party === correctParty;
-      const isDem = correctParty === "Democrat";
-      const timeTaken = Date.now() - (startTime || Date.now());
-
-      const nextStats = (() => {
-        const s = stats;
-        const nextStreak = isCorrect ? (s.streak || 0) + 1 : 0;
-        const nextBest = isCorrect ? Math.max(nextStreak, s.bestStreak || 0) : s.bestStreak || 0;
-
-        return {
-          ...s,
-          total: (s.total || 0) + 1,
-          correct: isCorrect ? (s.correct || 0) + 1 : s.correct || 0,
-          streak: nextStreak,
-          bestStreak: nextBest,
-          demGuesses: isDem ? (s.demGuesses || 0) + 1 : s.demGuesses || 0,
-          repGuesses: !isDem ? (s.repGuesses || 0) + 1 : s.repGuesses || 0,
-          demCorrect: isDem && isCorrect ? (s.demCorrect || 0) + 1 : s.demCorrect || 0,
-          repCorrect: !isDem && isCorrect ? (s.repCorrect || 0) + 1 : s.repCorrect || 0,
-          totalTime: (s.totalTime || 0) + timeTaken,
-        };
-      })();
-
-      setStats(nextStats);
-      maybeUnlockTrophies(nextStats);
-
-      setLastResult({ isCorrect, guessedParty: party, correctParty });
-      setGameState("revealed");
-
-      if (revealTimeoutRef.current) clearTimeout(revealTimeoutRef.current);
-      revealTimeoutRef.current = setTimeout(() => advanceToNext(), 1100);
-    },
-    [gameState, current, startTime, stats, maybeUnlockTrophies, advanceToNext]
-  );
-
-  // Keyboard controls (no on-screen hint text)
-  useEffect(() => {
-    const onKeyDown = (e) => {
-      if (showStats || showWrapped || showInfo || showTrophyCase) return;
-      if (gameState !== "guessing") return;
-
-      if (e.key === "ArrowLeft") handleGuess("Democrat");
-      if (e.key === "ArrowRight") handleGuess("Republican");
+  const handleGuess = useCallback((party) => {
+    if (gameState !== "guessing" || !current) return;
+    const isCorrect = party === current.party;
+    const isDem = current.party === "Democrat";
+    const timeTaken = Date.now() - startTime;
+    const nextStats = {
+      ...stats,
+      total: stats.total + 1,
+      correct: isCorrect ? stats.correct + 1 : stats.correct,
+      streak: isCorrect ? stats.streak + 1 : 0,
+      bestStreak: isCorrect ? Math.max(stats.streak + 1, stats.bestStreak) : stats.bestStreak,
+      demGuesses: isDem ? stats.demGuesses + 1 : stats.demGuesses,
+      repGuesses: !isDem ? stats.repGuesses + 1 : stats.repGuesses,
+      demCorrect: isDem && isCorrect ? stats.demCorrect + 1 : stats.demCorrect,
+      repCorrect: !isDem && isCorrect ? stats.repCorrect + 1 : stats.repCorrect,
+      totalTime: stats.totalTime + timeTaken,
     };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [gameState, handleGuess, showStats, showWrapped, showInfo, showTrophyCase]);
-
-  const resetGameStatsOnly = useCallback(() => {
-    if (!confirm("Reset game stats? (Trophies will stay.)")) return;
-    localStorage.removeItem("partyStats");
-    setStats({
-      correct: 0,
-      total: 0,
-      streak: 0,
-      bestStreak: 0,
-      demGuesses: 0,
-      repGuesses: 0,
-      demCorrect: 0,
-      repCorrect: 0,
-      totalTime: 0,
-    });
-  }, []);
+    setStats(nextStats); maybeUnlockTrophies(nextStats); setLastResult({ isCorrect, guessedParty: party, correctParty: current.party }); setGameState("revealed");
+    if (revealTimeoutRef.current) clearTimeout(revealTimeoutRef.current);
+    revealTimeoutRef.current = setTimeout(advanceToNext, 1100);
+  }, [gameState, current, startTime, stats, maybeUnlockTrophies, advanceToNext]);
 
   if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
 
-  const officeLabel = formatOffice(current);
-
   return (
-    <div className="min-h-screen w-full bg-[#F5F5F7] text-[#1D1D1F] font-sans">
+    <div className="min-h-screen w-full bg-[#F5F5F7] text-[#1D1D1F] font-sans overflow-x-hidden">
       <Head>
         <title>Guess The Party | Allen Wang</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
       </Head>
       <Analytics />
 
-      <div className="mx-auto max-w-4xl px-4 md:px-8 py-6">
-        {/* Minimal top bar */}
-        <header className="mb-6">
-          <Glass className="px-5 py-4 rounded-[2.25rem]">
-            <div className="flex items-center justify-between gap-4">
+      <div className="mx-auto max-w-4xl px-4 md:px-8 pt-4 pb-6 md:pt-8">
+        <header className="mb-4 md:mb-8">
+          <Glass className="px-4 py-3 md:px-5 md:py-4 rounded-[2rem] md:rounded-[2.5rem]">
+            <div className="flex items-center justify-between">
               <div className="min-w-0">
-                <h1 className="text-lg md:text-xl font-black tracking-tighter uppercase truncate">
-                  🇺🇸 Guess the Party
-                </h1>
-                <div className="mt-1 text-[10px] font-black uppercase tracking-[0.28em] text-gray-400">
-                  Allen Wang
-                </div>
+                <h1 className="text-base md:text-xl font-black tracking-tighter uppercase truncate">🇺🇸 Guess the Party</h1>
+                <div className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Allen Wang</div>
               </div>
-
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setShowInfo(true)}
-                  className="h-11 w-11 rounded-2xl bg-white border border-black/10 shadow-sm active:scale-95 transition-transform flex items-center justify-center"
-                  aria-label="Info"
-                >
-                  <Info size={18} className="text-gray-600" />
-                </button>
-
-                <button
-                  onClick={() => setShowTrophyCase(true)}
-                  className="hidden sm:flex h-11 rounded-2xl px-4 bg-white border border-black/10 shadow-sm active:scale-95 transition-transform items-center gap-2"
-                >
-                  <Trophy size={18} className="text-amber-600" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.18em]">Trophies</span>
-                  <span className="text-[11px] font-black tabular-nums text-gray-500">
-                    {unlockedCount}/{TROPHIES.length}
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setShowStats(true)}
-                  className="h-11 rounded-2xl px-5 bg-black text-white shadow-sm active:scale-95 transition-transform"
-                >
-                  <span className="text-[11px] font-black uppercase tracking-[0.22em]">Stats</span>
+                <IconButton onClick={() => setShowInfo(true)} ariaLabel="Info" className="h-9 w-9 md:h-11 md:w-11"><Info size={16} /></IconButton>
+                <button onClick={() => setShowStats(true)} className="h-9 md:h-11 rounded-xl md:rounded-2xl px-4 md:px-6 bg-black text-white shadow-sm active:scale-95 transition-transform">
+                  <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em]">Stats</span>
                 </button>
               </div>
             </div>
           </Glass>
         </header>
 
-        {/* Portrait-only main UI */}
         <main className="flex justify-center">
           <AnimatePresence mode="wait">
             <motion.div
@@ -516,156 +250,38 @@ export default function Home() {
               drag={gameState === "guessing" ? "x" : false}
               dragConstraints={{ left: 0, right: 0 }}
               style={{ x, rotate }}
-              onDragEnd={(e, i) => {
-                if (i.offset.x < -80) handleGuess("Democrat");
-                else if (i.offset.x > 80) handleGuess("Republican");
-              }}
-              className={[
-                "relative w-full max-w-[560px]",
-                "h-[76vh] max-h-[760px] min-h-[560px]",
-                "rounded-[2.5rem] overflow-hidden",
-                "border border-white bg-white",
-                "shadow-[0_24px_80px_rgba(0,0,0,0.14)]",
-                "cursor-grab active:cursor-grabbing",
-              ].join(" ")}
+              onDragEnd={(e, i) => { if (i.offset.x < -80) handleGuess("Democrat"); else if (i.offset.x > 80) handleGuess("Republican"); }}
+              className="relative w-full max-w-[560px] h-[68vh] md:h-[76vh] max-h-[760px] min-h-[500px] rounded-[2.5rem] overflow-hidden border border-white bg-white shadow-[0_24px_80px_rgba(0,0,0,0.14)]"
             >
               <motion.div className="absolute inset-0 z-0" style={{ backgroundColor: swipeBg }} />
-
-              {/* Image */}
-              <div className="relative z-10 h-[78%] bg-[#fbfbfb] overflow-hidden">
-                {imgLoading ? (
-                  <div className="absolute inset-0 flex items-center justify-center z-20 bg-white/70 backdrop-blur">
-                    <Loader2 className="animate-spin text-blue-500" size={34} />
-                  </div>
-                ) : null}
-
-                <img
-                  src={current.imageUrl}
-                  onLoad={() => setImgLoading(false)}
-                  className={[
-                    "absolute inset-0 w-full h-full",
-                    "object-contain object-center",
-                    "transition-all duration-700",
-                    revealed ? "scale-110 blur-2xl brightness-[0.35]" : "scale-100",
-                  ].join(" ")}
-                  alt={revealed ? current.name : "Portrait"}
-                />
-
-                {/* IMPORTANT: do NOT show name/role/state until AFTER guess */}
-                {revealed ? (
-                  <div className="absolute left-5 right-5 bottom-5 z-10">
-                    <div className="inline-flex flex-col gap-2 rounded-3xl bg-white/70 backdrop-blur-xl border border-white/70 shadow-sm px-4 py-3">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <Pill className="bg-black/5 text-gray-700 border border-black/10">
-                          {officeLabel}
-                        </Pill>
-                        {current?.state ? (
-                          <Pill className="bg-white text-gray-700 border border-black/10">
-                            {current.state}
-                          </Pill>
-                        ) : null}
-                      </div>
-                      <div className="text-xl md:text-2xl font-black tracking-tight leading-none">
-                        {current.name}
-                      </div>
+              <div className="relative z-10 h-[75%] md:h-[78%] bg-[#fbfbfb] overflow-hidden">
+                {imgLoading && <div className="absolute inset-0 flex items-center justify-center z-20 bg-white/70 backdrop-blur"><Loader2 className="animate-spin text-blue-500" size={34} /></div>}
+                <img src={current.imageUrl} onLoad={() => setImgLoading(false)} className={`absolute inset-0 w-full h-full object-contain p-4 transition-all duration-700 ${revealed ? "scale-110 blur-2xl brightness-[0.35]" : "scale-100"}`} alt="Portrait" />
+                {revealed && (
+                  <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center p-6">
+                    <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-4 md:mb-6 shadow-xl ${lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500"}`}>
+                      {lastResult?.isCorrect ? <Check size={30} className="text-white" strokeWidth={3.5} /> : <XCircle size={30} className="text-white" strokeWidth={2.8} />}
                     </div>
-                  </div>
-                ) : null}
-
-                {/* Reveal overlay */}
-                {revealed ? (
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center p-8"
-                  >
-                    <div
-                      className={[
-                        "w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-xl",
-                        lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500",
-                      ].join(" ")}
-                    >
-                      {lastResult?.isCorrect ? (
-                        <Check size={34} className="text-white" strokeWidth={3.5} />
-                      ) : (
-                        <XCircle size={34} className="text-white" strokeWidth={2.8} />
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="text-white/60 text-[10px] font-black uppercase tracking-[0.34em]">
-                        {officeLabel}
-                      </div>
-                      <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter leading-none">
-                        {current.name}
-                      </h2>
-                      <div className="pt-4 flex flex-col items-center gap-2">
-                        <Pill
-                          className={[
-                            "border border-white/10",
-                            current.party === "Democrat" ? "bg-blue-600 text-white" : "bg-red-600 text-white",
-                          ].join(" ")}
-                        >
-                          {current.party}
-                        </Pill>
-                        {current.state ? (
-                          <div className="text-white/55 text-[10px] font-black uppercase tracking-[0.34em]">
-                            {current.state}
-                          </div>
-                        ) : null}
-                      </div>
+                    <div className="space-y-1">
+                      <div className="text-white/60 text-[9px] font-black uppercase tracking-[0.3em]">{formatOffice(current)}</div>
+                      <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter leading-tight">{current.name}</h2>
+                      <Pill className={`mt-3 ${current.party === "Democrat" ? "bg-blue-600 text-white" : "bg-red-600 text-white"}`}>{current.party}</Pill>
                     </div>
                   </motion.div>
-                ) : null}
+                )}
               </div>
 
-              {/* Buttons (minimal) */}
-              <div className="relative z-10 h-[22%] px-5 md:px-6 py-5 bg-white border-t border-black/5">
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() => handleGuess("Democrat")}
-                    disabled={revealed}
-                    className={[
-                      "h-14 rounded-2xl bg-[#00AEF3] text-white",
-                      "font-black text-xs uppercase tracking-widest",
-                      "active:scale-95 transition-transform",
-                      "disabled:opacity-60 disabled:active:scale-100",
-                    ].join(" ")}
-                  >
-                    Democrat
-                  </button>
-
-                  <button
-                    onClick={() => handleGuess("Republican")}
-                    disabled={revealed}
-                    className={[
-                      "h-14 rounded-2xl bg-[#E81B23] text-white",
-                      "font-black text-xs uppercase tracking-widest",
-                      "active:scale-95 transition-transform",
-                      "disabled:opacity-60 disabled:active:scale-100",
-                    ].join(" ")}
-                  >
-                    Republican
-                  </button>
+              <div className="relative z-10 h-[25%] md:h-[22%] px-4 md:px-6 py-4 bg-white border-t border-black/5">
+                <div className="grid grid-cols-2 gap-3 md:gap-4 h-[60%]">
+                  <button onClick={() => handleGuess("Democrat")} disabled={revealed} className="rounded-2xl bg-[#00AEF3] text-white font-black text-[10px] md:text-xs uppercase tracking-widest active:scale-95 transition-transform disabled:opacity-60">Democrat</button>
+                  <button onClick={() => handleGuess("Republican")} disabled={revealed} className="rounded-2xl bg-[#E81B23] text-white font-black text-[10px] md:text-xs uppercase tracking-widest active:scale-95 transition-transform disabled:opacity-60">Republican</button>
                 </div>
-
-                <div className="mt-4 flex items-center justify-between">
-                  <button
-                    onClick={() => setShowTrophyCase(true)}
-                    className="sm:hidden h-10 rounded-2xl px-4 bg-white border border-black/10 shadow-sm active:scale-95 transition-transform flex items-center gap-2"
-                  >
-                    <Trophy size={16} className="text-amber-600" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.18em] tabular-nums">
-                      {unlockedCount}/{TROPHIES.length}
-                    </span>
+                <div className="mt-2 md:mt-3 flex items-center justify-between">
+                  <button onClick={() => setShowTrophyCase(true)} className="h-8 rounded-xl px-3 bg-white border border-black/10 shadow-sm flex items-center gap-1.5 active:scale-95 transition-transform">
+                    <Trophy size={14} className="text-amber-600" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.18em]">{unlockedCount}/{TROPHIES.length}</span>
                   </button>
-
-                  <button
-                    onClick={resetGameStatsOnly}
-                    className="ml-auto h-10 rounded-2xl px-4 bg-white border border-black/10 shadow-sm active:scale-95 transition-transform text-[10px] font-black uppercase tracking-[0.18em] text-gray-600"
-                  >
-                    Reset stats
-                  </button>
+                  <button onClick={() => { if(confirm("Reset stats?")) setStats({ correct: 0, total: 0, streak: 0, bestStreak: 0, demGuesses: 0, repGuesses: 0, demCorrect: 0, repCorrect: 0, totalTime: 0 }); }} className="h-8 rounded-xl px-3 text-[9px] font-black uppercase tracking-[0.18em] text-gray-400">Reset</button>
                 </div>
               </div>
             </motion.div>
@@ -673,288 +289,79 @@ export default function Home() {
         </main>
       </div>
 
-      {/* ------------------------------- Modals ------------------------------- */}
+      {/* Modals & Screens */}
       <AnimatePresence>
-        {showInfo ? (
-          <Modal onClose={() => setShowInfo(false)} maxW="max-w-lg">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h3 className="text-2xl font-black uppercase tracking-tighter">How it works</h3>
+        {showInfo && <Modal onClose={() => setShowInfo(false)} maxW="max-w-lg">
+          <div className="flex justify-between items-start mb-6">
+            <h3 className="text-2xl font-black uppercase tracking-tighter">How to Play</h3>
+            <IconButton onClick={() => setShowInfo(false)}><XCircle size={20} /></IconButton>
+          </div>
+          <div className="space-y-4 text-sm font-bold text-gray-700 leading-relaxed">
+            <p>A portrait will appear. Your goal is to identify their political party.</p>
+            <p>Drag <span className="text-blue-500">left</span> for Democrat, or <span className="text-red-500">right</span> for Republican.</p>
+            <p className="text-[10px] uppercase tracking-widest text-gray-400 pt-4">Data via public records</p>
+          </div>
+        </Modal>}
 
-                <div className="mt-2 text-sm font-bold text-gray-700 leading-relaxed">
-                  You’re shown a portrait of a U.S. politician. Your job is to guess whether they’re a{" "}
-                  <span className="font-black">Democrat</span> or{" "}
-                  <span className="font-black">Republican</span>.
-                </div>
-
-                <div className="mt-3 text-sm font-bold text-gray-700 leading-relaxed">
-                  Swipe or drag <span className="font-black">left</span> for Democrat,{" "}
-                  <span className="font-black">right</span> for Republican. On desktop, you can also use{" "}
-                  <span className="font-black">← / →</span>.
-                </div>
-
-                <div className="mt-3 text-sm font-bold text-gray-700 leading-relaxed">
-                  While you’re guessing, the screen stays portrait-only. The politician’s name, role, state, and party
-                  are revealed <span className="font-black">only after you guess</span>.
-                </div>
-              </div>
-
-              <IconButton onClick={() => setShowInfo(false)} ariaLabel="Close">
-                <XCircle size={20} className="text-gray-700" />
-              </IconButton>
+        {showStats && <Modal onClose={() => setShowStats(false)} maxW="max-w-2xl">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-2xl font-black uppercase tracking-tighter">Your Stats</h2>
+              <Pill className="mt-2 bg-black text-white">{rank.title}</Pill>
             </div>
-
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <div className="rounded-3xl bg-white border border-black/10 p-5">
-                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Controls</div>
-                <div className="mt-2 text-sm font-bold text-gray-700">Swipe/Drag or ← / →</div>
-              </div>
-              <div className="rounded-3xl bg-white border border-black/10 p-5">
-                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Reset</div>
-                <div className="mt-2 text-sm font-bold text-gray-700">Resets stats only</div>
-              </div>
-            </div>
-
-            <div className="mt-6 rounded-3xl bg-white border border-black/10 p-5">
-              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Role label</div>
-              <div className="mt-2 text-sm font-bold text-gray-700">
-                After you guess, the game shows whether the person is a{" "}
-                <span className="font-black">Representative</span>,{" "}
-                <span className="font-black">Senator</span>, or{" "}
-                <span className="font-black">Governor</span>.
-              </div>
-            </div>
-          </Modal>
-        ) : null}
-
-        {showStats ? (
-          <Modal onClose={() => setShowStats(false)} maxW="max-w-2xl">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-2xl font-black uppercase tracking-tighter">Stats</h2>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <Pill className="bg-white border border-black/10 text-gray-700">
-                    <Award size={14} className={`${rank.color} opacity-90`} />
-                    <span className={rank.color}>{rank.title}</span>
-                  </Pill>
-                  <Pill className="bg-white border border-black/10 text-gray-700">
-                    <Trophy size={14} className="text-amber-600 opacity-90" />
-                    <span className="tabular-nums">{unlockedCount}</span> / {TROPHIES.length}
-                  </Pill>
-                </div>
-              </div>
-
-              <IconButton onClick={() => setShowStats(false)} ariaLabel="Close">
-                <XCircle size={20} className="text-gray-700" />
-              </IconButton>
-            </div>
-
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <StatCard icon={<Target size={18} />} label="Total Seen" value={stats.total || 0} />
-              <StatCard icon={<Award size={18} />} label="Best Streak" value={stats.bestStreak || 0} />
-              <StatCard icon={<Timer size={18} />} label="Avg Speed" value={`${avgSpeed}s`} />
-              <StatCard icon={<Flame size={18} />} label="Accuracy" value={`${accuracy}%`} />
-            </div>
-
-            <div className="mt-5 rounded-3xl bg-white border border-black/10 p-6">
-              <div className="text-[11px] font-black uppercase tracking-[0.22em] text-gray-500">Party breakdown</div>
-              <div className="mt-5 space-y-5">
-                <StatBar label="Democrat Accuracy" current={stats.demCorrect} total={stats.demGuesses} color="bg-blue-500" />
-                <StatBar
-                  label="Republican Accuracy"
-                  current={stats.repCorrect}
-                  total={stats.repGuesses}
-                  color="bg-red-500"
-                />
-              </div>
-            </div>
-
-            <div className="mt-5 grid grid-cols-2 gap-3">
-              <button
-                onClick={() => setShowTrophyCase(true)}
-                className="h-12 rounded-2xl bg-white border border-black/10 shadow-sm font-black uppercase tracking-[0.22em] text-[11px] active:scale-95 transition-transform flex items-center justify-center gap-2"
-              >
-                <Trophy size={16} className="text-amber-600" />
-                Trophies
-              </button>
-              <button
-                onClick={() => {
-                  setShowStats(false);
-                  setShowWrapped(true);
-                }}
-                className="h-12 rounded-2xl bg-black text-white font-black uppercase tracking-[0.22em] text-[11px] active:scale-95 transition-transform flex items-center justify-center gap-2"
-              >
-                <Share2 size={16} />
-                Wrapped
-              </button>
-            </div>
-          </Modal>
-        ) : null}
-
-        {showTrophyCase ? (
-          <Modal onClose={() => setShowTrophyCase(false)} maxW="max-w-3xl">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-2xl font-black uppercase tracking-tighter">Trophy Case</h2>
-                <div className="mt-2 text-sm font-bold text-gray-700">These persist even if you reset stats.</div>
-              </div>
-
-              <IconButton onClick={() => setShowTrophyCase(false)} ariaLabel="Close">
-                <XCircle size={20} className="text-gray-700" />
-              </IconButton>
-            </div>
-
-            <div className="mt-5 rounded-3xl bg-white border border-black/10 p-5 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center">
-                  <Trophy size={18} className="text-amber-700" />
-                </div>
-                <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Unlocked</div>
-                  <div className="text-xl font-black tabular-nums">{unlockedCount}</div>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Total</div>
-                <div className="text-xl font-black tabular-nums">{TROPHIES.length}</div>
-              </div>
-            </div>
-
-            <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3">
-              {TROPHIES.map((t) => {
-                const unlocked = unlockedSet.has(t.id);
-                const unlockedAt = trophies.firstUnlockedAt?.[t.id];
-
-                return (
-                  <div
-                    key={t.id}
-                    className={[
-                      "rounded-3xl border",
-                      "p-4 md:p-5",
-                      "flex items-start justify-between gap-4",
-                      unlocked ? "bg-white border-black/10" : "bg-[#F5F5F7] border-black/10",
-                    ].join(" ")}
-                  >
-                    <div className="flex items-start gap-3 min-w-0">
-                      <div
-                        className={[
-                          "h-11 w-11 rounded-2xl flex items-center justify-center border shrink-0",
-                          unlocked ? tierStyles(t.tier) : "bg-white text-gray-400 border-black/10",
-                        ].join(" ")}
-                      >
-                        {t.icon}
-                      </div>
-
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <div className="text-base font-black tracking-tight truncate">{t.title}</div>
-                          <span
-                            className={[
-                              "text-[9px] font-black uppercase tracking-[0.22em] px-2 py-1 rounded-full border",
-                              tierStyles(t.tier),
-                            ].join(" ")}
-                          >
-                            {t.tier}
-                          </span>
-                        </div>
-
-                        <div className="mt-1 text-sm font-bold text-gray-600">{t.desc}</div>
-
-                        {unlocked && unlockedAt ? (
-                          <div className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-gray-400">
-                            Unlocked{" "}
-                            <span className="text-gray-600">
-                              {new Date(unlockedAt).toLocaleDateString(undefined, {
-                                year: "numeric",
-                                month: "short",
-                                day: "2-digit",
-                              })}
-                            </span>
-                          </div>
-                        ) : null}
-                      </div>
-                    </div>
-
-                    <div className="shrink-0">
-                      {unlocked ? (
-                        <Pill className="bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          <Check size={14} /> Unlocked
-                        </Pill>
-                      ) : (
-                        <Pill className="bg-white text-gray-500 border border-black/10">Locked</Pill>
-                      )}
-                    </div>
+            <IconButton onClick={() => setShowStats(false)}><XCircle size={20} /></IconButton>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <StatCard label="Total" value={stats.total} />
+            <StatCard label="Accuracy" value={`${accuracy}%`} />
+            <StatCard label="Streak" value={stats.bestStreak} />
+            <StatCard label="Avg Speed" value={`${avgSpeed}s`} />
+          </div>
+          <button onClick={() => { setShowStats(false); setShowWrapped(true); }} className="w-full mt-6 h-12 rounded-2xl bg-black text-white font-black uppercase tracking-[0.2em] text-[11px]">View Political Wrapped</button>
+        </Modal>}
+        
+        {showTrophyCase && <Modal onClose={() => setShowTrophyCase(false)} maxW="max-w-3xl">
+          <div className="flex justify-between items-start mb-6">
+            <h2 className="text-2xl font-black uppercase tracking-tighter">Trophies</h2>
+            <IconButton onClick={() => setShowTrophyCase(false)}><XCircle size={20} /></IconButton>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-2">
+            {TROPHIES.map(t => {
+              const unlocked = unlockedSet.has(t.id);
+              return (
+                <div key={t.id} className={`p-4 rounded-[2rem] border flex items-center gap-4 ${unlocked ? "bg-white border-black/10" : "bg-black/5 border-transparent opacity-60"}`}>
+                  <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${unlocked ? tierStyles(t.tier) : "bg-gray-200"}`}>{t.icon}</div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-black uppercase tracking-tight truncate">{t.title}</div>
+                    <div className="text-[11px] font-bold text-gray-500 line-clamp-1">{t.desc}</div>
                   </div>
-                );
-              })}
-            </div>
-          </Modal>
-        ) : null}
-
-        {showWrapped ? (
-          <div
-            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-6"
-            onClick={() => setShowWrapped(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="relative w-full max-w-sm aspect-[9/16] bg-gradient-to-b from-[#1c1c1e] to-black rounded-[3rem] p-10 flex flex-col border border-white/10 overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setShowWrapped(false)}
-                className="absolute top-8 right-8 h-10 w-10 bg-white/10 backdrop-blur-xl rounded-full z-50 active:scale-90 transition-transform flex items-center justify-center"
-              >
-                <XCircle size={20} className="text-white" />
-              </button>
-
+                </div>
+              );
+            })}
+          </div>
+        </Modal>}
+        
+        {showWrapped && (
+          <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-6" onClick={() => setShowWrapped(false)}>
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative w-full max-w-sm aspect-[9/16] bg-gradient-to-b from-[#1c1c1e] to-black rounded-[3rem] p-10 flex flex-col border border-white/10" onClick={e => e.stopPropagation()}>
               <div className="flex-grow pt-10 text-white">
-                <h3 className="text-5xl font-black leading-[0.85] tracking-tighter mb-10">
-                  POLITICAL
-                  <br />
-                  <span className="text-blue-500 italic font-serif text-4xl">wrapped</span>
-                </h3>
-
-                <div className="space-y-9">
-                  <div>
-                    <p className="text-[10px] font-black text-white/40 uppercase mb-2 tracking-[0.22em]">Your identity</p>
-                    <p className="text-3xl font-black uppercase leading-tight">{rank.title}</p>
-                  </div>
-
+                <h3 className="text-5xl font-black leading-[0.85] tracking-tighter mb-10">POLITICAL<br/><span className="text-blue-500 italic font-serif text-4xl">wrapped</span></h3>
+                <div className="space-y-8">
+                  <div><p className="text-[10px] font-black text-white/40 uppercase mb-2 tracking-widest">Identity</p><p className="text-3xl font-black uppercase">{rank.title}</p></div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-[0.22em]">Accuracy</p>
-                      <p className="text-3xl font-black tabular-nums">{accuracy}%</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-[0.22em]">Max streak</p>
-                      <p className="text-3xl font-black text-blue-500 tabular-nums">{stats.bestStreak || 0}</p>
-                    </div>
-                  </div>
-
-                  <div className="pt-8 border-t border-white/10 flex justify-between items-center px-4">
-                    <DonkeyIcon className="w-14 h-14 object-contain brightness-125 contrast-125" />
-                    <div className="h-10 w-[1px] bg-white/10" />
-                    <ElephantIcon className="w-14 h-14 object-contain brightness-125 contrast-125" />
+                    <div><p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-widest">Accuracy</p><p className="text-3xl font-black">{accuracy}%</p></div>
+                    <div><p className="text-[10px] font-black text-white/40 uppercase mb-1 tracking-widest">Streak</p><p className="text-3xl font-black text-blue-500">{stats.bestStreak}</p></div>
                   </div>
                 </div>
               </div>
-
-              <div className="text-center pt-8">
-                <p className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em]">
-                  🇺🇸 Guess the Party • Allen Wang 🇺🇸
-                </p>
-              </div>
+              <p className="text-center text-[8px] font-black text-white/20 uppercase tracking-[0.4em]">🇺🇸 Guess the Party • Allen Wang</p>
             </motion.div>
           </div>
-        ) : null}
+        )}
       </AnimatePresence>
     </div>
   );
 }
-
-/* -------------------------------- Helpers -------------------------------- */
 
 function LoadingScreen({ message }) {
   return (
@@ -965,51 +372,19 @@ function LoadingScreen({ message }) {
   );
 }
 
-function StatCard({ icon, label, value }) {
+function StatCard({ label, value }) {
   return (
-    <div className="rounded-3xl bg-white border border-black/10 p-5">
-      <div className="flex items-center gap-2 text-gray-700">
-        <div className="h-9 w-9 rounded-2xl bg-black/5 flex items-center justify-center">{icon}</div>
-        <div className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">{label}</div>
-      </div>
-      <div className="mt-4 text-3xl font-black tabular-nums">{value}</div>
-    </div>
-  );
-}
-
-function StatBar({ label, current, total, color }) {
-  const pct = !total ? 0 : Math.round(((current || 0) / total) * 100);
-  return (
-    <div>
-      <div className="flex justify-between text-[10px] font-black mb-2 uppercase tracking-[0.18em]">
-        <span className="text-gray-600">{label}</span>
-        <span className="text-gray-400 tabular-nums">{pct}%</span>
-      </div>
-      <div className="h-2 bg-gray-100 rounded-full overflow-hidden border border-black/5">
-        <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} className={`h-full ${color || "bg-black"}`} />
-      </div>
+    <div className="rounded-3xl bg-white border border-black/10 p-5 text-center">
+      <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2">{label}</div>
+      <div className="text-2xl font-black tabular-nums">{value}</div>
     </div>
   );
 }
 
 function Modal({ children, onClose, maxW = "max-w-xl" }) {
   return (
-    <div
-      className="fixed inset-0 z-[100] bg-black/55 backdrop-blur-xl flex items-center justify-center p-4 md:p-6"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ y: 16, opacity: 0, scale: 0.98 }}
-        animate={{ y: 0, opacity: 1, scale: 1 }}
-        className={[
-          "w-full",
-          maxW,
-          "max-h-[85vh] overflow-y-auto",
-          "rounded-[2.5rem] bg-[#F5F5F7] border border-white/20",
-          "shadow-[0_30px_120px_rgba(0,0,0,0.40)] p-7 md:p-8",
-        ].join(" ")}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-xl flex items-center justify-center p-4 md:p-6" onClick={onClose}>
+      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className={`w-full ${maxW} max-h-[90vh] overflow-y-auto rounded-[2.5rem] bg-[#F5F5F7] shadow-2xl p-7 md:p-10`} onClick={e => e.stopPropagation()}>
         {children}
       </motion.div>
     </div>
