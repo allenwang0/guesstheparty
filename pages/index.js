@@ -313,16 +313,16 @@ export default function Home() {
 
         <main className="flex justify-center relative">
 
-          {/* TRANSIENT COMBO STREAK POPUP */}
+          {/* TRANSIENT COMBO STREAK POPUP - MOVED TO TOP OF CARD AREA */}
           <AnimatePresence>
             {stats.streak >= 3 && gameState === 'revealed' && lastResult?.isCorrect && (
               <motion.div
                 key={`streak-${stats.streak}`}
-                initial={{ scale: 0.5, opacity: 0, y: 20 }}
-                animate={{ scale: 1.1, opacity: 1, y: -60 }}
-                exit={{ scale: 1.5, opacity: 0, filter: "blur(10px)" }}
+                initial={{ scale: 0.5, opacity: 0, y: 0 }}
+                animate={{ scale: 1.1, opacity: 1, y: 10 }}
+                exit={{ scale: 1.5, opacity: 0, filter: "blur(10px)", y: -20 }}
                 transition={{ duration: 0.5, ease: "backOut" }}
-                className="absolute top-1/2 left-0 right-0 z-50 pointer-events-none flex flex-col items-center justify-center"
+                className="absolute top-[5%] md:top-[8%] left-0 right-0 z-50 pointer-events-none flex flex-col items-center justify-center"
               >
                 <div className="relative">
                   <span className="absolute -inset-2 bg-orange-500 blur-xl opacity-30 rounded-full"></span>
@@ -513,47 +513,6 @@ export default function Home() {
           </button>
         </Modal>}
 
-        {/* TROPHY CASE MODAL */}
-        {showTrophyCase && <Modal onClose={() => setShowTrophyCase(false)} maxW="max-w-3xl">
-          <div className="flex flex-col gap-2 mb-6">
-            <div className="flex justify-between items-start">
-               <h2 className="text-2xl font-black uppercase tracking-tighter">Trophies</h2>
-               <IconButton onClick={() => setShowTrophyCase(false)}><XCircle size={20} /></IconButton>
-            </div>
-            {/* PROGRESS BAR */}
-            <div className="flex items-center gap-3">
-               <div className="flex-grow h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-amber-500" style={{ width: `${(unlockedCount / TROPHIES.length) * 100}%` }}></div>
-               </div>
-               <div className="text-[10px] font-black uppercase text-gray-400">{unlockedCount}/{TROPHIES.length}</div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-2">
-            {TROPHIES.map(t => {
-              const unlocked = unlockedSet.has(t.id);
-              return (
-                <div key={t.id} className={`relative p-4 rounded-[2rem] border transition-all ${unlocked ? "bg-white border-black/10 shadow-sm" : "bg-gray-50 border-transparent"}`}>
-                  <div className={`flex items-center gap-4 ${unlocked ? "opacity-100" : "opacity-40 grayscale blur-[0.5px]"}`}>
-                    <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${unlocked ? tierStyles(t.tier) : "bg-gray-200"}`}>
-                        {unlocked ? t.icon : <Lock size={18} />}
-                    </div>
-                    <div className="min-w-0">
-                        <div className="text-sm font-black uppercase tracking-tight truncate">{t.title}</div>
-                        <div className="text-[11px] font-bold text-gray-500 line-clamp-1">{t.desc}</div>
-                    </div>
-                  </div>
-                  {unlocked && (
-                     <div className="absolute top-4 right-4">
-                        <div className={`w-2 h-2 rounded-full ${t.tier === 'platinum' ? 'bg-indigo-400' : 'bg-amber-400'}`}></div>
-                     </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </Modal>}
-
         {/* WRAPPED (GLOSSY CARD) */}
         {showWrapped && (
           <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowWrapped(false)}>
@@ -571,7 +530,7 @@ export default function Home() {
               <div className="relative z-10 h-full flex flex-col p-8 text-white">
                 <div className="flex justify-between items-start">
                    <div className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">2025 Review</div>
-                   <Star className="text-yellow-400 fill-yellow-400 animate-spin-slow" size={24} />
+                   {/* Star icon removed as requested */}
                 </div>
 
                 <div className="mt-8">
