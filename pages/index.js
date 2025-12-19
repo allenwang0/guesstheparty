@@ -21,92 +21,83 @@ import {
   ArrowRight,
   AlertCircle,
   RefreshCw,
-  BarChart3,
-  Users
+  MoveHorizontal,
+  MousePointer2
 } from "lucide-react";
 
-/* ----------------------------- Mock Backend Data ---------------------------- */
+/* ----------------------------- Static Data (Fake It 'Til You Make It) ---------------------------- */
 
-// We simulate the backend response here. In a real app, this comes from /api/rank
-const MOCK_BACKEND_DATA = {
-  totalPlayers: 4812,
-  // Accuracy: 0-100 in 5% bins (20 bins)
-  accuracyDistribution: [
-    { range: '0-5', count: 10 }, { range: '5-10', count: 5 }, { range: '10-15', count: 8 },
-    { range: '15-20', count: 12 }, { range: '20-25', count: 20 }, { range: '25-30', count: 40 },
-    { range: '30-35', count: 80 }, { range: '35-40', count: 150 }, { range: '40-45', count: 300 },
-    { range: '45-50', count: 600 }, { range: '50-55', count: 800 }, { range: '55-60', count: 900 },
-    { range: '60-65', count: 700 }, { range: '65-70', count: 500 }, { range: '70-75', count: 300 },
-    { range: '75-80', count: 200 }, { range: '80-85', count: 100 }, { range: '85-90', count: 50 },
-    { range: '90-95', count: 25 }, { range: '95-100', count: 12 }
-  ],
-  // Streak: Log-ish bins (0–1, 2–3, 4–7, 8–15, 16–31, 32–63, 64+)
-  streakDistribution: [
-    { range: '0-1', label: '0-1', count: 1200 },
-    { range: '2-3', label: '2-3', count: 1500 },
-    { range: '4-7', label: '4-7', count: 1100 },
-    { range: '8-15', label: '8-15', count: 600 },
-    { range: '16-31', label: '16-31', count: 300 },
-    { range: '32-63', label: '32-63', count: 100 },
-    { range: '64+', label: '64+', count: 12 }
-  ]
-};
+// Simulating a Bell Curve distribution of player scores
+const FAKE_DISTRIBUTION = [
+  { range: '0-10', count: 2 },
+  { range: '10-20', count: 5 },
+  { range: '20-30', count: 12 },
+  { range: '30-40', count: 20 },
+  { range: '40-50', count: 45 }, // Peak difficulty
+  { range: '50-60', count: 60 },
+  { range: '60-70', count: 40 },
+  { range: '70-80', count: 25 },
+  { range: '80-90', count: 10 },
+  { range: '90-100', count: 3 }
+];
 
-/* ----------------------------- Helpers ---------------------------- */
+// Helper to calculate percentile ranking
+function calculatePercentile(userAcc, data) {
+  if (!data || data.length === 0) return 0;
 
-function getStreakBinIndex(streak) {
-  if (streak <= 1) return 0;
-  if (streak <= 3) return 1;
-  if (streak <= 7) return 2;
-  if (streak <= 15) return 3;
-  if (streak <= 31) return 4;
-  if (streak <= 63) return 5;
-  return 6;
-}
-
-function getAccuracyBinIndex(acc) {
-  // 0-100 mapped to 0-19 (5% chunks)
-  return Math.min(Math.floor(acc / 5), 19);
-}
-
-function calculatePercentile(userValue, distribution, type = 'accuracy') {
   let totalPlayers = 0;
   let playersBeaten = 0;
 
-  distribution.forEach(d => totalPlayers += d.count);
+  // Calculate total players
+  data.forEach(d => totalPlayers += d.count);
 
-  const userIndex = type === 'accuracy'
-    ? getAccuracyBinIndex(userValue)
-    : getStreakBinIndex(userValue);
+  // Calculate how many people scored in buckets strictly lower than the user's bucket
+  const userBucketIndex = Math.min(Math.floor(userAcc / 10), 9);
 
-  distribution.forEach((d, i) => {
-    if (i < userIndex) {
+  data.forEach((d, i) => {
+    if (i < userBucketIndex) {
       playersBeaten += d.count;
     }
   });
 
   if (totalPlayers === 0) return 0;
-  // Top X% logic: if you beat 80% of players, you are Top 20%
-  const beatPercent = (playersBeaten / totalPlayers) * 100;
-  return Math.max(1, Math.round(100 - beatPercent));
+  return Math.round((playersBeaten / totalPlayers) * 100);
 }
 
-/* ----------------------------- Components ---------------------------- */
+/* ----------------------------- Utility Components ---------------------------- */
 
 const Glass = ({ children, className = "" }) => (
-  <div className={["rounded-3xl border border-white/60 bg-white/60 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.04)]", className].join(" ")}>
+  <div
+    className={[
+      "rounded-3xl border border-white/60 bg-white/60 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.04)]",
+      className,
+    ].join(" ")}
+  >
     {children}
   </div>
 );
 
 const Pill = ({ children, className = "" }) => (
-  <span className={["inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.20em]", className].join(" ")}>
+  <span
+    className={[
+      "inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.20em]",
+      className,
+    ].join(" ")}
+  >
     {children}
   </span>
 );
 
 const IconButton = ({ onClick, ariaLabel, children, className = "" }) => (
-  <button onClick={onClick} aria-label={ariaLabel} className={["h-10 w-10 rounded-2xl", "bg-white/60 border border-black/5 backdrop-blur shadow-sm hover:bg-white/90 active:scale-95 transition-all flex items-center justify-center", className].join(" ")}>
+  <button
+    onClick={onClick}
+    aria-label={ariaLabel}
+    className={[
+      "h-10 w-10 rounded-2xl",
+      "bg-white/60 border border-black/5 backdrop-blur shadow-sm hover:bg-white/90 active:scale-95 transition-all flex items-center justify-center",
+      className,
+    ].join(" ")}
+  >
     {children}
   </button>
 );
@@ -115,140 +106,217 @@ const ProgressBar = ({ label, value, color, total }) => (
   <div className="w-full">
     <div className="flex justify-between mb-1">
       <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">{label}</span>
-      <span className="text-[9px] font-black text-gray-600">{Math.round((value / (total || 1)) * 100)}%</span>
+      <span className="text-[9px] font-black text-gray-600">
+        {Math.round((value / (total || 1)) * 100)}%
+      </span>
     </div>
     <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-      <motion.div initial={{ width: 0 }} animate={{ width: `${(value / (total || 1)) * 100}%` }} className={`h-full ${color}`} />
+      <motion.div
+        initial={{ width: 0 }}
+        animate={{ width: `${(value / (total || 1)) * 100}%` }}
+        className={`h-full ${color}`}
+      />
     </div>
   </div>
 );
 
 const Toast = ({ message }) => (
-  <motion.div initial={{ opacity: 0, y: -20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, scale: 0.9 }} className="fixed top-24 left-1/2 -translate-x-1/2 z-[150] bg-black/80 backdrop-blur text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 pointer-events-none">
+  <motion.div
+    initial={{ opacity: 0, y: -20, scale: 0.9 }}
+    animate={{ opacity: 1, y: 0, scale: 1 }}
+    exit={{ opacity: 0, y: -20, scale: 0.9 }}
+    className="fixed top-24 left-1/2 -translate-x-1/2 z-[150] bg-black/80 backdrop-blur text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 pointer-events-none"
+  >
     <span className="text-xs font-bold tracking-widest uppercase">{message}</span>
   </motion.div>
 );
 
-/* --- The New Sophisticated Histogram Component --- */
-const CommunityRank = ({ stats }) => {
-  const [metric, setMetric] = useState('accuracy'); // 'accuracy' | 'streak'
+const Histogram = ({ userAccuracy }) => {
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Logic Gate: Lock functionality if under 50 seen
-  const isProvisional = stats.total < 50;
-  const userAccuracy = stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100);
-  const userStreak = stats.bestStreak;
-
   useEffect(() => {
-    // Simulate API Fetch
-    setTimeout(() => setLoading(false), 800);
+    // Simulate API fetch delay for realism
+    const timer = setTimeout(() => {
+      // Process the raw counts into percentages for the UI
+      const total = FAKE_DISTRIBUTION.reduce((acc, curr) => acc + curr.count, 0);
+      const processed = FAKE_DISTRIBUTION.map(d => ({
+        ...d,
+        percentOfPlayers: Math.round((d.count / total) * 100)
+      }));
+      setData(processed);
+      setLoading(false);
+    }, 600);
+    return () => clearTimeout(timer);
   }, []);
 
-  const data = metric === 'accuracy' ? MOCK_BACKEND_DATA.accuracyDistribution : MOCK_BACKEND_DATA.streakDistribution;
-  const maxCount = Math.max(...data.map(d => d.count));
+  if (loading) return <div className="text-[10px] font-black uppercase tracking-widest text-gray-300 mt-6 text-center animate-pulse">Loading global benchmarks...</div>;
 
-  const userBinIndex = metric === 'accuracy'
-    ? getAccuracyBinIndex(userAccuracy)
-    : getStreakBinIndex(userStreak);
-
-  const percentile = calculatePercentile(metric === 'accuracy' ? userAccuracy : userStreak, data, metric);
-
-  if (loading) return (
-    <div className="w-full h-48 bg-gray-50 rounded-2xl flex flex-col items-center justify-center animate-pulse gap-2 mt-4">
-      <Loader2 className="animate-spin text-gray-300" size={20} />
-      <span className="text-[10px] font-black uppercase text-gray-300 tracking-widest">Loading Community Data...</span>
-    </div>
-  );
+  // Find the max value to normalize bar heights
+  const maxPercent = Math.max(...data.map(d => d.percentOfPlayers));
 
   return (
-    <div className="w-full mt-6 bg-gray-50/50 rounded-3xl p-5 border border-gray-100 relative overflow-hidden">
-      {/* Header / Toggles */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex gap-1 bg-gray-200/50 p-1 rounded-xl">
-          <button
-            onClick={() => setMetric('accuracy')}
-            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${metric === 'accuracy' ? 'bg-white shadow-sm text-black' : 'text-gray-400 hover:text-gray-600'}`}
-          >
-            Accuracy
-          </button>
-          <button
-            onClick={() => setMetric('streak')}
-            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${metric === 'streak' ? 'bg-white shadow-sm text-black' : 'text-gray-400 hover:text-gray-600'}`}
-          >
-            Streak
-          </button>
-        </div>
+    <div className="w-full mt-6 pt-6 border-t border-gray-100">
+      <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
+        Global Player Distribution
+      </h3>
 
-        {!isProvisional && (
-          <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">
-             <Target size={12} />
-             <span className="text-[9px] font-black uppercase tracking-wider">Top {percentile}%</span>
-          </div>
-        )}
-      </div>
-
-      {/* Logic Gate Overlay */}
-      {isProvisional && (
-        <div className="absolute inset-0 z-20 backdrop-blur-sm bg-white/30 flex flex-col items-center justify-center text-center p-6">
-          <div className="h-12 w-12 bg-black text-white rounded-2xl flex items-center justify-center mb-3 shadow-xl">
-            <Lock size={20} />
-          </div>
-          <h4 className="text-sm font-black uppercase tracking-tight">Rank Locked</h4>
-          <p className="text-xs text-gray-500 mt-1 max-w-[200px]">
-            Identify <span className="text-black font-bold">50 politicians</span> to unlock your global ranking.
-          </p>
-          <div className="mt-3 w-full max-w-[120px]">
-            <ProgressBar label="Progress" value={stats.total} total={50} color="bg-black" />
-          </div>
-        </div>
-      )}
-
-      {/* The Chart */}
-      <div className={`flex items-end justify-between h-28 gap-[2px] ${isProvisional ? 'opacity-20 blur-sm' : ''}`}>
+      <div className="flex items-end justify-between h-32 gap-1 mb-2">
         {data.map((bucket, i) => {
-          const isUser = i === userBinIndex;
-          const height = Math.max(5, (bucket.count / maxCount) * 100);
+          const rangeStart = i * 10;
+          const isUserBucket = userAccuracy >= rangeStart && userAccuracy < rangeStart + 10;
+          // Edge case for 100%
+          const isUser100 = userAccuracy === 100 && i === 9;
 
           return (
-            <div key={i} className="flex-1 flex flex-col justify-end group relative h-full">
-               {/* Bar */}
-               <motion.div
-                 initial={{ height: 0 }}
-                 animate={{ height: `${height}%` }}
-                 transition={{ duration: 0.5, delay: i * 0.02 }}
-                 className={`w-full rounded-t-[2px] relative min-h-[4px] ${isUser ? 'bg-blue-500' : 'bg-gray-300'}`}
-               >
-                 {isUser && (
-                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 h-1.5 w-1.5 bg-black rounded-full ring-2 ring-white" />
-                 )}
-               </motion.div>
+            <div key={i} className="flex flex-col items-center gap-1 flex-1 group relative">
+              {/* The Bar */}
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: `${(bucket.percentOfPlayers / maxPercent) * 100}%` }}
+                transition={{ duration: 0.5, delay: i * 0.05 }}
+                className={`w-full rounded-t-sm relative ${
+                  (isUserBucket || isUser100) ? 'bg-blue-500' : 'bg-gray-200'
+                }`}
+              >
+                {/* Tooltip on Hover */}
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-[9px] px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-10">
+                  {bucket.percentOfPlayers}%
+                </div>
+              </motion.div>
+
+              {/* X-Axis Label */}
+              <span className={`text-[8px] font-bold ${ (isUserBucket || isUser100) ? 'text-blue-600' : 'text-gray-300'}`}>
+                {i === 0 ? '0' : i === 9 ? '100' : ''}
+              </span>
             </div>
           );
         })}
       </div>
 
-      {/* X-Axis Labels */}
-      <div className={`flex justify-between mt-2 text-[8px] font-bold text-gray-400 uppercase tracking-widest ${isProvisional ? 'opacity-20' : ''}`}>
-        <span>{metric === 'accuracy' ? '0%' : '0'}</span>
-        <span>{metric === 'accuracy' ? '50%' : '15'}</span>
-        <span>{metric === 'accuracy' ? '100%' : '64+'}</span>
-      </div>
-
-      {/* Footer Stats */}
-      <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
-        <div className="flex items-center gap-2 text-gray-400">
-          <Users size={12} />
-          <span className="text-[9px] font-bold tracking-wider">{MOCK_BACKEND_DATA.totalPlayers.toLocaleString()} Players</span>
-        </div>
-        <div className="text-[9px] font-bold text-gray-400">
-           {metric === 'accuracy' ? 'Min 50 Seen' : 'All Time Best'}
-        </div>
+      {/* Contextual Text */}
+      <div className="mt-3 text-center text-xs text-gray-500">
+        You performed better than <span className="font-bold text-black">{calculatePercentile(userAccuracy, FAKE_DISTRIBUTION)}%</span> of players.
       </div>
     </div>
   );
 };
 
-/* ----------------------------- Main App ---------------------------- */
+function LoadingScreen({ message }) {
+  return (
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F5F5F7] gap-4">
+      <Loader2 className="animate-spin text-blue-600" size={40} />
+      <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">{message}</p>
+    </div>
+  );
+}
+
+function ErrorScreen({ title, detail }) {
+  return (
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F5F5F7] px-6 text-center gap-3">
+      <div className="h-14 w-14 rounded-2xl bg-white border border-black/5 flex items-center justify-center shadow-sm">
+        <AlertCircle />
+      </div>
+      <div className="text-lg font-black tracking-tight">{title}</div>
+      {detail && <div className="text-sm text-gray-500 max-w-lg">{detail}</div>}
+      <div className="text-xs text-gray-400 mt-2">
+        Check that <span className="font-mono">/public/politicians.json</span> is valid JSON (an array).
+      </div>
+    </div>
+  );
+}
+
+function Modal({ children, onClose }) {
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "unset";
+      };
+    }
+  }, []);
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 md:p-6"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ y: 20, opacity: 0, scale: 0.95 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: 20, opacity: 0, scale: 0.95 }}
+        className="w-full max-w-md max-h-[85vh] overflow-y-auto bg-white rounded-[2rem] shadow-2xl p-6 md:p-8"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {children}
+      </motion.div>
+    </div>
+  );
+}
+
+/* -------------------------------- Logic & Data ------------------------------ */
+
+const TROPHY_KEY = "partyTrophies_v3";
+const INTRO_KEY = "partyHasSeenIntro_v3";
+const STATS_KEY = "partyStats_v3";
+
+const TROPHIES = [
+  { id: "first_correct", title: "First Blood", desc: "First correct guess.", icon: <Star size={18} />, tier: "bronze", check: ({ stats }) => (stats.correct || 0) >= 1 },
+  { id: "streak_5", title: "Warm Streak", desc: "Best streak ≥ 5.", icon: <Flame size={18} />, tier: "bronze", check: ({ stats }) => (stats.bestStreak || 0) >= 5 },
+  { id: "streak_10", title: "Campaign Staff", desc: "Best streak ≥ 10.", icon: <Award size={18} />, tier: "silver", check: ({ stats }) => (stats.bestStreak || 0) >= 10 },
+  { id: "streak_25", title: "Party Operator", desc: "Best streak ≥ 25.", icon: <ShieldCheck size={18} />, tier: "gold", check: ({ stats }) => (stats.bestStreak || 0) >= 25 },
+  { id: "streak_50", title: "Floor Leader", desc: "Best streak ≥ 50.", icon: <Trophy size={18} />, tier: "platinum", check: ({ stats }) => (stats.bestStreak || 0) >= 50 },
+  { id: "seen_50", title: "Caucus Regular", desc: "Seen ≥ 50.", icon: <Target size={18} />, tier: "bronze", check: ({ stats }) => (stats.total || 0) >= 50 },
+  { id: "seen_200", title: "Capitol Fixture", desc: "Seen ≥ 200.", icon: <Trophy size={18} />, tier: "gold", check: ({ stats }) => (stats.total || 0) >= 200 },
+  {
+    id: "accuracy_80_50",
+    title: "Solid Read",
+    desc: "≥80% accuracy with ≥50 seen.",
+    icon: <Award size={18} />,
+    tier: "silver",
+    check: ({ stats }) => {
+      const t = stats.total || 0;
+      return t >= 50 && (stats.correct / t) >= 0.8;
+    },
+  },
+  { id: "speed_fast", title: "Fast Reflexes", desc: "Answer correctly in <1s.", icon: <Zap size={18} />, tier: "gold", check: ({ lastResult }) => lastResult?.isFast && lastResult?.isCorrect },
+];
+
+function tierStyles(tier) {
+  switch (tier) {
+    case "bronze": return "bg-amber-100 text-amber-900 border-amber-200";
+    case "silver": return "bg-slate-100 text-slate-900 border-slate-200";
+    case "gold": return "bg-yellow-100 text-yellow-900 border-yellow-200";
+    case "platinum": return "bg-indigo-100 text-indigo-900 border-indigo-200";
+    default: return "bg-gray-100 text-gray-700 border-gray-200";
+  }
+}
+
+function formatOffice(p, revealed) {
+  const c = (p?.category ?? "").toString().trim().toLowerCase();
+  let base = "Public Official";
+  if (c === "house") base = "Representative";
+  if (c === "senate") base = "Senator";
+  if (c === "gov") base = "Governor";
+  if (!revealed) return base;
+  if (p?.state) return `${base} • ${p.state}`;
+  return base;
+}
+
+async function fireConfettiSafe() {
+  if (typeof window === "undefined") return;
+  const mod = await import("canvas-confetti");
+  const confetti = mod?.default || mod;
+  if (typeof confetti === "function") {
+    confetti({
+      particleCount: 80,
+      spread: 60,
+      origin: { y: 0.6 },
+    });
+  }
+}
+
+/* ----------------------------- Main Application -------------------------- */
 
 export default function Home() {
   const [allPoliticians, setAllPoliticians] = useState([]);
@@ -261,7 +329,6 @@ export default function Home() {
   // Logic Refs
   const recentIds = useRef(new Set());
   const startTimeRef = useRef(null);
-  const shakeControls = useAnimation();
 
   // UX State
   const [toast, setToast] = useState(null);
@@ -269,15 +336,14 @@ export default function Home() {
   const [showStats, setShowStats] = useState(false);
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
-
-  // Identity State
-  const [playerId, setPlayerId] = useState(null);
+  const shakeControls = useAnimation(); // For Screen Shake
 
   // Game State
   const [gameState, setGameState] = useState("guessing");
   const [imgLoading, setImgLoading] = useState(true);
   const [lastResult, setLastResult] = useState(null);
 
+  // Stats State
   const [stats, setStats] = useState({
     correct: 0,
     total: 0,
@@ -297,25 +363,38 @@ export default function Home() {
 
   const [trophies, setTrophies] = useState({ unlocked: [], firstUnlockedAt: {} });
 
-  // Motion Logic
+  // Motion
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-12, 12]);
-  const swipeBg = useTransform(x, [-150, 0, 150], ["rgba(59, 130, 246, 0.15)", "rgba(255,255,255,0)", "rgba(239, 68, 68, 0.15)"]);
+  const swipeBg = useTransform(
+    x,
+    [-150, 0, 150],
+    ["rgba(59, 130, 246, 0.15)", "rgba(255,255,255,0)", "rgba(239, 68, 68, 0.15)"]
+  );
+
+  // JUICINESS: Stamps now Scale + Fade
   const demStampOpacity = useTransform(x, [0, -60], [0, 1]);
-  const demStampScale = useTransform(x, [0, -60], [2, 1]);
+  const demStampScale = useTransform(x, [0, -60], [2, 1]); // Big to small slam effect
+
   const repStampOpacity = useTransform(x, [0, 60], [0, 1]);
-  const repStampScale = useTransform(x, [0, 60], [2, 1]);
+  const repStampScale = useTransform(x, [0, 60], [2, 1]); // Big to small slam effect
 
   // Derived Metrics
   const unlockedCount = trophies.unlocked?.length || 0;
   const unlockedSet = useMemo(() => new Set(trophies.unlocked || []), [trophies.unlocked]);
-  const accuracy = useMemo(() => (stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100)), [stats]);
+  const accuracy = useMemo(
+    () => (stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100)),
+    [stats]
+  );
 
   const medianSpeed = useMemo(() => {
     if (stats.responseTimes.length === 0) return "0.0";
     const sorted = [...stats.responseTimes].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
-    const ms = sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    const ms =
+      sorted.length % 2 !== 0
+        ? sorted[mid]
+        : (sorted[mid - 1] + sorted[mid]) / 2;
     return (ms / 1000).toFixed(1);
   }, [stats.responseTimes]);
 
@@ -328,6 +407,27 @@ export default function Home() {
     if (s >= 5) return { title: "Staffer" };
     return { title: "Political Intern" };
   }, [stats.bestStreak]);
+
+  const bestGuessedParty = useMemo(() => {
+    const demAcc = stats.demGuesses > 0 ? (stats.demCorrect / stats.demGuesses) : 0;
+    const repAcc = stats.repGuesses > 0 ? (stats.repCorrect / stats.repGuesses) : 0;
+
+    if (demAcc >= repAcc) {
+      return {
+        name: "Democrats",
+        img: "https://upload.wikimedia.org/wikipedia/commons/9/93/Democratic_Disc.svg",
+        color: "text-blue-500",
+        value: Math.round(demAcc * 100)
+      };
+    } else {
+      return {
+        name: "Republicans",
+        img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Republican_Disc.png",
+        color: "text-red-500",
+        value: Math.round(repAcc * 100)
+      };
+    }
+  }, [stats]);
 
   const revealed = gameState === "revealed";
 
@@ -347,7 +447,9 @@ export default function Home() {
   const closeInfoModal = useCallback(() => {
     setShowInfo(false);
     if (typeof window !== "undefined") {
-      try { localStorage.setItem("partyHasSeenIntro_v3", "1"); } catch {}
+      try {
+        localStorage.setItem(INTRO_KEY, "1");
+      } catch {}
     }
   }, []);
 
@@ -355,60 +457,75 @@ export default function Home() {
   useEffect(() => {
     setHasMounted(true);
 
-    // Identity Management
     try {
-      let pid = localStorage.getItem("partyPlayerId");
-      if (!pid) {
-        pid = crypto.randomUUID();
-        localStorage.setItem("partyPlayerId", pid);
-      }
-      setPlayerId(pid);
-    } catch (e) { console.error("Identity setup failed", e); }
-
-    try {
-      const savedStats = localStorage.getItem("partyStats_v3");
+      const savedStats = localStorage.getItem(STATS_KEY);
       if (savedStats) setStats((prev) => ({ ...prev, ...JSON.parse(savedStats) }));
     } catch {}
 
     try {
-      const savedTrophies = localStorage.getItem("partyTrophies_v3");
+      const savedTrophies = localStorage.getItem(TROPHY_KEY);
       if (savedTrophies) setTrophies((prev) => ({ ...prev, ...JSON.parse(savedTrophies) }));
     } catch {}
 
     try {
-      const hasSeenIntro = localStorage.getItem("partyHasSeenIntro_v3");
+      const hasSeenIntro = localStorage.getItem(INTRO_KEY);
       if (!hasSeenIntro) setShowInfo(true);
-    } catch { setShowInfo(true); }
+    } catch {
+      setShowInfo(true);
+    }
 
     (async () => {
       try {
         const res = await fetch("/politicians.json", { cache: "no-store" });
-        if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+        if (!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
         const data = await res.json();
-        const normalized = data.map((p, idx) => ({ ...p, imageUrl: p.img || p.imageUrl, id: `${p.name}-${idx}` }));
+
+        if (!Array.isArray(data)) {
+          throw new Error("politicians.json must be a JSON array.");
+        }
+
+        const normalized = data.map((p, idx) => {
+          const imageUrl = p?.img || p?.image_url || p?.imageUrl;
+          const name = p?.name || `Unknown #${idx + 1}`;
+          const party = p?.party;
+          const id = `${name}-${party}-${p?.state || ""}-${idx}`;
+          return { ...p, imageUrl, id };
+        });
+
+        const bad = normalized.find((p) => !p.imageUrl || !p.party || !p.name);
+        if (bad) throw new Error("Every entry must include name, party, and img.");
+
         setAllPoliticians(normalized);
         const shuffled = [...normalized].sort(() => 0.5 - Math.random());
         setCurrent(shuffled[0]);
         recentIds.current.add(shuffled[0].id);
         setLoadingQueue(shuffled.slice(1, 6));
         startTimeRef.current = Date.now();
-      } catch (e) { setFatalError(e?.message); }
+      } catch (e) {
+        setFatalError(e?.message || "Failed to load politicians.");
+      }
     })();
+
     if (containerRef.current) containerRef.current.focus();
   }, []);
 
   useEffect(() => {
     if (!hasMounted) return;
-    localStorage.setItem("partyStats_v3", JSON.stringify(stats));
+    try {
+      localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    } catch {}
   }, [stats, hasMounted]);
 
   useEffect(() => {
     if (!hasMounted) return;
-    localStorage.setItem("partyTrophies_v3", JSON.stringify(trophies));
+    try {
+      localStorage.setItem(TROPHY_KEY, JSON.stringify(trophies));
+    } catch {}
   }, [trophies, hasMounted]);
 
   const advanceToNext = useCallback(() => {
     if (allPoliticians.length === 0) return;
+
     setLoadingQueue((prev) => {
       const nextCard = prev[0];
       let candidate = allPoliticians[Math.floor(Math.random() * allPoliticians.length)];
@@ -425,6 +542,7 @@ export default function Home() {
       setCurrent(nextCard);
       return [...prev.slice(1), candidate].filter(Boolean);
     });
+
     setGameState("guessing");
     setImgLoading(true);
     startTimeRef.current = Date.now();
@@ -432,73 +550,163 @@ export default function Home() {
     x.set(0);
   }, [allPoliticians, x]);
 
-  const handleGuess = useCallback(async (guessedParty) => {
-    if (gameState !== "guessing" || !current) return;
-    const actualParty = current.party;
-    const isCorrect = guessedParty === actualParty;
-    const now = Date.now();
-    const timeTaken = now - (startTimeRef.current || now);
-    const validTime = timeTaken < 10000 ? timeTaken : null;
-    const isFast = !!validTime && validTime < 1000;
-    const newStreak = isCorrect ? stats.streak + 1 : 0;
+  const handleGuess = useCallback(
+    async (guessedParty) => {
+      if (gameState !== "guessing" || !current) return;
 
-    if (typeof navigator !== "undefined" && navigator.vibrate) {
-      if (isCorrect) navigator.vibrate(10);
-      else navigator.vibrate([30, 50, 30]);
-    }
-    if (!isCorrect) {
-      shakeControls.start({ x: [0, -10, 10, -10, 10, 0], transition: { duration: 0.4 } });
-    }
-    if (isCorrect && newStreak > 0 && newStreak % 10 === 0) {
-      await (await import("canvas-confetti")).default({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
-    }
+      const actualParty = current.party;
+      const isCorrect = guessedParty === actualParty;
+      const now = Date.now();
+      const timeTaken = now - (startTimeRef.current || now);
+      const validTime = timeTaken < 10000 ? timeTaken : null;
+      const isFast = !!validTime && validTime < 1000;
+      const newStreak = isCorrect ? stats.streak + 1 : 0;
 
-    const nextStats = {
-      ...stats,
-      total: stats.total + 1,
-      correct: isCorrect ? stats.correct + 1 : stats.correct,
-      streak: newStreak,
-      bestStreak: Math.max(newStreak, stats.bestStreak),
-      demGuesses: guessedParty === "Democrat" ? stats.demGuesses + 1 : stats.demGuesses,
-      repGuesses: guessedParty === "Republican" ? stats.repGuesses + 1 : stats.repGuesses,
-      demCorrect: actualParty === "Democrat" && isCorrect ? stats.demCorrect + 1 : stats.demCorrect,
-      repCorrect: actualParty === "Republican" && isCorrect ? stats.repCorrect + 1 : stats.repCorrect,
-      responseTimes: validTime ? [...stats.responseTimes, validTime] : stats.responseTimes,
-    };
+      if (typeof navigator !== "undefined" && navigator.vibrate) {
+        if (isCorrect) navigator.vibrate(10);
+        else navigator.vibrate([30, 50, 30]);
+      }
 
-    setStats(nextStats);
-    setLastResult({ isCorrect, guessedParty, correctParty: actualParty, isFast });
-    setGameState("revealed");
-    setTimeout(advanceToNext, isCorrect ? 400 : 1600);
-  }, [gameState, current, stats, advanceToNext, shakeControls]);
+      // Screen Shake on Error
+      if (!isCorrect) {
+         shakeControls.start({
+             x: [0, -10, 10, -10, 10, 0],
+             transition: { duration: 0.4 }
+         });
+      }
 
-  // Key Bindings
+      if (isCorrect && newStreak > 0 && newStreak % 10 === 0) {
+        await fireConfettiSafe();
+      }
+
+      const nextStats = {
+        ...stats,
+        total: stats.total + 1,
+        correct: isCorrect ? stats.correct + 1 : stats.correct,
+        streak: newStreak,
+        bestStreak: Math.max(newStreak, stats.bestStreak),
+        demGuesses: guessedParty === "Democrat" ? stats.demGuesses + 1 : stats.demGuesses,
+        repGuesses: guessedParty === "Republican" ? stats.repGuesses + 1 : stats.repGuesses,
+        demCorrect: actualParty === "Democrat" && isCorrect ? stats.demCorrect + 1 : stats.demCorrect,
+        repCorrect: actualParty === "Republican" && isCorrect ? stats.repCorrect + 1 : stats.repCorrect,
+        guessedDemActualRep:
+          guessedParty === "Democrat" && !isCorrect ? stats.guessedDemActualRep + 1 : stats.guessedDemActualRep,
+        guessedRepActualDem:
+          guessedParty === "Republican" && !isCorrect ? stats.guessedRepActualDem + 1 : stats.guessedRepActualDem,
+        totalTime: stats.totalTime + (validTime || 0),
+        responseTimes: validTime ? [...stats.responseTimes, validTime] : stats.responseTimes,
+      };
+
+      const resultObj = { isCorrect, guessedParty, correctParty: actualParty, isFast };
+
+      const nextUnlocked = new Set(trophies.unlocked || []);
+      let unlockedSomething = false;
+
+      for (const t of TROPHIES) {
+        if (!nextUnlocked.has(t.id) && t.check({ stats: nextStats, lastResult: resultObj })) {
+          nextUnlocked.add(t.id);
+          unlockedSomething = true;
+        }
+      }
+
+      if (unlockedSomething) {
+        setTrophies((prev) => ({
+          ...prev,
+          unlocked: Array.from(nextUnlocked),
+        }));
+        showToast("Trophy Unlocked!");
+      }
+
+      setStats(nextStats);
+      setLastResult(resultObj);
+      setGameState("revealed");
+
+      const delay = isCorrect ? 400 : 1600;
+      setTimeout(advanceToNext, delay);
+    },
+    [gameState, current, stats, trophies, advanceToNext, shakeControls]
+  );
+
   useEffect(() => {
     const onKeyDown = (e) => {
       if (showInfo || showStats || showTrophyCase || showWrapped) return;
       if (gameState !== "guessing") return;
-      if (e.key === "ArrowLeft") { e.preventDefault(); handleGuess("Democrat"); }
-      if (e.key === "ArrowRight") { e.preventDefault(); handleGuess("Republican"); }
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handleGuess("Democrat");
+      }
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        handleGuess("Republican");
+      }
     };
+
     if (typeof window !== "undefined") {
       window.addEventListener("keydown", onKeyDown);
       return () => window.removeEventListener("keydown", onKeyDown);
     }
   }, [gameState, showInfo, showStats, showTrophyCase, showWrapped, handleGuess]);
 
-  if (fatalError) return <div className="p-10 text-center font-bold">Error: {fatalError}</div>;
+  const handleReset = () => {
+    if (typeof window !== "undefined" && confirm("Reset run stats? (Trophies will persist)")) {
+      setStats({
+        correct: 0,
+        total: 0,
+        streak: 0,
+        bestStreak: 0,
+        demGuesses: 0,
+        repGuesses: 0,
+        demCorrect: 0,
+        repCorrect: 0,
+        guessedDemActualRep: 0,
+        guessedRepActualDem: 0,
+        totalTime: 0,
+        responseTimes: [],
+        demTime: 0,
+        repTime: 0,
+      });
+      setGameState("guessing");
+      x.set(0);
+    }
+  };
+
+  const copyStats = async () => {
+    const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nAccuracy: ${accuracy}%\nBest Streak: ${stats.bestStreak}\n\nCan you beat my score?`;
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(text);
+        showToast("Copied to clipboard!");
+      } else {
+        showToast("Clipboard not available");
+      }
+    } catch (err) {
+      console.error("Copy failed", err);
+      showToast("Failed to copy");
+    }
+  };
+
+  if (fatalError) return <ErrorScreen title="App failed to start" detail={fatalError} />;
   if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
 
   return (
-    <div ref={containerRef} tabIndex={0} className={`fixed inset-0 w-full h-[100dvh] ${bgColor} text-[#1D1D1F] font-sans overflow-hidden transition-colors duration-500 overscroll-none touch-none focus:outline-none`}>
+    <div
+      ref={containerRef}
+      tabIndex={0}
+      className={`fixed inset-0 w-full h-[100dvh] ${bgColor} text-[#1D1D1F] font-sans overflow-hidden transition-colors duration-500 overscroll-none touch-none focus:outline-none`}
+    >
       <Head>
-        <title>Guess The Party</title>
+        <title>Guess The Party | Allen Wang</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </Head>
+
       <Analytics />
 
-      {/* Background Noise */}
-      <div className="absolute inset-0 opacity-40 pointer-events-none mix-blend-soft-light" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
+      <div
+        className="absolute inset-0 opacity-40 pointer-events-none mix-blend-soft-light"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
 
       <AnimatePresence>{toast && <Toast message={toast} />}</AnimatePresence>
 
@@ -506,11 +714,27 @@ export default function Home() {
         {/* Header */}
         <header className="mb-4 mt-4 shrink-0 flex justify-center">
           <Glass className="px-5 py-3 rounded-full flex items-center justify-between w-full max-w-lg">
-            <h1 className="text-sm font-black uppercase tracking-tighter">🇺🇸 Guess the Party</h1>
+            <div className="flex flex-col items-start pr-4">
+              <h1 className="text-sm md:text-base font-black uppercase tracking-tighter leading-none whitespace-nowrap">
+                🇺🇸 Guess the Party
+              </h1>
+              <div className="w-full flex justify-between px-[1px] mt-0.5 opacity-40">
+                {"ALLEN WANG".split("").map((char, i) => (
+                  <span key={i} className="text-[8px] font-black">
+                    {char === " " ? "\u00A0" : char}
+                  </span>
+                ))}
+              </div>
+            </div>
             <div className="flex items-center gap-2">
-              <IconButton onClick={() => setShowInfo(true)} ariaLabel="Info"><Info size={18} /></IconButton>
-              <button onClick={() => setShowWrapped(true)} className="h-10 px-5 bg-black text-white rounded-2xl shadow-sm hover:bg-black/80 active:scale-95 transition-transform flex items-center">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Rank</span>
+              <IconButton onClick={() => setShowInfo(true)} ariaLabel="Info">
+                <Info size={18} />
+              </IconButton>
+              <button
+                onClick={() => setShowStats(true)}
+                className="h-10 px-5 bg-black text-white rounded-2xl shadow-sm hover:bg-black/80 active:scale-95 transition-transform flex items-center"
+              >
+                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Stats</span>
               </button>
             </div>
           </Glass>
@@ -518,175 +742,382 @@ export default function Home() {
 
         {/* Main Game Area */}
         <main className="flex-grow flex flex-col items-center justify-center relative touch-none select-none py-2">
+          {/* Hints */}
+          {stats.total === 0 && !revealed && (
+            <div className="absolute inset-0 flex items-center justify-between px-2 pointer-events-none max-w-[420px] mx-auto z-0 opacity-40">
+              <div className="flex flex-col items-center gap-2">
+                <ArrowLeft size={24} />
+                <span className="text-[9px] font-black uppercase tracking-widest">Dem</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <ArrowRight size={24} />
+                <span className="text-[9px] font-black uppercase tracking-widest">Rep</span>
+              </div>
+            </div>
+          )}
+
           {/* Card Stack */}
           <div className="relative w-full max-w-[400px] flex-grow flex flex-col max-h-[75vh]">
-             <div className="relative flex-grow w-full">
-                {/* Preload Image */}
-                {loadingQueue[0] && <div className="absolute inset-0 w-full h-full opacity-0 pointer-events-none"><Image src={loadingQueue[0].imageUrl} fill alt="preload" sizes="400px" priority /></div>}
+            <div className="relative flex-grow w-full">
+              {loadingQueue[0] && (
+                <div className="absolute inset-0 w-full h-full opacity-0 pointer-events-none">
+                  <Image src={loadingQueue[0].imageUrl} fill alt="preload" sizes="400px" priority />
+                </div>
+              )}
 
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={current.id}
-                    drag={gameState === "guessing" ? "x" : false}
-                    dragConstraints={{ left: 0, right: 0 }}
-                    dragElastic={0.6} // Added Spring Feel
-                    style={{ x, rotate }}
-                    animate={revealed && !lastResult?.isCorrect ? shakeControls : {}}
-                    onDragEnd={(e, i) => {
-                      if (i.offset.x < -80) handleGuess("Democrat");
-                      else if (i.offset.x > 80) handleGuess("Republican");
-                    }}
-                    className="absolute inset-0 rounded-[2.5rem] overflow-hidden border-[6px] border-white bg-white shadow-2xl cursor-grab active:cursor-grabbing flex flex-col"
-                  >
-                    <motion.div className="absolute inset-0 z-10 pointer-events-none" style={{ backgroundColor: swipeBg }} />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={current.id}
+                  drag={gameState === "guessing" ? "x" : false}
+                  dragConstraints={{ left: 0, right: 0 }}
+                  style={{ x, rotate }}
+                  animate={revealed && !lastResult?.isCorrect ? shakeControls : {}}
+                  onDragEnd={(e, i) => {
+                    if (i.offset.x < -80) handleGuess("Democrat");
+                    else if (i.offset.x > 80) handleGuess("Republican");
+                  }}
+                  className="absolute inset-0 rounded-[2.5rem] overflow-hidden border-[6px] border-white bg-white shadow-2xl cursor-grab active:cursor-grabbing flex flex-col"
+                >
+                  <motion.div className="absolute inset-0 z-10 pointer-events-none" style={{ backgroundColor: swipeBg }} />
 
-                    {!revealed && (
-                      <>
-                        <motion.div style={{ opacity: demStampOpacity, scale: demStampScale }} className="absolute top-8 right-8 z-20 pointer-events-none border-4 border-blue-500 text-blue-500 px-4 py-1 rounded-xl font-black text-3xl -rotate-12 uppercase tracking-tighter">Dem</motion.div>
-                        <motion.div style={{ opacity: repStampOpacity, scale: repStampScale }} className="absolute top-8 left-8 z-20 pointer-events-none border-4 border-red-500 text-red-500 px-4 py-1 rounded-xl font-black text-3xl rotate-12 uppercase tracking-tighter">Rep</motion.div>
-                      </>
+                  {!revealed && (
+                    <>
+                      <motion.div
+                        style={{ opacity: demStampOpacity, scale: demStampScale }}
+                        className="absolute top-8 right-8 z-20 pointer-events-none border-4 border-blue-500 text-blue-500 px-4 py-1 rounded-xl font-black text-3xl -rotate-12 uppercase tracking-tighter"
+                      >
+                        Dem
+                      </motion.div>
+                      <motion.div
+                        style={{ opacity: repStampOpacity, scale: repStampScale }}
+                        className="absolute top-8 left-8 z-20 pointer-events-none border-4 border-red-500 text-red-500 px-4 py-1 rounded-xl font-black text-3xl rotate-12 uppercase tracking-tighter"
+                      >
+                        Rep
+                      </motion.div>
+                    </>
+                  )}
+
+                  <div className="relative flex-grow bg-gray-50 overflow-hidden w-full h-full">
+                    {imgLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center z-30 bg-white/50 backdrop-blur-sm">
+                        <Loader2 className="animate-spin text-black/20" size={32} />
+                      </div>
                     )}
 
-                    <div className="relative flex-grow bg-gray-50 overflow-hidden w-full h-full">
-                      {imgLoading && <div className="absolute inset-0 flex items-center justify-center z-30 bg-white/50 backdrop-blur-sm"><Loader2 className="animate-spin text-black/20" size={32} /></div>}
-                      <Image src={current.imageUrl} onLoadingComplete={() => setImgLoading(false)} alt="Politician" fill priority className={`object-contain transition-all duration-500 ${revealed ? "scale-105" : "scale-100"}`} />
+                    <Image
+                      src={current.imageUrl}
+                      onLoadingComplete={() => setImgLoading(false)}
+                      alt="Politician"
+                      fill
+                      priority
+                      className={`object-contain transition-all duration-500 ${
+                        revealed ? "scale-105" : "scale-100"
+                      }`}
+                    />
 
-                      {revealed && (
-                         <motion.div initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }} className="absolute inset-x-0 bottom-0 z-40 flex flex-col items-center justify-end text-center pb-8 pt-32 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white">
-                           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-3 shadow-lg ${lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500"}`}>
-                             {lastResult?.isCorrect ? <Check size={32} strokeWidth={4} /> : <XCircle size={32} strokeWidth={3} />}
-                           </div>
-                           <h2 className="text-3xl font-black uppercase tracking-tighter leading-none px-4 mb-2">{current.name}</h2>
-                           <Pill className={`${current.party === "Democrat" ? "bg-blue-500" : "bg-red-500"} text-white border-none`}>{current.party}</Pill>
-                         </motion.div>
-                      )}
+                    {revealed && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 100 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute inset-x-0 bottom-0 z-40 flex flex-col items-center justify-end text-center pb-8 pt-32 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white"
+                      >
+                        <div
+                          className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-3 shadow-lg ${
+                            lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500"
+                          }`}
+                        >
+                          {lastResult?.isCorrect ? <Check size={32} strokeWidth={4} /> : <XCircle size={32} strokeWidth={3} />}
+                        </div>
+
+                        <div className="space-y-1">
+                          <div className="text-white/70 text-[10px] font-black uppercase tracking-[0.25em]">
+                            {formatOffice(current, true)}
+                          </div>
+                          <h2 className="text-3xl font-black uppercase tracking-tighter leading-none px-4">{current.name}</h2>
+
+                          <div className="flex items-center justify-center gap-2 pt-2">
+                            <Pill className={`${current.party === "Democrat" ? "bg-blue-500" : "bg-red-500"} text-white border-none`}>
+                              {current.party}
+                            </Pill>
+
+                            {lastResult?.isFast && lastResult?.isCorrect && (
+                              <div className="flex items-center gap-1 px-2 py-1 bg-yellow-400 text-yellow-900 rounded-full text-[9px] font-black uppercase tracking-widest">
+                                <Zap size={10} className="fill-yellow-900" /> Fast
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+
+                  {/* Controls */}
+                  <div className="relative shrink-0 h-32 px-5 py-4 bg-white flex flex-col justify-between z-50">
+                    <div className="grid grid-cols-2 gap-3 h-12">
+                      <button
+                        onClick={() => handleGuess("Democrat")}
+                        disabled={revealed}
+                        className="rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-black text-xs uppercase tracking-widest hover:bg-blue-100 active:scale-95 transition-all disabled:opacity-50"
+                      >
+                        Democrat
+                      </button>
+                      <button
+                        onClick={() => handleGuess("Republican")}
+                        disabled={revealed}
+                        className="rounded-xl bg-red-50 text-red-600 border border-red-100 font-black text-xs uppercase tracking-widest hover:bg-red-100 active:scale-95 transition-all disabled:opacity-50"
+                      >
+                        Republican
+                      </button>
                     </div>
 
-                    <div className="relative shrink-0 h-32 px-5 py-4 bg-white flex flex-col justify-between z-50">
-                      <div className="grid grid-cols-2 gap-3 h-12">
-                        <button onClick={() => handleGuess("Democrat")} disabled={revealed} className="rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-black text-xs uppercase tracking-widest hover:bg-blue-100 active:scale-95 transition-all disabled:opacity-50">Democrat</button>
-                        <button onClick={() => handleGuess("Republican")} disabled={revealed} className="rounded-xl bg-red-50 text-red-600 border border-red-100 font-black text-xs uppercase tracking-widest hover:bg-red-100 active:scale-95 transition-all disabled:opacity-50">Republican</button>
-                      </div>
-                      <div className="flex items-center justify-between mt-2">
-                         <button onClick={() => setShowStats(true)} className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black">View Stats</button>
-                         <button onClick={() => { if(confirm("Reset?")) setStats({ correct: 0, total: 0, streak: 0, bestStreak: 0, demGuesses: 0, repGuesses: 0, demCorrect: 0, repCorrect: 0, responseTimes: [] }); }} className="p-2 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200"><RefreshCw size={14} /></button>
-                      </div>
+                    <div className="flex items-center justify-between mt-2">
+                      <button
+                        onClick={() => setShowTrophyCase(true)}
+                        className="flex items-center gap-2 bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-100/50 px-4 py-2.5 rounded-xl transition-all active:scale-95"
+                      >
+                        <Trophy size={16} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">
+                          {unlockedCount}/{TROPHIES.length}
+                        </span>
+                      </button>
+                      <button
+                        onClick={handleReset}
+                        className="p-2.5 bg-gray-100 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-xl transition-all active:scale-95"
+                      >
+                        <RefreshCw size={16} />
+                      </button>
                     </div>
-                  </motion.div>
-                </AnimatePresence>
-             </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
         </main>
       </div>
 
       <AnimatePresence>
-        {/* Info Modal */}
         {showInfo && (
           <Modal onClose={closeInfoModal}>
-             <div className="text-center space-y-6 py-4">
-               <h3 className="text-2xl font-black uppercase tracking-tighter">How to Play</h3>
-               <div className="flex justify-center gap-8">
-                 <div className="flex flex-col items-center gap-2">
-                   <div className="h-12 w-12 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg"><ArrowLeft size={24} /></div>
-                   <span className="text-xs font-black uppercase tracking-widest">Democrat</span>
+            <div className="text-center space-y-5 py-2">
+              <h3 className="text-xl font-black uppercase tracking-tight leading-none">
+                Can you tell political leanings from a picture?
+              </h3>
+
+              <p className="text-sm font-medium text-gray-600 max-w-[260px] mx-auto leading-relaxed">
+                Swipe or use arrow keys to guess.
+                <br />
+              </p>
+
+              <div className="grid grid-cols-2 gap-4">
+                 {/* Left Tile */}
+                 <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex flex-col items-center gap-2">
+                    <div className="h-8 w-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                      <ArrowLeft size={16} strokeWidth={3} />
+                    </div>
+                    <div className="leading-none">
+                      <div className="text-[10px] font-black uppercase tracking-widest text-blue-300">Left</div>
+                      <div className="text-sm font-black uppercase text-blue-600">Democrat</div>
+                    </div>
                  </div>
-                 <div className="flex flex-col items-center gap-2">
-                   <div className="h-12 w-12 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg"><ArrowRight size={24} /></div>
-                   <span className="text-xs font-black uppercase tracking-widest">Republican</span>
+
+                 {/* Right Tile */}
+                 <div className="bg-red-50/50 border border-red-100 rounded-2xl p-4 flex flex-col items-center gap-2">
+                    <div className="h-8 w-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                      <ArrowRight size={16} strokeWidth={3} />
+                    </div>
+                    <div className="leading-none">
+                      <div className="text-[10px] font-black uppercase tracking-widest text-red-300">Right</div>
+                      <div className="text-sm font-black uppercase text-red-600">Republican</div>
+                    </div>
                  </div>
-               </div>
-               <button onClick={closeInfoModal} className="w-full py-4 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 transition-transform">Start Guessing</button>
-             </div>
+              </div>
+
+              <button
+                onClick={closeInfoModal}
+                className="w-full py-4 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs active:scale-95 transition-transform shadow-xl"
+              >
+                Let's Play
+              </button>
+
+            </div>
           </Modal>
         )}
 
-        {/* Standard Stats Modal */}
         {showStats && (
           <Modal onClose={() => setShowStats(false)}>
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-black uppercase tracking-tighter">Your Session</h2>
-              <IconButton onClick={() => setShowStats(false)} ariaLabel="Close"><XCircle size={20} /></IconButton>
+              <div>
+                <h2 className="text-xl font-black uppercase tracking-tighter">Performance</h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <Pill className="bg-black text-white">{rank.title}</Pill>
+                </div>
+              </div>
+              <IconButton onClick={() => setShowStats(false)} ariaLabel="Close">
+                <XCircle size={20} />
+              </IconButton>
             </div>
-            <div className="space-y-4">
-              <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
-                <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2">Accuracy</div>
-                <div className="text-4xl font-black">{accuracy}%</div>
-                <div className="flex gap-2 mt-4">
-                  <div className="flex-1 h-2 bg-blue-200 rounded-full overflow-hidden"><div style={{ width: `${(stats.demCorrect / (stats.demGuesses || 1)) * 100}%` }} className="h-full bg-blue-500" /></div>
-                  <div className="flex-1 h-2 bg-red-200 rounded-full overflow-hidden"><div style={{ width: `${(stats.repCorrect / (stats.repGuesses || 1)) * 100}%` }} className="h-full bg-red-500" /></div>
+
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="col-span-2 bg-white rounded-3xl border border-gray-100 p-5 shadow-sm">
+                <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Total Accuracy</div>
+                <div className="text-5xl font-black tracking-tighter text-gray-900">{accuracy}%</div>
+                <div className="mt-4 space-y-2">
+                  <ProgressBar label="Democrat" value={stats.demCorrect} total={stats.demGuesses} color="bg-blue-500" />
+                  <ProgressBar label="Republican" value={stats.repCorrect} total={stats.repGuesses} color="bg-red-500" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 text-center">
-                   <div className="text-[9px] font-black uppercase tracking-widest text-gray-400">Streak</div>
-                   <div className="text-2xl font-black mt-1">{stats.streak}</div>
+
+              <div className="bg-white rounded-3xl border border-gray-100 p-4 text-center shadow-sm">
+                <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Streak</div>
+                <div className="text-2xl font-black">{stats.streak}</div>
+              </div>
+
+              <div className="bg-white rounded-3xl border border-gray-100 p-4 text-center shadow-sm">
+                <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Median Speed</div>
+                <div className="text-2xl font-black">{medianSpeed}s</div>
+              </div>
+            </div>
+
+            {/* HISTOGRAM ADDED HERE */}
+            <Histogram userAccuracy={accuracy} />
+
+            <button
+              onClick={() => {
+                setShowStats(false);
+                setShowWrapped(true);
+              }}
+              className="w-full h-14 mt-6 rounded-2xl bg-black text-white flex items-center justify-center gap-2 active:scale-95 transition-transform"
+            >
+              <Star size={16} className="text-yellow-400 fill-yellow-400" />
+              <span className="font-black uppercase tracking-[0.2em] text-xs">Generate Wrapped</span>
+            </button>
+          </Modal>
+        )}
+
+        {showTrophyCase && (
+          <Modal onClose={() => setShowTrophyCase(false)}>
+            <div className="flex flex-col gap-4 mb-4 pt-2">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-black uppercase tracking-tighter">Trophies</h2>
+                <IconButton onClick={() => setShowTrophyCase(false)} ariaLabel="Close">
+                  <XCircle size={20} />
+                </IconButton>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex-grow h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-amber-500"
+                    style={{ width: `${(unlockedCount / TROPHIES.length) * 100}%` }}
+                  />
                 </div>
-                <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 text-center">
-                   <div className="text-[9px] font-black uppercase tracking-widest text-gray-400">Total</div>
-                   <div className="text-2xl font-black mt-1">{stats.total}</div>
+                <div className="text-[10px] font-black uppercase text-gray-400">
+                  {unlockedCount}/{TROPHIES.length}
                 </div>
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-2">
+              {TROPHIES.map((t) => {
+                const unlocked = unlockedSet.has(t.id);
+                return (
+                  <div
+                    key={t.id}
+                    className={`p-4 rounded-2xl border flex items-center gap-4 ${
+                      unlocked ? "bg-white border-gray-100 shadow-sm" : "bg-gray-50 border-transparent opacity-60 grayscale"
+                    }`}
+                  >
+                    <div
+                      className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${
+                        unlocked ? tierStyles(t.tier) : "bg-gray-200"
+                      }`}
+                    >
+                      {unlocked ? t.icon : <Lock size={16} />}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-black uppercase tracking-tight truncate">{t.title}</div>
+                      <div className="text-[10px] font-bold text-gray-400">{t.desc}</div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </Modal>
         )}
 
-        {/* Community / Wrapped Modal (The Big Update) */}
         {showWrapped && (
-           <div className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setShowWrapped(false)}>
-             <motion.div initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} className="relative w-full max-w-sm max-h-[90vh] overflow-y-auto bg-white rounded-[2.5rem] p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-               <div className="flex justify-between items-start mb-6">
-                 <div className="flex flex-col">
-                   <h2 className="text-2xl font-black uppercase tracking-tighter">Community Rank</h2>
-                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Player ID: {playerId?.slice(0, 8)}</span>
-                 </div>
-                 <IconButton onClick={() => setShowWrapped(false)} ariaLabel="Close"><XCircle size={20} /></IconButton>
-               </div>
+          <div
+            className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+            onClick={() => setShowWrapped(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              className="relative w-full max-w-sm max-h-[90vh] overflow-y-auto bg-gradient-to-br from-gray-900 to-black rounded-[2.5rem] border border-white/10 p-8 text-white shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative z-10 flex flex-col gap-6">
+                <div className="flex justify-between items-start">
+                  <div className="text-[9px] font-black uppercase tracking-[0.25em] opacity-60">2025 Review</div>
+                  <button onClick={() => setShowWrapped(false)} className="opacity-50 hover:opacity-100">
+                    <XCircle size={20} />
+                  </button>
+                </div>
 
-               {/* Stats Overview */}
-               <div className="grid grid-cols-2 gap-3 mb-2">
-                 <div className="bg-black text-white rounded-2xl p-4">
-                    <div className="text-[9px] font-black uppercase tracking-widest opacity-60">Accuracy</div>
-                    <div className="text-3xl font-black">{accuracy}%</div>
-                 </div>
-                 <div className="bg-gray-100 rounded-2xl p-4 border border-gray-200">
-                    <div className="text-[9px] font-black uppercase tracking-widest text-gray-400">Best Streak</div>
-                    <div className="text-3xl font-black text-gray-900">{stats.bestStreak}</div>
-                 </div>
-               </div>
+                <h3 className="text-3xl font-black tracking-tighter uppercase leading-none">
+                  My Party <span className="text-blue-400">IQ</span>
+                </h3>
 
-               {/* The Sophisticated Histogram */}
-               <CommunityRank stats={stats} />
+                <div className="space-y-3">
+                  <div className="bg-white/10 rounded-2xl p-4 border border-white/5">
+                    <div className="text-[9px] uppercase tracking-widest opacity-50 mb-1">Rank</div>
+                    <div className="text-xl font-black uppercase">{rank.title}</div>
+                  </div>
 
-               {/* Share Button */}
-               <button onClick={() => { navigator.clipboard.writeText(`My Party IQ: ${accuracy}% (Top ${calculatePercentile(accuracy, MOCK_BACKEND_DATA.accuracyDistribution)}%)\nRank: ${rank.title}`); showToast("Copied Stats!"); }} className="w-full mt-6 py-4 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-transform">
-                 <Share2 size={16} /> Share Rank
-               </button>
-             </motion.div>
-           </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white/10 rounded-2xl p-4 border border-white/5">
+                      <div className="text-[9px] uppercase tracking-widest opacity-50 mb-1">Accuracy</div>
+                      <div className="text-2xl font-black">{accuracy}%</div>
+                    </div>
+                    <div className="bg-white/10 rounded-2xl p-4 border border-white/5">
+                      <div className="text-[9px] uppercase tracking-widest opacity-50 mb-1">Streak</div>
+                      <div className="text-2xl font-black text-amber-400">{stats.bestStreak}</div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white/10 rounded-2xl p-4 border border-white/5 flex items-center gap-4">
+                    <div className="relative h-12 w-12 shrink-0 bg-white rounded-full p-2">
+                       <img
+                        src={bestGuessedParty.img}
+                        alt={bestGuessedParty.name}
+                        className="w-full h-full object-contain"
+                       />
+                    </div>
+                    <div>
+                      <div className="text-[9px] uppercase tracking-widest opacity-50">Best Accuracy</div>
+                      <div className={`text-sm font-bold ${bestGuessedParty.color}`}>
+                        {bestGuessedParty.name} <span className="opacity-50 text-white font-normal">({bestGuessedParty.value || 0}%)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-white/10 flex justify-between items-center">
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">Guess The Party</p>
+                    <p className="text-[9px] font-bold opacity-30 mt-0.5">Allen Wang</p>
+                  </div>
+                  <div className="relative z-50">
+                    <IconButton onClick={copyStats} ariaLabel="Share" className="h-8 w-8 bg-white text-black hover:bg-white/90">
+                      <Share2 size={14} />
+                    </IconButton>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
-    </div>
-  );
-}
-
-function LoadingScreen({ message }) {
-  return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F5F5F7] gap-4">
-      <Loader2 className="animate-spin text-blue-600" size={40} />
-      <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">{message}</p>
-    </div>
-  );
-}
-
-function Modal({ children, onClose }) {
-  useEffect(() => {
-    if (typeof document !== "undefined") { document.body.style.overflow = "hidden"; return () => { document.body.style.overflow = "unset"; }; }
-  }, []);
-  return (
-    <div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 md:p-6" onClick={onClose}>
-      <motion.div initial={{ y: 20, opacity: 0, scale: 0.95 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 20, opacity: 0, scale: 0.95 }} className="w-full max-w-md max-h-[85vh] overflow-y-auto bg-white rounded-[2rem] shadow-2xl p-6 md:p-8" onClick={(e) => e.stopPropagation()}>
-        {children}
-      </motion.div>
     </div>
   );
 }
