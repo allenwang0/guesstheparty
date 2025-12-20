@@ -67,7 +67,21 @@ function calculatePercentile(userAcc, data) {
   return Math.round((weightedScore / totalPlayers) * 100);
 }
 
-/* ----------------------------- Utility Components ---------------------------- */
+/* ----------------------------- Icons & Components ---------------------------- */
+const DonkeyIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M20.5 13.5C20.5 13.5 19 12.5 18 12.5C17 12.5 16 13 16 13L14 8L10 6L8 8V12L4 13L2 11V15L4 18H6V22H8V19H14V22H16V18L18 16C18 16 20 16.5 21 16C22 15.5 22 14 22 14L20.5 13.5Z" />
+    <path d="M12 4L11 2H9L8 4V6H12V4Z" />
+  </svg>
+);
+
+const ElephantIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 15V11C20 8 18 6 16 6H14C14 6 14.5 4 16 3H9C8 3 6 4 6 6V11L2 10V14L6 15V19H9V22H12V19H15V22H18V18C19 18 20 17 20 15Z" />
+    <path d="M16 8C16.55 8 17 8.45 17 9C17 9.55 16.55 10 16 10C15.45 10 15 9.55 15 9C15 8.45 15.45 8 16 8Z" fill="white" />
+  </svg>
+);
+
 const Glass = ({ children, className = "" }) => (
   <div
     className={[
@@ -482,13 +496,11 @@ export default function Home() {
     }
   }, []);
 
-  // --- DOWNLOAD LOGIC (Updated for CORS + Mobile Share) ---
+  // --- DOWNLOAD LOGIC ---
   const handleDownloadWrapped = async () => {
     if (!wrappedRef.current) return;
     try {
         showToast("Generating image...");
-
-        // Wait 100ms to ensure all images/fonts are settled
         await new Promise(resolve => setTimeout(resolve, 100));
 
         const canvas = await html2canvas(wrappedRef.current, {
@@ -499,7 +511,6 @@ export default function Home() {
             logging: false,
         });
 
-        // 1. Try Native Sharing (Best for Mobile)
         canvas.toBlob(async (blob) => {
             if (!blob) throw new Error("Canvas is empty");
             const file = new File([blob], "GuessTheParty-Wrapped.png", { type: "image/png" });
@@ -515,11 +526,10 @@ export default function Home() {
                 } catch (shareError) {
                     if (shareError.name !== 'AbortError') {
                         console.error(shareError);
-                        triggerDownload(canvas); // Fallback if share actually fails
+                        triggerDownload(canvas);
                     }
                 }
             } else {
-                 // 2. Fallback to classic download (Desktop)
                 triggerDownload(canvas);
             }
         }, 'image/png');
@@ -944,15 +954,17 @@ export default function Home() {
                       <button
                         onClick={() => handleGuess("Democrat")}
                         disabled={revealed}
-                        className="rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-black text-xs uppercase tracking-widest hover:bg-blue-100 active:scale-95 transition-all disabled:opacity-50"
+                        className="rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-black text-xs uppercase tracking-widest hover:bg-blue-100 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
+                        <DonkeyIcon className="w-4 h-4" />
                         Democrat
                       </button>
                       <button
                         onClick={() => handleGuess("Republican")}
                         disabled={revealed}
-                        className="rounded-xl bg-red-50 text-red-600 border border-red-100 font-black text-xs uppercase tracking-widest hover:bg-red-100 active:scale-95 transition-all disabled:opacity-50"
+                        className="rounded-xl bg-red-50 text-red-600 border border-red-100 font-black text-xs uppercase tracking-widest hover:bg-red-100 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
+                         <ElephantIcon className="w-4 h-4" />
                         Republican
                       </button>
                     </div>
