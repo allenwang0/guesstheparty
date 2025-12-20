@@ -25,7 +25,8 @@ import {
   TrendingUp,
   Download,
   Copy,
-  HelpCircle
+  HelpCircle,
+  BarChart2
 } from "lucide-react";
 
 /* ----------------------------- Static Data ---------------------------- */
@@ -811,9 +812,18 @@ export default function Home() {
               </IconButton>
               <button
                 onClick={() => setShowStats(true)}
-                className="h-10 px-5 bg-black text-white rounded-2xl shadow-sm hover:bg-black/80 active:scale-95 transition-transform flex items-center"
+                className="h-10 px-5 bg-black text-white rounded-2xl shadow-sm hover:bg-black/80 active:scale-95 transition-transform flex items-center justify-center min-w-[80px]"
               >
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Stats</span>
+                {stats.total > 0 ? (
+                  <div className="flex items-center gap-1.5">
+                    <BarChart2 size={12} className="text-white/60" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] tabular-nums">
+                      {accuracy}%
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Stats</span>
+                )}
               </button>
             </div>
           </Glass>
@@ -924,9 +934,9 @@ export default function Home() {
                     )}
                   </div>
 
-                  {/* Controls - FIXED: stopPropagation ensures clicks work on the draggable card */}
+                  {/* Controls - FIXED: cursor-auto and stopPropagation */}
                   <div
-                    className="relative shrink-0 h-32 px-5 py-4 bg-white flex flex-col justify-between z-50"
+                    className="relative shrink-0 h-32 px-5 py-4 bg-white flex flex-col justify-between z-50 cursor-auto"
                     onPointerDown={(e) => e.stopPropagation()}
                     onTouchStart={(e) => e.stopPropagation()}
                   >
@@ -1118,6 +1128,55 @@ export default function Home() {
               <Star size={16} className="text-yellow-400 fill-yellow-400" />
               <span className="font-black uppercase tracking-[0.2em] text-xs">Generate Wrapped</span>
             </button>
+          </Modal>
+        )}
+
+        {showTrophyCase && (
+          <Modal onClose={() => setShowTrophyCase(false)}>
+            <div className="flex flex-col gap-4 mb-4 pt-2">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-black uppercase tracking-tighter">Trophies</h2>
+                <IconButton onClick={() => setShowTrophyCase(false)} ariaLabel="Close">
+                  <XCircle size={20} />
+                </IconButton>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex-grow h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-amber-500"
+                    style={{ width: `${(unlockedCount / TROPHIES.length) * 100}%` }}
+                  />
+                </div>
+                <div className="text-[10px] font-black uppercase text-gray-400">
+                  {unlockedCount}/{TROPHIES.length}
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              {TROPHIES.map((t) => {
+                const unlocked = unlockedSet.has(t.id);
+                return (
+                  <div
+                    key={t.id}
+                    className={`p-4 rounded-2xl border flex items-center gap-4 ${
+                      unlocked ? "bg-white border-gray-100 shadow-sm" : "bg-gray-50 border-transparent opacity-60 grayscale"
+                    }`}
+                  >
+                    <div
+                      className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${
+                        unlocked ? tierStyles(t.tier) : "bg-gray-200"
+                      }`}
+                    >
+                      {unlocked ? t.icon : <Lock size={16} />}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-black uppercase tracking-tight truncate">{t.title}</div>
+                      <div className="text-[10px] font-bold text-gray-400">{t.desc}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </Modal>
         )}
 
