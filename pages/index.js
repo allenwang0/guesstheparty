@@ -3,7 +3,6 @@ import Head from "next/head";
 import Image from "next/image";
 import { Analytics } from "@vercel/analytics/react";
 import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation } from "framer-motion";
-import html2canvas from "html2canvas";
 import {
   Loader2,
   Check,
@@ -22,8 +21,6 @@ import {
   AlertCircle,
   RefreshCw,
   TrendingUp,
-  Download,
-  Copy,
   HelpCircle,
   BarChart2
 } from "lucide-react";
@@ -339,7 +336,6 @@ export default function Home() {
   const [hasMounted, setHasMounted] = useState(false);
   const [fatalError, setFatalError] = useState(null);
   const containerRef = useRef(null);
-  const wrappedRef = useRef(null);
 
   // Logic Refs
   const recentIds = useRef(new Set());
@@ -352,9 +348,6 @@ export default function Home() {
   const [showScoreDetails, setShowScoreDetails] = useState(false);
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
-
-  // NEW: State for manual image saving
-  const [generatedImage, setGeneratedImage] = useState(null);
 
   const shakeControls = useAnimation();
 
@@ -457,78 +450,6 @@ export default function Home() {
       } catch {}
     }
   }, []);
-
-  // --- UPDATED DOWNLOAD LOGIC ---
-  const handleDownloadWrapped = async () => {
-    if (!wrappedRef.current) return;
-
-    // 1. Force a small wait for fonts to settle
-    await document.fonts.ready;
-    await new Promise(resolve => setTimeout(resolve, 200));
-
-    try {
-        showToast("Generating...");
-
-        const canvas = await html2canvas(wrappedRef.current, {
-            scale: 3, // Higher res for clear screenshots
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: null,
-            logging: false,
-        });
-
-        const dataUrl = canvas.toDataURL("image/png");
-
-        // 2. Try Native Share first (Mobile App experience)
-        if (navigator.canShare && navigator.share) {
-             canvas.toBlob(async (blob) => {
-                const file = new File([blob], "party-iq.png", { type: "image/png" });
-                try {
-                    await navigator.share({
-                        files: [file],
-                        title: 'My Party IQ',
-                    });
-                } catch (err) {
-                    // If they cancel share, or it fails, OPEN THE SCREENSHOT MODAL
-                    if (err.name !== 'AbortError') {
-                        setGeneratedImage(dataUrl);
-                    }
-                }
-            });
-        } else {
-            // 3. Desktop: Try auto-download
-            try {
-                const link = document.createElement("a");
-                link.href = dataUrl;
-                link.download = `GuessTheParty-2025.png`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } catch (e) {
-                // 4. Fallback: Show the image for manual saving
-                setGeneratedImage(dataUrl);
-            }
-        }
-    } catch (e) {
-        console.error("Export failed", e);
-        showToast("Auto-save failed. Taking you to screenshot mode...");
-    }
-  };
-
-  const copyStats = async () => {
-    const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nScore: ${rank.score}\nAccuracy: ${accuracy}%\nBest Streak: ${stats.bestStreak}\n\nguesstheparty.vercel.app`;
-    try {
-      if (typeof navigator !== "undefined" && navigator.clipboard) {
-        await navigator.clipboard.writeText(text);
-        showToast("Copied to clipboard!");
-      } else {
-        showToast("Clipboard not available");
-      }
-    } catch (err) {
-      console.error("Copy failed", err);
-      showToast("Failed to copy");
-    }
-  };
 
   // --- Initialization ---
   useEffect(() => {
@@ -1135,36 +1056,7 @@ export default function Home() {
           </Modal>
         )}
 
-        {/* NEW: Screenshot / Manual Save Modal (Fallback) */}
-        {generatedImage && (
-             <div
-                className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-6"
-                onClick={() => setGeneratedImage(null)}
-             >
-                <div className="text-white text-center mb-4 space-y-1">
-                    <h3 className="text-lg font-black uppercase tracking-widest text-emerald-400">Image Ready</h3>
-                    <p className="text-xs text-white/60 font-medium">Long press to save or take a screenshot</p>
-                </div>
-
-                <motion.img
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    src={generatedImage}
-                    alt="Generated Wrapped"
-                    className="w-full max-w-sm rounded-[2rem] shadow-2xl border border-white/10"
-                    onClick={(e) => e.stopPropagation()} // Allow clicking image without closing
-                />
-
-                <button
-                    onClick={() => setGeneratedImage(null)}
-                    className="mt-8 px-8 py-3 bg-white text-black rounded-full font-black text-xs uppercase tracking-widest"
-                >
-                    Close
-                </button>
-             </div>
-        )}
-
-        {/* Wrapped Modal (The Source) */}
+        {/* Wrapped Modal (Simplified) */}
         {showWrapped && (
           <div
             className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
@@ -1178,7 +1070,6 @@ export default function Home() {
             >
                 {/* --- WRAPPED CARD (Captured) --- */}
                 <div
-                    ref={wrappedRef}
                     className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-[2rem] border border-white/10 p-6 text-white shadow-2xl flex flex-col justify-between aspect-[9/14]"
                 >
                     {/* Header */}
@@ -1205,7 +1096,7 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* Best Party - FIXED: Uses SVGs to avoid CORS issues */}
+                    {/* Best Party */}
                     <div className="bg-white/5 rounded-xl p-3 border border-white/5 flex items-center gap-3">
                         <div className={`relative h-10 w-10 shrink-0 bg-white rounded-full p-2 flex items-center justify-center ${bestGuessedParty.color}`}>
                            {bestGuessedParty.name === "Democrats" ? <DonkeyIcon /> : <ElephantIcon />}
@@ -1237,21 +1128,6 @@ export default function Home() {
                 </div>
                 {/* --- END CAPTURED AREA --- */}
 
-                {/* Actions */}
-                <div className="grid grid-cols-2 gap-3">
-                     <button
-                        onClick={copyStats}
-                        className="h-12 bg-white text-black rounded-2xl flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest active:scale-95 transition-all"
-                     >
-                        <Copy size={16} /> Copy Text
-                     </button>
-                     <button
-                        onClick={handleDownloadWrapped}
-                        className="h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest active:scale-95 transition-all"
-                     >
-                        <Download size={16} /> Save / Share
-                     </button>
-                </div>
                 <button
                     onClick={() => setShowWrapped(false)}
                     className="w-full h-12 bg-black/40 text-white/50 hover:text-white rounded-2xl flex items-center justify-center font-black text-xs uppercase tracking-widest transition-colors"
