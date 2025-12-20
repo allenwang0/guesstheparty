@@ -222,7 +222,8 @@ function ErrorScreen({ title, detail }) {
     </div>
   );
 }
-function Modal({ children, onClose }) {
+/* Updated Modal to accept custom width classes */
+function Modal({ children, onClose, className = "" }) {
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.body.style.overflow = "hidden";
@@ -231,6 +232,10 @@ function Modal({ children, onClose }) {
       };
     }
   }, []);
+
+  // Default to max-w-md if no specific width class is passed
+  const widthClass = className || "max-w-md";
+
   return (
     <div
       className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 md:p-6"
@@ -240,7 +245,7 @@ function Modal({ children, onClose }) {
         initial={{ y: 20, opacity: 0, scale: 0.95 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}
         exit={{ y: 20, opacity: 0, scale: 0.95 }}
-        className="w-full max-w-md max-h-[85vh] overflow-y-auto bg-white rounded-[2rem] shadow-2xl p-6 md:p-8"
+        className={`w-full ${widthClass} max-h-[85vh] overflow-y-auto bg-white rounded-[2rem] shadow-2xl p-6 md:p-8`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}
@@ -858,9 +863,9 @@ export default function Home() {
       </div>
       <AnimatePresence>
 
-        {/* Intro Modal */}
+        {/* Intro Modal (WIDER on Desktop) */}
         {showInfo && (
-          <Modal onClose={closeInfoModal}>
+          <Modal onClose={closeInfoModal} className="max-w-md md:max-w-xl">
             <div className="text-center space-y-5 py-2">
               <div className="space-y-1">
                 <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight leading-none text-balance md:whitespace-nowrap">
