@@ -1232,7 +1232,7 @@ export default function Home() {
                             <div className="text-[8px] font-black uppercase tracking-widest">Guess The Party</div>
                             <div className="text-[8px]">2025 Review</div>
                          </div>
-                         <div className="text-[8px] font-mono">guesstheparty.com</div>
+                         <div className="text-[8px] font-mono">guesstheparty.vercel.app</div>
                     </div>
                 </div>
                 {/* --- END CAPTURED AREA --- */}
