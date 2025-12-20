@@ -25,20 +25,6 @@ import {
   BarChart2
 } from "lucide-react";
 
-/* ----------------------------- Icons ---------------------------- */
-const DonkeyIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-    <path d="M20.5 13.5C20.5 13.5 19 12.5 18 12.5C17 12.5 16 13 16 13L14 8L10 6L8 8V12L4 13L2 11V15L4 18H6V22H8V19H14V22H16V18L18 16C18 16 20 16.5 21 16C22 15.5 22 14 22 14L20.5 13.5Z" />
-    <path d="M12 4L11 2H9L8 4V6H12V4Z" />
-  </svg>
-);
-const ElephantIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-    <path d="M20 15V11C20 8 18 6 16 6H14C14 6 14.5 4 16 3H9C8 3 6 4 6 6V11L2 10V14L6 15V19H9V22H12V19H15V22H18V18C19 18 20 17 20 15Z" />
-    <path d="M16 8C16.55 8 17 8.45 17 9C17 9.55 16.55 10 16 10C15.45 10 15 9.55 15 9C15 8.45 15.45 8 16 8Z" fill="white" />
-  </svg>
-);
-
 /* ----------------------------- Static Data ---------------------------- */
 const FAKE_DISTRIBUTION = [
   { range: '0-10', count: 2, percentOfPlayers: 1 },
@@ -417,12 +403,14 @@ export default function Home() {
     if (demAcc >= repAcc) {
       return {
         name: "Democrats",
+        img: "https://www.stickylife.com/media/catalog/product/cache/cae11d3eb59b15e233305252c507fc33/d/o/donkey-decal-front.png",
         color: "text-blue-500",
         value: Math.round(demAcc * 100)
       };
     } else {
       return {
         name: "Republicans",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Republicanlogo.svg/1163px-Republicanlogo.svg.png",
         color: "text-red-500",
         value: Math.round(repAcc * 100)
       };
@@ -812,7 +800,7 @@ export default function Home() {
                       </motion.div>
                     )}
                   </div>
-                  {/* Controls */}
+                  {/* Controls - Updated with specific Image URLs */}
                   <div
                     className="relative shrink-0 h-32 px-5 py-4 bg-white flex flex-col justify-between z-50 cursor-auto"
                     onPointerDown={(e) => e.stopPropagation()}
@@ -824,7 +812,11 @@ export default function Home() {
                         disabled={revealed}
                         className="rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-black text-xs uppercase tracking-widest hover:bg-blue-100 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
-                        <DonkeyIcon className="w-4 h-4" />
+                        <img
+                          src="https://upload.wikimedia.org/wikipedia/commons/9/93/Democratic_Disc.svg"
+                          alt="Dem"
+                          className="w-4 h-4 object-contain"
+                        />
                         Democrat
                       </button>
                       <button
@@ -832,7 +824,11 @@ export default function Home() {
                         disabled={revealed}
                         className="rounded-xl bg-red-50 text-red-600 border border-red-100 font-black text-xs uppercase tracking-widest hover:bg-red-100 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
-                         <ElephantIcon className="w-4 h-4" />
+                        <img
+                          src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Republican_Disc.png"
+                          alt="Rep"
+                          className="w-4 h-4 object-contain"
+                        />
                         Republican
                       </button>
                     </div>
@@ -1096,10 +1092,14 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* Best Party */}
+                    {/* Best Party - UPDATED with specific wrapped image URL */}
                     <div className="bg-white/5 rounded-xl p-3 border border-white/5 flex items-center gap-3">
-                        <div className={`relative h-10 w-10 shrink-0 bg-white rounded-full p-2 flex items-center justify-center ${bestGuessedParty.color}`}>
-                           {bestGuessedParty.name === "Democrats" ? <DonkeyIcon /> : <ElephantIcon />}
+                        <div className="relative h-10 w-10 shrink-0 bg-white rounded-full p-2 flex items-center justify-center">
+                           <img
+                             src={bestGuessedParty.img}
+                             alt={bestGuessedParty.name}
+                             className="w-full h-full object-contain"
+                           />
                         </div>
                         <div>
                             <div className="text-[8px] uppercase tracking-widest opacity-50">Best Read</div>
