@@ -863,7 +863,7 @@ export default function Home() {
           <Modal onClose={closeInfoModal}>
             <div className="text-center space-y-5 py-2">
               <div className="space-y-1">
-                <h3 className="text-xl font-black uppercase tracking-tight leading-none">
+                <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight leading-none text-balance md:whitespace-nowrap">
                   Does appearance predict ideology?
                 </h3>
                 <p className="text-lg font-serif italic text-gray-500">
