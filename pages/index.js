@@ -29,6 +29,21 @@ import {
   BarChart2
 } from "lucide-react";
 
+/* ----------------------------- Icons ---------------------------- */
+const DonkeyIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M20.5 13.5C20.5 13.5 19 12.5 18 12.5C17 12.5 16 13 16 13L14 8L10 6L8 8V12L4 13L2 11V15L4 18H6V22H8V19H14V22H16V18L18 16C18 16 20 16.5 21 16C22 15.5 22 14 22 14L20.5 13.5Z" />
+    <path d="M12 4L11 2H9L8 4V6H12V4Z" />
+  </svg>
+);
+
+const ElephantIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 15V11C20 8 18 6 16 6H14C14 6 14.5 4 16 3H9C8 3 6 4 6 6V11L2 10V14L6 15V19H9V22H12V19H15V22H18V18C19 18 20 17 20 15Z" />
+    <path d="M16 8C16.55 8 17 8.45 17 9C17 9.55 16.55 10 16 10C15.45 10 15 9.55 15 9C15 8.45 15.45 8 16 8Z" fill="white" />
+  </svg>
+);
+
 /* ----------------------------- Static Data ---------------------------- */
 const FAKE_DISTRIBUTION = [
   { range: '0-10', count: 2, percentOfPlayers: 1 },
@@ -67,21 +82,7 @@ function calculatePercentile(userAcc, data) {
   return Math.round((weightedScore / totalPlayers) * 100);
 }
 
-/* ----------------------------- Icons & Components ---------------------------- */
-const DonkeyIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-    <path d="M20.5 13.5C20.5 13.5 19 12.5 18 12.5C17 12.5 16 13 16 13L14 8L10 6L8 8V12L4 13L2 11V15L4 18H6V22H8V19H14V22H16V18L18 16C18 16 20 16.5 21 16C22 15.5 22 14 22 14L20.5 13.5Z" />
-    <path d="M12 4L11 2H9L8 4V6H12V4Z" />
-  </svg>
-);
-
-const ElephantIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-    <path d="M20 15V11C20 8 18 6 16 6H14C14 6 14.5 4 16 3H9C8 3 6 4 6 6V11L2 10V14L6 15V19H9V22H12V19H15V22H18V18C19 18 20 17 20 15Z" />
-    <path d="M16 8C16.55 8 17 8.45 17 9C17 9.55 16.55 10 16 10C15.45 10 15 9.55 15 9C15 8.45 15.45 8 16 8Z" fill="white" />
-  </svg>
-);
-
+/* ----------------------------- Utility Components ---------------------------- */
 const Glass = ({ children, className = "" }) => (
   <div
     className={[
@@ -372,6 +373,7 @@ export default function Home() {
   const [showScoreDetails, setShowScoreDetails] = useState(false);
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
+  const [partyLogoBase64, setPartyLogoBase64] = useState(null); // Base64 state for Wrapped image
   const shakeControls = useAnimation();
 
   // Game State
@@ -473,6 +475,27 @@ export default function Home() {
     }
   }, [stats]);
 
+  // --- SAFE IMAGE LOADING FOR WRAPPED ---
+  // When the user opens the "Wrapped" modal, we fetch the party logo as a blob
+  // and convert it to Base64. This prevents "Tainted Canvas" errors when downloading.
+  useEffect(() => {
+    if (showWrapped && bestGuessedParty?.img) {
+      const convertToBase64 = async () => {
+        try {
+          const response = await fetch(bestGuessedParty.img);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.onloadend = () => setPartyLogoBase64(reader.result);
+          reader.readAsDataURL(blob);
+        } catch (e) {
+          console.error("Failed to convert image", e);
+          setPartyLogoBase64(null); // Fallback to normal URL if fails
+        }
+      };
+      convertToBase64();
+    }
+  }, [showWrapped, bestGuessedParty]);
+
   const revealed = gameState === "revealed";
   const bgColor = useMemo(() => {
     if (revealed && lastResult) {
@@ -496,11 +519,13 @@ export default function Home() {
     }
   }, []);
 
-  // --- DOWNLOAD LOGIC ---
+  // --- DOWNLOAD LOGIC (Updated for CORS + Mobile Share) ---
   const handleDownloadWrapped = async () => {
     if (!wrappedRef.current) return;
     try {
         showToast("Generating image...");
+
+        // Wait 100ms to ensure all images/fonts are settled
         await new Promise(resolve => setTimeout(resolve, 100));
 
         const canvas = await html2canvas(wrappedRef.current, {
@@ -511,6 +536,7 @@ export default function Home() {
             logging: false,
         });
 
+        // 1. Try Native Sharing (Best for Mobile)
         canvas.toBlob(async (blob) => {
             if (!blob) throw new Error("Canvas is empty");
             const file = new File([blob], "GuessTheParty-Wrapped.png", { type: "image/png" });
@@ -526,10 +552,11 @@ export default function Home() {
                 } catch (shareError) {
                     if (shareError.name !== 'AbortError') {
                         console.error(shareError);
-                        triggerDownload(canvas);
+                        triggerDownload(canvas); // Fallback if share actually fails
                     }
                 }
             } else {
+                 // 2. Fallback to classic download (Desktop)
                 triggerDownload(canvas);
             }
         }, 'image/png');
@@ -759,7 +786,7 @@ export default function Home() {
   };
 
   const copyStats = async () => {
-    const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nScore: ${rank.score}\nAccuracy: ${accuracy}%\nBest Streak: ${stats.bestStreak}\n\nguesstheparty.com`;
+    const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nScore: ${rank.score}\nAccuracy: ${accuracy}%\nBest Streak: ${stats.bestStreak}\n\nguesstheparty.vercel.app`;
     try {
       if (typeof navigator !== "undefined" && navigator.clipboard) {
         await navigator.clipboard.writeText(text);
@@ -1238,10 +1265,10 @@ export default function Home() {
                     <div className="bg-white/5 rounded-xl p-3 border border-white/5 flex items-center gap-3">
                         <div className="relative h-10 w-10 shrink-0 bg-white rounded-full p-1.5">
                             <img
-                              src={bestGuessedParty.img}
+                              src={partyLogoBase64 || bestGuessedParty.img}
                               alt={bestGuessedParty.name}
                               className="w-full h-full object-contain"
-                              crossOrigin="anonymous" // <--- CRITICAL FIX FOR DOWNLOAD
+                              crossOrigin="anonymous"
                             />
                         </div>
                         <div>
