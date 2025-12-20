@@ -862,9 +862,14 @@ export default function Home() {
         {showInfo && (
           <Modal onClose={closeInfoModal}>
             <div className="text-center space-y-5 py-2">
-              <h3 className="text-xl font-black uppercase tracking-tight leading-none">
-                Can you tell political leanings from a picture?
-              </h3>
+              <div className="space-y-1">
+                <h3 className="text-xl font-black uppercase tracking-tight leading-none">
+                  Does appearance predict ideology?
+                </h3>
+                <p className="text-lg font-serif italic text-gray-500">
+                  Test your political intuition
+                </p>
+              </div>
               <p className="text-sm font-medium text-gray-600 max-w-[260px] mx-auto leading-relaxed">
                 Swipe or use arrow keys to guess.
                 <br />
