@@ -17,7 +17,6 @@ import {
   Zap,
   XCircle,
   Lock,
-  Share2,
   ArrowLeft,
   ArrowRight,
   AlertCircle,
@@ -36,7 +35,6 @@ const DonkeyIcon = ({ className }) => (
     <path d="M12 4L11 2H9L8 4V6H12V4Z" />
   </svg>
 );
-
 const ElephantIcon = ({ className }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
     <path d="M20 15V11C20 8 18 6 16 6H14C14 6 14.5 4 16 3H9C8 3 6 4 6 6V11L2 10V14L6 15V19H9V22H12V19H15V22H18V18C19 18 20 17 20 15Z" />
@@ -64,11 +62,8 @@ function calculatePercentile(userAcc, data) {
   let totalPlayers = 0;
   let playersStrictlyBelow = 0;
   let playersInSameBucket = 0;
-
   data.forEach(d => totalPlayers += d.count);
-
   const userBucketIndex = Math.min(Math.floor(userAcc / 10), 9);
-
   data.forEach((d, i) => {
     if (i < userBucketIndex) {
       playersStrictlyBelow += d.count;
@@ -76,7 +71,6 @@ function calculatePercentile(userAcc, data) {
       playersInSameBucket += d.count;
     }
   });
-
   if (totalPlayers === 0) return 0;
   const weightedScore = playersStrictlyBelow + (playersInSameBucket * 0.5);
   return Math.round((weightedScore / totalPlayers) * 100);
@@ -93,7 +87,6 @@ const Glass = ({ children, className = "" }) => (
     {children}
   </div>
 );
-
 const Pill = ({ children, className = "" }) => (
   <span
     className={[
@@ -104,7 +97,6 @@ const Pill = ({ children, className = "" }) => (
     {children}
   </span>
 );
-
 const IconButton = ({ onClick, ariaLabel, children, className = "" }) => (
   <button
     onClick={onClick}
@@ -118,7 +110,6 @@ const IconButton = ({ onClick, ariaLabel, children, className = "" }) => (
     {children}
   </button>
 );
-
 const ProgressBar = ({ label, value, color, total }) => (
   <div className="w-full">
     <div className="flex justify-between mb-1">
@@ -136,7 +127,6 @@ const ProgressBar = ({ label, value, color, total }) => (
     </div>
   </div>
 );
-
 const Toast = ({ message }) => (
   <motion.div
     initial={{ opacity: 0, y: -20, scale: 0.9 }}
@@ -151,7 +141,6 @@ const Toast = ({ message }) => (
 /* ----------------------------- Histogram Component ---------------------------- */
 const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubmit = false, compact = false }) => {
   const [data, setData] = useState(FAKE_DISTRIBUTION);
-
   useEffect(() => {
     let isMounted = true;
     const syncStats = async () => {
@@ -178,10 +167,8 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
     syncStats();
     return () => { isMounted = false; };
   }, [userAccuracy, totalGamesPlayed, disableSubmit]);
-
   const maxCount = Math.max(...data.map(d => d.count), 0);
   const containerHeight = compact ? "h-20" : "h-32";
-
   return (
     <div className={`w-full mt-4 pt-4 border-t ${isDark ? 'border-white/10' : 'border-gray-100'}`}>
       <h3 className={`text-[10px] font-black uppercase tracking-widest mb-3 ${isDark ? 'text-white/40' : 'text-gray-400'}`}>
@@ -194,7 +181,6 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
           const isUser100 = userAccuracy === 100 && i === 9;
           const isActive = isUserBucket || isUser100;
           const barHeight = maxCount > 0 ? (bucket.count / maxCount) * 100 : 0;
-
           return (
             <div
               key={i}
@@ -239,7 +225,6 @@ function LoadingScreen({ message }) {
     </div>
   );
 }
-
 function ErrorScreen({ title, detail }) {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F5F5F7] px-6 text-center gap-3">
@@ -254,7 +239,6 @@ function ErrorScreen({ title, detail }) {
     </div>
   );
 }
-
 function Modal({ children, onClose }) {
   useEffect(() => {
     if (typeof document !== "undefined") {
@@ -286,7 +270,6 @@ function Modal({ children, onClose }) {
 const TROPHY_KEY = "partyTrophies_v3";
 const INTRO_KEY = "partyHasSeenIntro_v3";
 const STATS_KEY = "partyStats_v3";
-
 const TROPHIES = [
   { id: "first_correct", title: "First Blood", desc: "First correct guess.", icon: <Star size={18} />, tier: "bronze", check: ({ stats }) => (stats.correct || 0) >= 1 },
   { id: "streak_5", title: "Warm Streak", desc: "Best streak ≥ 5.", icon: <Flame size={18} />, tier: "bronze", check: ({ stats }) => (stats.bestStreak || 0) >= 5 },
@@ -308,7 +291,6 @@ const TROPHIES = [
   },
   { id: "speed_fast", title: "Fast Reflexes", desc: "Answer correctly in <1s.", icon: <Zap size={18} />, tier: "gold", check: ({ lastResult }) => lastResult?.isFast && lastResult?.isCorrect },
 ];
-
 function tierStyles(tier) {
   switch (tier) {
     case "bronze": return "bg-amber-100 text-amber-900 border-amber-200";
@@ -318,7 +300,6 @@ function tierStyles(tier) {
     default: return "bg-gray-100 text-gray-700 border-gray-200";
   }
 }
-
 function formatOffice(p, revealed) {
   const c = (p?.category ?? "").toString().trim().toLowerCase();
   let base = "Public Official";
@@ -329,7 +310,6 @@ function formatOffice(p, revealed) {
   if (p?.state) return `${base} • ${p.state}`;
   return base;
 }
-
 async function fireConfettiSafe() {
   if (typeof window === "undefined") return;
   const mod = await import("canvas-confetti");
@@ -342,7 +322,6 @@ async function fireConfettiSafe() {
     });
   }
 }
-
 const RANK_TIERS = [
   { title: "Speaker", min: 110000 },
   { title: "Party Whip", min: 100000 },
@@ -373,7 +352,10 @@ export default function Home() {
   const [showScoreDetails, setShowScoreDetails] = useState(false);
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
-  const [partyLogoBase64, setPartyLogoBase64] = useState(null); // Base64 state for Wrapped image
+
+  // NEW: State for manual image saving
+  const [generatedImage, setGeneratedImage] = useState(null);
+
   const shakeControls = useAnimation();
 
   // Game State
@@ -408,50 +390,31 @@ export default function Home() {
     [-150, 0, 150],
     ["rgba(59, 130, 246, 0.15)", "rgba(255,255,255,0)", "rgba(239, 68, 68, 0.15)"]
   );
-
   const demStampOpacity = useTransform(x, [0, -60], [0, 1]);
   const demStampScale = useTransform(x, [0, -60], [2, 1]);
   const repStampOpacity = useTransform(x, [0, 60], [0, 1]);
   const repStampScale = useTransform(x, [0, 60], [2, 1]);
-
   const unlockedCount = trophies.unlocked?.length || 0;
   const unlockedSet = useMemo(() => new Set(trophies.unlocked || []), [trophies.unlocked]);
-
   const accuracy = useMemo(
     () => (stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100)),
     [stats]
   );
-
-  const medianSpeed = useMemo(() => {
-    if (stats.responseTimes.length === 0) return "0.0";
-    const sorted = [...stats.responseTimes].sort((a, b) => a - b);
-    const mid = Math.floor(sorted.length / 2);
-    const ms =
-      sorted.length % 2 !== 0
-        ? sorted[mid]
-        : (sorted[mid - 1] + sorted[mid]) / 2;
-    return (ms / 1000).toFixed(1);
-  }, [stats.responseTimes]);
-
   const rank = useMemo(() => {
     if (stats.total < 20) {
       return { title: "Unranked", score: 0, nextGoal: 20 - stats.total };
     }
-
     const rawScore =
       (accuracy * 1000) +
       (stats.bestStreak * 40) +
       (Math.log1p(stats.total) * 200);
-
     const score = Math.round(rawScore);
-
     let title = "Intern";
     if (score >= 110000) title = "Speaker";
     else if (score >= 100000) title = "Party Whip";
     else if (score >= 90000) title = "Senior Senator";
     else if (score >= 80000) title = "Campaign Manager";
     else if (score >= 70000) title = "Staffer";
-
     return { title, score };
   }, [stats.total, accuracy, stats.bestStreak]);
 
@@ -461,40 +424,17 @@ export default function Home() {
     if (demAcc >= repAcc) {
       return {
         name: "Democrats",
-        img: "https://upload.wikimedia.org/wikipedia/commons/9/93/Democratic_Disc.svg",
         color: "text-blue-500",
         value: Math.round(demAcc * 100)
       };
     } else {
       return {
         name: "Republicans",
-        img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Republican_Disc.png",
         color: "text-red-500",
         value: Math.round(repAcc * 100)
       };
     }
   }, [stats]);
-
-  // --- SAFE IMAGE LOADING FOR WRAPPED ---
-  // When the user opens the "Wrapped" modal, we fetch the party logo as a blob
-  // and convert it to Base64. This prevents "Tainted Canvas" errors when downloading.
-  useEffect(() => {
-    if (showWrapped && bestGuessedParty?.img) {
-      const convertToBase64 = async () => {
-        try {
-          const response = await fetch(bestGuessedParty.img);
-          const blob = await response.blob();
-          const reader = new FileReader();
-          reader.onloadend = () => setPartyLogoBase64(reader.result);
-          reader.readAsDataURL(blob);
-        } catch (e) {
-          console.error("Failed to convert image", e);
-          setPartyLogoBase64(null); // Fallback to normal URL if fails
-        }
-      };
-      convertToBase64();
-    }
-  }, [showWrapped, bestGuessedParty]);
 
   const revealed = gameState === "revealed";
   const bgColor = useMemo(() => {
@@ -509,7 +449,6 @@ export default function Home() {
     setToast(msg);
     setTimeout(() => setToast(null), 2500);
   };
-
   const closeInfoModal = useCallback(() => {
     setShowInfo(false);
     if (typeof window !== "undefined") {
@@ -519,69 +458,77 @@ export default function Home() {
     }
   }, []);
 
-  // --- DOWNLOAD LOGIC (Updated for CORS + Mobile Share) ---
+  // --- UPDATED DOWNLOAD LOGIC ---
   const handleDownloadWrapped = async () => {
     if (!wrappedRef.current) return;
-    try {
-        showToast("Generating image...");
 
-        // Wait 100ms to ensure all images/fonts are settled
-        await new Promise(resolve => setTimeout(resolve, 100));
+    // 1. Force a small wait for fonts to settle
+    await document.fonts.ready;
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    try {
+        showToast("Generating...");
 
         const canvas = await html2canvas(wrappedRef.current, {
-            scale: 2,
+            scale: 3, // Higher res for clear screenshots
             useCORS: true,
-            allowTaint: false,
+            allowTaint: true,
             backgroundColor: null,
             logging: false,
         });
 
-        // 1. Try Native Sharing (Best for Mobile)
-        canvas.toBlob(async (blob) => {
-            if (!blob) throw new Error("Canvas is empty");
-            const file = new File([blob], "GuessTheParty-Wrapped.png", { type: "image/png" });
+        const dataUrl = canvas.toDataURL("image/png");
 
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        // 2. Try Native Share first (Mobile App experience)
+        if (navigator.canShare && navigator.share) {
+             canvas.toBlob(async (blob) => {
+                const file = new File([blob], "party-iq.png", { type: "image/png" });
                 try {
                     await navigator.share({
                         files: [file],
                         title: 'My Party IQ',
-                        text: 'Can you beat my score?',
                     });
-                    showToast("Shared successfully!");
-                } catch (shareError) {
-                    if (shareError.name !== 'AbortError') {
-                        console.error(shareError);
-                        triggerDownload(canvas); // Fallback if share actually fails
+                } catch (err) {
+                    // If they cancel share, or it fails, OPEN THE SCREENSHOT MODAL
+                    if (err.name !== 'AbortError') {
+                        setGeneratedImage(dataUrl);
                     }
                 }
-            } else {
-                 // 2. Fallback to classic download (Desktop)
-                triggerDownload(canvas);
+            });
+        } else {
+            // 3. Desktop: Try auto-download
+            try {
+                const link = document.createElement("a");
+                link.href = dataUrl;
+                link.download = `GuessTheParty-2025.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (e) {
+                // 4. Fallback: Show the image for manual saving
+                setGeneratedImage(dataUrl);
             }
-        }, 'image/png');
-
+        }
     } catch (e) {
         console.error("Export failed", e);
-        showToast("Download failed. Screenshot instead?");
+        showToast("Auto-save failed. Taking you to screenshot mode...");
     }
   };
 
-  const triggerDownload = (canvas) => {
-      try {
-        const image = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
-        link.href = image;
-        link.download = `GuessTheParty-Wrapped-2025.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast("Saved to Photos");
-      } catch(e) {
-         console.error("DataURL failed", e);
-         showToast("Save failed. Try screenshotting.");
+  const copyStats = async () => {
+    const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nScore: ${rank.score}\nAccuracy: ${accuracy}%\nBest Streak: ${stats.bestStreak}\n\nguesstheparty.vercel.app`;
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(text);
+        showToast("Copied to clipboard!");
+      } else {
+        showToast("Clipboard not available");
       }
-  }
+    } catch (err) {
+      console.error("Copy failed", err);
+      showToast("Failed to copy");
+    }
+  };
 
   // --- Initialization ---
   useEffect(() => {
@@ -684,18 +631,15 @@ export default function Home() {
         if (isCorrect) navigator.vibrate(10);
         else navigator.vibrate([30, 50, 30]);
       }
-
       if (!isCorrect) {
           shakeControls.start({
               x: [0, -10, 10, -10, 10, 0],
               transition: { duration: 0.4 }
           });
       }
-
       if (isCorrect && newStreak > 0 && newStreak % 10 === 0) {
         await fireConfettiSafe();
       }
-
       const nextStats = {
         ...stats,
         total: stats.total + 1,
@@ -715,7 +659,6 @@ export default function Home() {
       };
 
       const resultObj = { isCorrect, guessedParty, correctParty: actualParty, isFast };
-
       const nextUnlocked = new Set(trophies.unlocked || []);
       let unlockedSomething = false;
       for (const t of TROPHIES) {
@@ -724,7 +667,6 @@ export default function Home() {
           unlockedSomething = true;
         }
       }
-
       if (unlockedSomething) {
         setTrophies((prev) => ({
           ...prev,
@@ -732,11 +674,9 @@ export default function Home() {
         }));
         showToast("Trophy Unlocked!");
       }
-
       setStats(nextStats);
       setLastResult(resultObj);
       setGameState("revealed");
-
       const delay = isCorrect ? 2000 : 3000;
       setTimeout(advanceToNext, delay);
     },
@@ -785,21 +725,6 @@ export default function Home() {
     }
   };
 
-  const copyStats = async () => {
-    const text = `🇺🇸 Guess The Party\nRank: ${rank.title}\nScore: ${rank.score}\nAccuracy: ${accuracy}%\nBest Streak: ${stats.bestStreak}\n\nguesstheparty.vercel.app`;
-    try {
-      if (typeof navigator !== "undefined" && navigator.clipboard) {
-        await navigator.clipboard.writeText(text);
-        showToast("Copied to clipboard!");
-      } else {
-        showToast("Clipboard not available");
-      }
-    } catch (err) {
-      console.error("Copy failed", err);
-      showToast("Failed to copy");
-    }
-  };
-
   if (fatalError) return <ErrorScreen title="App failed to start" detail={fatalError} />;
   if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
 
@@ -824,10 +749,9 @@ export default function Home() {
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
         }}
       />
-
       <AnimatePresence>{toast && <Toast message={toast} />}</AnimatePresence>
-
       <div className="mx-auto max-w-2xl px-4 md:px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] h-full flex flex-col relative z-20">
+
         {/* Header */}
         <header className="mb-4 mt-4 shrink-0 flex justify-center relative z-50">
           <Glass className="px-5 py-3 rounded-full flex items-center justify-between w-full max-w-lg">
@@ -881,7 +805,6 @@ export default function Home() {
               </div>
             </div>
           )}
-
           {/* Card Stack */}
           <div className="relative w-full max-w-[400px] flex-grow flex flex-col max-h-[75vh]">
             <div className="relative flex-grow w-full">
@@ -904,7 +827,6 @@ export default function Home() {
                   className="absolute inset-0 rounded-[2.5rem] overflow-hidden border-[6px] border-white bg-white shadow-2xl cursor-grab active:cursor-grabbing flex flex-col"
                 >
                   <motion.div className="absolute inset-0 z-10 pointer-events-none" style={{ backgroundColor: swipeBg }} />
-
                   {!revealed && (
                     <>
                       <motion.div
@@ -921,7 +843,6 @@ export default function Home() {
                       </motion.div>
                     </>
                   )}
-
                   <div className="relative flex-grow bg-gray-50 overflow-hidden w-full h-full">
                     {imgLoading && (
                       <div className="absolute inset-0 flex items-center justify-center z-30 bg-white/50 backdrop-blur-sm">
@@ -970,8 +891,7 @@ export default function Home() {
                       </motion.div>
                     )}
                   </div>
-
-                  {/* Controls - FIXED: cursor-auto and stopPropagation */}
+                  {/* Controls */}
                   <div
                     className="relative shrink-0 h-32 px-5 py-4 bg-white flex flex-col justify-between z-50 cursor-auto"
                     onPointerDown={(e) => e.stopPropagation()}
@@ -1019,8 +939,9 @@ export default function Home() {
           </div>
         </main>
       </div>
-
       <AnimatePresence>
+
+        {/* Intro Modal */}
         {showInfo && (
           <Modal onClose={closeInfoModal}>
             <div className="text-center space-y-5 py-2">
@@ -1063,6 +984,7 @@ export default function Home() {
           </Modal>
         )}
 
+        {/* Stats Modal */}
         {showStats && (
           <Modal onClose={() => setShowStats(false)}>
             <div className="flex justify-between items-center mb-6">
@@ -1081,8 +1003,7 @@ export default function Home() {
                 <XCircle size={20} />
               </IconButton>
             </div>
-
-            {/* Political Capital Score Section - UPDATED WITH EXPLANATION TOGGLE */}
+            {/* Political Capital Score Section */}
              <div className="mb-4 bg-gradient-to-br from-gray-900 to-black rounded-3xl p-5 text-white relative overflow-hidden">
                 <div className="relative z-10 flex justify-between items-start">
                   <div>
@@ -1100,7 +1021,6 @@ export default function Home() {
                     <TrendingUp size={20} />
                   </div>
                 </div>
-
                 {/* Conditional Info Section */}
                 <AnimatePresence>
                   {showScoreDetails && (
@@ -1119,11 +1039,9 @@ export default function Home() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-
                 {/* Background decoration */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
              </div>
-
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="col-span-2 bg-white rounded-3xl border border-gray-100 p-5 shadow-sm">
                 <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Total Accuracy</div>
@@ -1134,9 +1052,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
             <Histogram userAccuracy={accuracy} totalGamesPlayed={stats.total} />
-
             {/* Career Ladder Legend */}
             <div className="mt-6 pt-6 border-t border-gray-100">
                <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Career Ladder</h3>
@@ -1156,7 +1072,6 @@ export default function Home() {
                   })}
                </div>
             </div>
-
             <button
               onClick={() => {
                 setShowStats(false);
@@ -1170,6 +1085,7 @@ export default function Home() {
           </Modal>
         )}
 
+        {/* Trophy Case */}
         {showTrophyCase && (
           <Modal onClose={() => setShowTrophyCase(false)}>
             <div className="flex flex-col gap-4 mb-4 pt-2">
@@ -1219,6 +1135,36 @@ export default function Home() {
           </Modal>
         )}
 
+        {/* NEW: Screenshot / Manual Save Modal (Fallback) */}
+        {generatedImage && (
+             <div
+                className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-6"
+                onClick={() => setGeneratedImage(null)}
+             >
+                <div className="text-white text-center mb-4 space-y-1">
+                    <h3 className="text-lg font-black uppercase tracking-widest text-emerald-400">Image Ready</h3>
+                    <p className="text-xs text-white/60 font-medium">Long press to save or take a screenshot</p>
+                </div>
+
+                <motion.img
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    src={generatedImage}
+                    alt="Generated Wrapped"
+                    className="w-full max-w-sm rounded-[2rem] shadow-2xl border border-white/10"
+                    onClick={(e) => e.stopPropagation()} // Allow clicking image without closing
+                />
+
+                <button
+                    onClick={() => setGeneratedImage(null)}
+                    className="mt-8 px-8 py-3 bg-white text-black rounded-full font-black text-xs uppercase tracking-widest"
+                >
+                    Close
+                </button>
+             </div>
+        )}
+
+        {/* Wrapped Modal (The Source) */}
         {showWrapped && (
           <div
             className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
@@ -1243,12 +1189,10 @@ export default function Home() {
                              <div className="text-[10px] font-mono opacity-50 mt-1">Score: {rank.score.toLocaleString()}</div>
                         </div>
                         <div className="text-right">
-                            {/* Assuming percentile calculation logic from helper */}
                             <div className="text-3xl font-black leading-none">{calculatePercentile(accuracy, FAKE_DISTRIBUTION)}%</div>
                             <div className="text-[9px] font-black uppercase tracking-widest opacity-50 mt-1">Top Percentile</div>
                         </div>
                     </div>
-
                     {/* Stats Grid */}
                     <div className="grid grid-cols-2 gap-2 my-2">
                         <div className="bg-white/5 rounded-xl p-3 border border-white/5">
@@ -1261,15 +1205,10 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* Best Party - IMAGE FIX APPLIED HERE (crossOrigin="anonymous") */}
+                    {/* Best Party - FIXED: Uses SVGs to avoid CORS issues */}
                     <div className="bg-white/5 rounded-xl p-3 border border-white/5 flex items-center gap-3">
-                        <div className="relative h-10 w-10 shrink-0 bg-white rounded-full p-1.5">
-                            <img
-                              src={partyLogoBase64 || bestGuessedParty.img}
-                              alt={bestGuessedParty.name}
-                              className="w-full h-full object-contain"
-                              crossOrigin="anonymous"
-                            />
+                        <div className={`relative h-10 w-10 shrink-0 bg-white rounded-full p-2 flex items-center justify-center ${bestGuessedParty.color}`}>
+                           {bestGuessedParty.name === "Democrats" ? <DonkeyIcon /> : <ElephantIcon />}
                         </div>
                         <div>
                             <div className="text-[8px] uppercase tracking-widest opacity-50">Best Read</div>
@@ -1287,7 +1226,6 @@ export default function Home() {
                         disableSubmit={true}
                         compact={true}
                     />
-
                     {/* Footer */}
                     <div className="pt-4 border-t border-white/10 flex justify-between items-end opacity-50">
                          <div>
@@ -1311,7 +1249,7 @@ export default function Home() {
                         onClick={handleDownloadWrapped}
                         className="h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest active:scale-95 transition-all"
                      >
-                        <Download size={16} /> Save Image
+                        <Download size={16} /> Save / Share
                      </button>
                 </div>
                 <button
