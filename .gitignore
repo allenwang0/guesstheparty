@@ -1,1 +1,10 @@
+node_modules/
+.next/
+.env*
+.vercel/
+__pycache__/
+.venv/
+.DS_Store
 .idea/
+playwright-report/
+test-results/

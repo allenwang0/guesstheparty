@@ -2,29 +2,43 @@
   "name": "guesstheparty",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.1.18",
-    "@vercel/analytics": "^1.6.1",
-    "@vercel/kv": "^3.0.0",
-    "axios": "^1.13.2",
-    "canvas-confetti": "^1.9.4",
-    "framer-motion": "^11.15.0",
-    "html2canvas": "^1.4.1",
-    "lucide-react": "^0.562.0",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest"
+    "@tailwindcss/postcss": "4.1.18",
+    "@vercel/analytics": "1.6.1",
+    "@vercel/kv": "3.0.0",
+    "axios": "1.13.2",
+    "canvas-confetti": "1.9.4",
+    "framer-motion": "11.15.0",
+    "html2canvas": "1.4.1",
+    "lucide-react": "0.562.0",
+    "next": "16.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "latest",
-    "autoprefixer": "latest",
-    "postcss": "latest",
-    "tailwindcss": "latest"
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/react": "16.3.3",
+    "@vitejs/plugin-react": "4.7.0",
+    "autoprefixer": "10.4.23",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.1.0",
+    "fast-check": "4.10.2",
+    "jsdom": "26.1.0",
+    "postcss": "8.5.6",
+    "prettier": "3.9.10",
+    "tailwindcss": "4.1.18",
+    "vitest": "3.2.7"
   }
 }
