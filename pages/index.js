@@ -453,14 +453,14 @@ export default function Home() {
     if (demAcc >= repAcc) {
       return {
         name: "Democrats",
-        img: "https://www.stickylife.com/media/catalog/product/cache/cae11d3eb59b15e233305252c507fc33/d/o/donkey-decal-front.png",
+        img: "/brand/democrat.svg",
         color: "text-blue-500",
         value: Math.round(demAcc * 100),
       };
     } else {
       return {
         name: "Republicans",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Republicanlogo.svg/1163px-Republicanlogo.svg.png",
+        img: "/brand/republican.svg",
         color: "text-red-500",
         value: Math.round(repAcc * 100),
       };
@@ -853,11 +853,7 @@ export default function Home() {
                         disabled={revealed}
                         className="rounded-xl bg-blue-50 text-blue-600 border border-blue-100 font-black text-xs uppercase tracking-widest hover:bg-blue-100 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
-                        <img
-                          src="https://upload.wikimedia.org/wikipedia/commons/9/93/Democratic_Disc.svg"
-                          alt="Dem"
-                          className="w-4 h-4 object-contain"
-                        />
+                        <img src="/brand/democrat.svg" alt="Dem" className="w-4 h-4 object-contain" />
                         Democrat
                       </button>
                       <button
@@ -865,11 +861,7 @@ export default function Home() {
                         disabled={revealed}
                         className="rounded-xl bg-red-50 text-red-600 border border-red-100 font-black text-xs uppercase tracking-widest hover:bg-red-100 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
-                        <img
-                          src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Republican_Disc.png"
-                          alt="Rep"
-                          className="w-4 h-4 object-contain"
-                        />
+                        <img src="/brand/republican.svg" alt="Rep" className="w-4 h-4 object-contain" />
                         Republican
                       </button>
                     </div>
