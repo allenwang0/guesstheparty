@@ -61,4 +61,19 @@ describe("guessing", () => {
 
     expect(shownCard()).toBe(nextCard);
   });
+
+  // The reveal timer used to keep running after Reset, so the card changed under the player's feet.
+  it("keeps the current card when Reset is pressed during the reveal", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    await renderGame();
+    const card = shownCard();
+
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+    await act(async () => {});
+    fireEvent.click(screen.getByRole("button", { name: "Reset run" }));
+    await act(async () => vi.advanceTimersByTime(3000));
+
+    expect(shownCard()).toBe(card);
+  });
 });

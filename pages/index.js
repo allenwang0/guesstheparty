@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback, useReducer, useRef } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { Analytics } from "@vercel/analytics/react";
@@ -25,7 +25,18 @@ import {
   BarChart2,
 } from "lucide-react";
 import { bucketCounts, bucketIndex, MIN_RUNS_TO_SHOW } from "../lib/buckets";
+import { initialQueueState, queueReducer } from "../lib/game-queue";
 import { betterThanPercent } from "../lib/percentile";
+import {
+  emptyStats,
+  LEGACY_STATS_KEY,
+  migrateLegacyStats,
+  normalizeStats,
+  STATS_KEY,
+} from "../lib/player-stats";
+import { computeRank, RANK_TIERS } from "../lib/rank";
+import { addResponse, MAX_COUNTED_RESPONSE_MS } from "../lib/response-stats";
+import { shuffle } from "../lib/shuffle";
 import { shouldSubmitRun } from "../lib/submission";
 
 /* ----------------------------- Utility Components ---------------------------- */
@@ -257,7 +268,10 @@ function Modal({ children, onClose, className = "" }) {
 /* -------------------------------- Logic & Data ------------------------------ */
 const TROPHY_KEY = "partyTrophies_v3";
 const INTRO_KEY = "partyHasSeenIntro_v3";
-const STATS_KEY = "partyStats_v3";
+const FAST_RESPONSE_MS = 1000;
+const REVEAL_CORRECT_MS = 2000;
+const REVEAL_WRONG_MS = 3000;
+const SWIPE_THRESHOLD_PX = 80;
 const TROPHIES = [
   {
     id: "first_correct",
@@ -371,27 +385,16 @@ async function fireConfettiSafe() {
     });
   }
 }
-const RANK_TIERS = [
-  { title: "Speaker", min: 110000 },
-  { title: "Party Whip", min: 100000 },
-  { title: "Senior Senator", min: 90000 },
-  { title: "Campaign Manager", min: 80000 },
-  { title: "Staffer", min: 70000 },
-  { title: "Intern", min: 0 },
-];
-
 /* ----------------------------- Main Application -------------------------- */
 export default function Home() {
-  const [allPoliticians, setAllPoliticians] = useState([]);
-  const [current, setCurrent] = useState(null);
-  const [loadingQueue, setLoadingQueue] = useState([]);
+  const [{ current, queue: loadingQueue }, dispatchQueue] = useReducer(queueReducer, initialQueueState);
   const [hasMounted, setHasMounted] = useState(false);
   const [fatalError, setFatalError] = useState(null);
   const containerRef = useRef(null);
 
   // Logic Refs
-  const recentIds = useRef(new Set());
   const startTimeRef = useRef(null);
+  const advanceTimerRef = useRef(null);
   const guessLockRef = useRef(false);
 
   // UX State
@@ -410,22 +413,7 @@ export default function Home() {
   const [lastResult, setLastResult] = useState(null);
 
   // Stats State
-  const [stats, setStats] = useState({
-    correct: 0,
-    total: 0,
-    streak: 0,
-    bestStreak: 0,
-    demGuesses: 0,
-    repGuesses: 0,
-    demCorrect: 0,
-    repCorrect: 0,
-    guessedDemActualRep: 0,
-    guessedRepActualDem: 0,
-    responseTimes: [],
-    totalTime: 0,
-    demTime: 0,
-    repTime: 0,
-  });
+  const [stats, setStats] = useState(emptyStats);
   const [trophies, setTrophies] = useState({ unlocked: [], firstUnlockedAt: {} });
   const distribution = useDistribution(showStats || showWrapped);
   const wrappedBetterThan =
@@ -454,20 +442,10 @@ export default function Home() {
     () => (stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100)),
     [stats],
   );
-  const rank = useMemo(() => {
-    if (stats.total < 20) {
-      return { title: "Unranked", score: 0, nextGoal: 20 - stats.total };
-    }
-    const rawScore = accuracy * 1000 + stats.bestStreak * 40 + Math.log1p(stats.total) * 200;
-    const score = Math.round(rawScore);
-    let title = "Intern";
-    if (score >= 110000) title = "Speaker";
-    else if (score >= 100000) title = "Party Whip";
-    else if (score >= 90000) title = "Senior Senator";
-    else if (score >= 80000) title = "Campaign Manager";
-    else if (score >= 70000) title = "Staffer";
-    return { title, score };
-  }, [stats.total, accuracy, stats.bestStreak]);
+  const rank = useMemo(
+    () => computeRank({ accuracy, bestStreak: stats.bestStreak, total: stats.total }),
+    [stats.total, accuracy, stats.bestStreak],
+  );
 
   const bestGuessedParty = useMemo(() => {
     const demAcc = stats.demGuesses > 0 ? stats.demCorrect / stats.demGuesses : 0;
@@ -516,7 +494,9 @@ export default function Home() {
     setHasMounted(true);
     try {
       const savedStats = localStorage.getItem(STATS_KEY);
-      if (savedStats) setStats((prev) => ({ ...prev, ...JSON.parse(savedStats) }));
+      const legacyStats = savedStats ? null : localStorage.getItem(LEGACY_STATS_KEY);
+      if (savedStats) setStats(normalizeStats(JSON.parse(savedStats)));
+      else if (legacyStats) setStats(migrateLegacyStats(JSON.parse(legacyStats)));
     } catch {}
     try {
       const savedTrophies = localStorage.getItem(TROPHY_KEY);
@@ -545,12 +525,7 @@ export default function Home() {
         });
         const bad = normalized.find((p) => !p.imageUrl || !p.party || !p.name);
         if (bad) throw new Error("Every entry must include name, party, and img.");
-        setAllPoliticians(normalized);
-        const shuffled = [...normalized].sort(() => 0.5 - Math.random());
-        setCurrent(shuffled[0]);
-        recentIds.current.add(shuffled[0].id);
-        setLoadingQueue(shuffled.slice(1, 6));
-        startTimeRef.current = Date.now();
+        dispatchQueue({ type: "start", pool: normalized, shuffled: shuffle(normalized) });
       } catch (e) {
         setFatalError(e?.message || "Failed to load politicians.");
       }
@@ -573,30 +548,16 @@ export default function Home() {
   }, [trophies, hasMounted]);
 
   const advanceToNext = useCallback(() => {
-    if (allPoliticians.length === 0) return;
-    setLoadingQueue((prev) => {
-      const nextCard = prev[0];
-      let candidate = allPoliticians[Math.floor(Math.random() * allPoliticians.length)];
-      let attempts = 0;
-      while (recentIds.current.has(candidate.id) && attempts < 20) {
-        candidate = allPoliticians[Math.floor(Math.random() * allPoliticians.length)];
-        attempts++;
-      }
-      recentIds.current.add(candidate.id);
-      if (recentIds.current.size > 50) {
-        const first = recentIds.current.values().next().value;
-        recentIds.current.delete(first);
-      }
-      setCurrent(nextCard);
-      return [...prev.slice(1), candidate].filter(Boolean);
-    });
-    guessLockRef.current = false;
+    advanceTimerRef.current = null;
+    dispatchQueue({ type: "advance", random: Math.random() });
     setGameState("guessing");
     setImgLoading(true);
-    startTimeRef.current = Date.now();
+    startTimeRef.current = null;
     setLastResult(null);
     x.set(0);
-  }, [allPoliticians, x]);
+  }, [x]);
+
+  useEffect(() => () => clearTimeout(advanceTimerRef.current), []);
 
   const handleGuess = useCallback(
     (guessedParty) => {
@@ -604,10 +565,9 @@ export default function Home() {
       guessLockRef.current = true;
       const actualParty = current.party;
       const isCorrect = guessedParty === actualParty;
-      const now = Date.now();
-      const timeTaken = now - (startTimeRef.current || now);
-      const validTime = timeTaken < 10000 ? timeTaken : null;
-      const isFast = !!validTime && validTime < 1000;
+      const timeTaken = startTimeRef.current === null ? null : Date.now() - startTimeRef.current;
+      const validTime = timeTaken !== null && timeTaken < MAX_COUNTED_RESPONSE_MS ? timeTaken : null;
+      const isFast = validTime !== null && validTime < FAST_RESPONSE_MS;
       const newStreak = isCorrect ? stats.streak + 1 : 0;
 
       if (typeof navigator !== "undefined" && navigator.vibrate) {
@@ -642,8 +602,7 @@ export default function Home() {
           guessedParty === "Republican" && !isCorrect
             ? stats.guessedRepActualDem + 1
             : stats.guessedRepActualDem,
-        totalTime: stats.totalTime + (validTime || 0),
-        responseTimes: validTime ? [...stats.responseTimes, validTime] : stats.responseTimes,
+        response: validTime === null ? stats.response : addResponse(stats.response, validTime),
       };
 
       const resultObj = { isCorrect, guessedParty, correctParty: actualParty, isFast };
@@ -666,8 +625,8 @@ export default function Home() {
       if (shouldSubmitRun(nextStats.total)) submitRun(nextStats.runId, nextStats.correct, nextStats.total);
       setLastResult(resultObj);
       setGameState("revealed");
-      const delay = isCorrect ? 2000 : 3000;
-      setTimeout(advanceToNext, delay);
+      clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = setTimeout(advanceToNext, isCorrect ? REVEAL_CORRECT_MS : REVEAL_WRONG_MS);
     },
     [gameState, current, stats, trophies, advanceToNext, shakeControls],
   );
@@ -693,23 +652,10 @@ export default function Home() {
 
   const handleReset = () => {
     if (typeof window !== "undefined" && confirm("Reset run stats? (Trophies will persist)")) {
-      setStats({
-        runId: crypto.randomUUID(),
-        correct: 0,
-        total: 0,
-        streak: 0,
-        bestStreak: 0,
-        demGuesses: 0,
-        repGuesses: 0,
-        demCorrect: 0,
-        repCorrect: 0,
-        guessedDemActualRep: 0,
-        guessedRepActualDem: 0,
-        totalTime: 0,
-        responseTimes: [],
-        demTime: 0,
-        repTime: 0,
-      });
+      clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = null;
+      setStats(emptyStats(crypto.randomUUID()));
+      setLastResult(null);
       guessLockRef.current = false;
       setGameState("guessing");
       x.set(0);
@@ -811,8 +757,8 @@ export default function Home() {
                   style={{ x, rotate }}
                   animate={revealed && !lastResult?.isCorrect ? shakeControls : {}}
                   onDragEnd={(e, i) => {
-                    if (i.offset.x < -80) handleGuess("Democrat");
-                    else if (i.offset.x > 80) handleGuess("Republican");
+                    if (i.offset.x < -SWIPE_THRESHOLD_PX) handleGuess("Democrat");
+                    else if (i.offset.x > SWIPE_THRESHOLD_PX) handleGuess("Republican");
                   }}
                   className="absolute inset-0 rounded-[2.5rem] overflow-hidden border-[6px] border-white bg-white shadow-2xl cursor-grab active:cursor-grabbing flex flex-col"
                 >
@@ -844,7 +790,10 @@ export default function Home() {
                     )}
                     <Image
                       src={current.imageUrl}
-                      onLoadingComplete={() => setImgLoading(false)}
+                      onLoad={() => {
+                        setImgLoading(false);
+                        startTimeRef.current = Date.now();
+                      }}
                       alt="Politician"
                       fill
                       priority
@@ -936,6 +885,7 @@ export default function Home() {
                       </button>
                       <button
                         onClick={handleReset}
+                        aria-label="Reset run"
                         className="p-2.5 bg-gray-100 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-xl transition-all active:scale-95"
                       >
                         <RefreshCw size={16} />
