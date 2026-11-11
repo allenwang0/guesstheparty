@@ -1,32 +1,37 @@
-import { kv } from "@vercel/kv";
+import { accuracyPercent, bucketIndex } from "../../lib/buckets";
+import { isRateLimited } from "../../lib/rate-limit";
+import { getRedis } from "../../lib/redis";
+import { validateRun } from "../../lib/submission";
+
+export const RUNS_KEY = "stats:runs";
+export const BUCKETS_KEY = "stats:buckets";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).send();
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
+  const redis = getRedis();
   try {
-    const { accuracy } = req.body;
+    if (await isRateLimited(redis, req)) return res.status(429).json({ error: "Too many requests" });
 
-    // Validate input
-    if (typeof accuracy !== "number" || accuracy < 0 || accuracy > 100) {
-      return res.status(400).json({ error: "Invalid accuracy" });
-    }
+    const problem = validateRun(req.body);
+    if (problem) return res.status(400).json({ error: problem });
 
-    // Calculate which bucket this falls into (0, 10, 20... 90)
-    let bucket = Math.floor(accuracy / 10) * 10;
+    const { runId, correct, total } = req.body;
+    const bucket = bucketIndex(accuracyPercent(correct, total));
+    const previous = await redis.hget(RUNS_KEY, runId);
+    const previousBucket = previous === null ? null : Number(previous);
+    if (previousBucket === bucket) return res.status(200).json({ bucket });
 
-    // Edge case: If accuracy is 100, Math.floor gives 100.
-    // We want to group 100 into the 90+ bucket.
-    if (bucket === 100) bucket = 90;
+    const tx = redis
+      .multi()
+      .hset(RUNS_KEY, { [runId]: bucket })
+      .hincrby(BUCKETS_KEY, String(bucket), 1);
+    if (previousBucket !== null) tx.hincrby(BUCKETS_KEY, String(previousBucket), -1);
+    await tx.exec();
 
-    const key = `stats:accuracy:${bucket}`;
-
-    // Atomic increment
-    await kv.incr(key);
-    await kv.incr("stats:total_games");
-
-    return res.status(200).json({ success: true });
+    return res.status(200).json({ bucket });
   } catch (error) {
-    console.error(error);
+    console.error("submit-score failed", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }
