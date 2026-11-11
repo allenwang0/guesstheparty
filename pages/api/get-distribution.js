@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import { kv } from "@vercel/kv";
 
 export default async function handler(req, res) {
   try {
@@ -6,10 +6,7 @@ export default async function handler(req, res) {
     // We stick to 10 buckets. Bucket "90" covers 90-100%
     const keys = Array.from({ length: 10 }, (_, i) => `stats:accuracy:${i * 10}`);
 
-    const [counts, total] = await Promise.all([
-      kv.mget(...keys),
-      kv.get('stats:total_games')
-    ]);
+    const [counts, total] = await Promise.all([kv.mget(...keys), kv.get("stats:total_games")]);
 
     // Format for the frontend
     const distribution = keys.map((_, i) => {
@@ -18,10 +15,10 @@ export default async function handler(req, res) {
 
       return {
         // Label the range nicely
-        range: i === 9 ? '90-100' : `${i * 10}-${(i * 10) + 9}`,
+        range: i === 9 ? "90-100" : `${i * 10}-${i * 10 + 9}`,
         count: count,
         // Calculate percentage of players in this bucket for the bar height
-        percentOfPlayers: totalNum > 0 ? Math.round((count / totalNum) * 100) : 0
+        percentOfPlayers: totalNum > 0 ? Math.round((count / totalNum) * 100) : 0,
       };
     });
 

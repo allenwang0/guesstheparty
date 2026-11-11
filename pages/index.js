@@ -22,21 +22,21 @@ import {
   RefreshCw,
   TrendingUp,
   HelpCircle,
-  BarChart2
+  BarChart2,
 } from "lucide-react";
 
 /* ----------------------------- Static Data ---------------------------- */
 const FAKE_DISTRIBUTION = [
-  { range: '0-10', count: 2, percentOfPlayers: 1 },
-  { range: '10-20', count: 5, percentOfPlayers: 2 },
-  { range: '20-30', count: 15, percentOfPlayers: 6 },
-  { range: '30-40', count: 30, percentOfPlayers: 12 },
-  { range: '40-50', count: 60, percentOfPlayers: 24 },
-  { range: '50-60', count: 70, percentOfPlayers: 28 },
-  { range: '60-70', count: 40, percentOfPlayers: 16 },
-  { range: '70-80', count: 20, percentOfPlayers: 8 },
-  { range: '80-90', count: 5, percentOfPlayers: 2 },
-  { range: '90-100', count: 1, percentOfPlayers: 1 }
+  { range: "0-10", count: 2, percentOfPlayers: 1 },
+  { range: "10-20", count: 5, percentOfPlayers: 2 },
+  { range: "20-30", count: 15, percentOfPlayers: 6 },
+  { range: "30-40", count: 30, percentOfPlayers: 12 },
+  { range: "40-50", count: 60, percentOfPlayers: 24 },
+  { range: "50-60", count: 70, percentOfPlayers: 28 },
+  { range: "60-70", count: 40, percentOfPlayers: 16 },
+  { range: "70-80", count: 20, percentOfPlayers: 8 },
+  { range: "80-90", count: 5, percentOfPlayers: 2 },
+  { range: "90-100", count: 1, percentOfPlayers: 1 },
 ];
 
 /* ----------------------------- Utility Helper ---------------------------- */
@@ -45,7 +45,7 @@ function calculatePercentile(userAcc, data) {
   let totalPlayers = 0;
   let playersStrictlyBelow = 0;
   let playersInSameBucket = 0;
-  data.forEach(d => totalPlayers += d.count);
+  data.forEach((d) => (totalPlayers += d.count));
   const userBucketIndex = Math.min(Math.floor(userAcc / 10), 9);
   data.forEach((d, i) => {
     if (i < userBucketIndex) {
@@ -55,7 +55,7 @@ function calculatePercentile(userAcc, data) {
     }
   });
   if (totalPlayers === 0) return 0;
-  const weightedScore = playersStrictlyBelow + (playersInSameBucket * 0.5);
+  const weightedScore = playersStrictlyBelow + playersInSameBucket * 0.5;
   return Math.round((weightedScore / totalPlayers) * 100);
 }
 
@@ -97,9 +97,7 @@ const ProgressBar = ({ label, value, color, total }) => (
   <div className="w-full">
     <div className="flex justify-between mb-1">
       <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">{label}</span>
-      <span className="text-[9px] font-black text-gray-600">
-        {Math.round((value / (total || 1)) * 100)}%
-      </span>
+      <span className="text-[9px] font-black text-gray-600">{Math.round((value / (total || 1)) * 100)}%</span>
     </div>
     <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
       <motion.div
@@ -122,20 +120,26 @@ const Toast = ({ message }) => (
 );
 
 /* ----------------------------- Histogram Component ---------------------------- */
-const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubmit = false, compact = false }) => {
+const Histogram = ({
+  userAccuracy,
+  totalGamesPlayed,
+  isDark = false,
+  disableSubmit = false,
+  compact = false,
+}) => {
   const [data, setData] = useState(FAKE_DISTRIBUTION);
   useEffect(() => {
     let isMounted = true;
     const syncStats = async () => {
       try {
         if (!disableSubmit && totalGamesPlayed > 0) {
-          await fetch('/api/submit-score', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          await fetch("/api/submit-score", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ accuracy: userAccuracy }),
           });
         }
-        const response = await fetch('/api/get-distribution');
+        const response = await fetch("/api/get-distribution");
         const result = await response.json();
         if (isMounted && result.distribution) {
           const totalRealPlayers = result.distribution.reduce((acc, curr) => acc + curr.count, 0);
@@ -148,13 +152,17 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
       }
     };
     syncStats();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, [userAccuracy, totalGamesPlayed, disableSubmit]);
-  const maxCount = Math.max(...data.map(d => d.count), 0);
+  const maxCount = Math.max(...data.map((d) => d.count), 0);
   const containerHeight = compact ? "h-20" : "h-32";
   return (
-    <div className={`w-full mt-4 pt-4 border-t ${isDark ? 'border-white/10' : 'border-gray-100'}`}>
-      <h3 className={`text-[10px] font-black uppercase tracking-widest mb-3 ${isDark ? 'text-white/40' : 'text-gray-400'}`}>
+    <div className={`w-full mt-4 pt-4 border-t ${isDark ? "border-white/10" : "border-gray-100"}`}>
+      <h3
+        className={`text-[10px] font-black uppercase tracking-widest mb-3 ${isDark ? "text-white/40" : "text-gray-400"}`}
+      >
         Global Player Distribution
       </h3>
       <div className={`flex items-end justify-between ${containerHeight} gap-1 mb-2`}>
@@ -165,34 +173,33 @@ const Histogram = ({ userAccuracy, totalGamesPlayed, isDark = false, disableSubm
           const isActive = isUserBucket || isUser100;
           const barHeight = maxCount > 0 ? (bucket.count / maxCount) * 100 : 0;
           return (
-            <div
-              key={i}
-              className="h-full flex flex-col justify-end items-center gap-1 flex-1 relative"
-            >
+            <div key={i} className="h-full flex flex-col justify-end items-center gap-1 flex-1 relative">
               <motion.div
                 initial={{ height: 0 }}
                 animate={{ height: `${barHeight}%` }}
                 transition={{ duration: 0.5, delay: i * 0.05 }}
                 className={`w-full rounded-t-sm relative ${
-                  isActive
-                    ? 'bg-blue-500'
-                    : (isDark ? 'bg-white/10' : 'bg-gray-200')
+                  isActive ? "bg-blue-500" : isDark ? "bg-white/10" : "bg-gray-200"
                 }`}
               />
-              <span className={`text-[7px] font-bold ${
-                isActive
-                  ? 'text-blue-500'
-                  : (isDark ? 'text-white/20' : 'text-gray-300')
-              }`}>
-                {i === 0 ? '0' : i === 9 ? '100' : ''}
+              <span
+                className={`text-[7px] font-bold ${
+                  isActive ? "text-blue-500" : isDark ? "text-white/20" : "text-gray-300"
+                }`}
+              >
+                {i === 0 ? "0" : i === 9 ? "100" : ""}
               </span>
             </div>
           );
         })}
       </div>
       {!compact && (
-        <div className={`mt-3 text-center text-xs ${isDark ? 'text-white/60' : 'text-gray-500'}`}>
-          You performed better than <span className={`font-bold ${isDark ? 'text-white' : 'text-black'}`}>{calculatePercentile(userAccuracy, data)}%</span> of players.
+        <div className={`mt-3 text-center text-xs ${isDark ? "text-white/60" : "text-gray-500"}`}>
+          You performed better than{" "}
+          <span className={`font-bold ${isDark ? "text-white" : "text-black"}`}>
+            {calculatePercentile(userAccuracy, data)}%
+          </span>{" "}
+          of players.
         </div>
       )}
     </div>
@@ -259,13 +266,62 @@ const TROPHY_KEY = "partyTrophies_v3";
 const INTRO_KEY = "partyHasSeenIntro_v3";
 const STATS_KEY = "partyStats_v3";
 const TROPHIES = [
-  { id: "first_correct", title: "First Blood", desc: "First correct guess.", icon: <Star size={18} />, tier: "bronze", check: ({ stats }) => (stats.correct || 0) >= 1 },
-  { id: "streak_5", title: "Warm Streak", desc: "Best streak ≥ 5.", icon: <Flame size={18} />, tier: "bronze", check: ({ stats }) => (stats.bestStreak || 0) >= 5 },
-  { id: "streak_10", title: "Campaign Staff", desc: "Best streak ≥ 10.", icon: <Award size={18} />, tier: "silver", check: ({ stats }) => (stats.bestStreak || 0) >= 10 },
-  { id: "streak_25", title: "Party Operator", desc: "Best streak ≥ 25.", icon: <ShieldCheck size={18} />, tier: "gold", check: ({ stats }) => (stats.bestStreak || 0) >= 25 },
-  { id: "streak_50", title: "Floor Leader", desc: "Best streak ≥ 50.", icon: <Trophy size={18} />, tier: "platinum", check: ({ stats }) => (stats.bestStreak || 0) >= 50 },
-  { id: "seen_50", title: "Caucus Regular", desc: "Seen ≥ 50.", icon: <Target size={18} />, tier: "bronze", check: ({ stats }) => (stats.total || 0) >= 50 },
-  { id: "seen_200", title: "Capitol Fixture", desc: "Seen ≥ 200.", icon: <Trophy size={18} />, tier: "gold", check: ({ stats }) => (stats.total || 0) >= 200 },
+  {
+    id: "first_correct",
+    title: "First Blood",
+    desc: "First correct guess.",
+    icon: <Star size={18} />,
+    tier: "bronze",
+    check: ({ stats }) => (stats.correct || 0) >= 1,
+  },
+  {
+    id: "streak_5",
+    title: "Warm Streak",
+    desc: "Best streak ≥ 5.",
+    icon: <Flame size={18} />,
+    tier: "bronze",
+    check: ({ stats }) => (stats.bestStreak || 0) >= 5,
+  },
+  {
+    id: "streak_10",
+    title: "Campaign Staff",
+    desc: "Best streak ≥ 10.",
+    icon: <Award size={18} />,
+    tier: "silver",
+    check: ({ stats }) => (stats.bestStreak || 0) >= 10,
+  },
+  {
+    id: "streak_25",
+    title: "Party Operator",
+    desc: "Best streak ≥ 25.",
+    icon: <ShieldCheck size={18} />,
+    tier: "gold",
+    check: ({ stats }) => (stats.bestStreak || 0) >= 25,
+  },
+  {
+    id: "streak_50",
+    title: "Floor Leader",
+    desc: "Best streak ≥ 50.",
+    icon: <Trophy size={18} />,
+    tier: "platinum",
+    check: ({ stats }) => (stats.bestStreak || 0) >= 50,
+  },
+  {
+    id: "seen_50",
+    title: "Caucus Regular",
+    desc: "Seen ≥ 50.",
+    icon: <Target size={18} />,
+    tier: "bronze",
+    check: ({ stats }) => (stats.total || 0) >= 50,
+  },
+  {
+    id: "seen_200",
+    title: "Capitol Fixture",
+    desc: "Seen ≥ 200.",
+    icon: <Trophy size={18} />,
+    tier: "gold",
+    check: ({ stats }) => (stats.total || 0) >= 200,
+  },
   {
     id: "accuracy_80_50",
     title: "Solid Read",
@@ -274,18 +330,30 @@ const TROPHIES = [
     tier: "silver",
     check: ({ stats }) => {
       const t = stats.total || 0;
-      return t >= 50 && (stats.correct / t) >= 0.8;
+      return t >= 50 && stats.correct / t >= 0.8;
     },
   },
-  { id: "speed_fast", title: "Fast Reflexes", desc: "Answer correctly in <1s.", icon: <Zap size={18} />, tier: "gold", check: ({ lastResult }) => lastResult?.isFast && lastResult?.isCorrect },
+  {
+    id: "speed_fast",
+    title: "Fast Reflexes",
+    desc: "Answer correctly in <1s.",
+    icon: <Zap size={18} />,
+    tier: "gold",
+    check: ({ lastResult }) => lastResult?.isFast && lastResult?.isCorrect,
+  },
 ];
 function tierStyles(tier) {
   switch (tier) {
-    case "bronze": return "bg-amber-100 text-amber-900 border-amber-200";
-    case "silver": return "bg-slate-100 text-slate-900 border-slate-200";
-    case "gold": return "bg-yellow-100 text-yellow-900 border-yellow-200";
-    case "platinum": return "bg-indigo-100 text-indigo-900 border-indigo-200";
-    default: return "bg-gray-100 text-gray-700 border-gray-200";
+    case "bronze":
+      return "bg-amber-100 text-amber-900 border-amber-200";
+    case "silver":
+      return "bg-slate-100 text-slate-900 border-slate-200";
+    case "gold":
+      return "bg-yellow-100 text-yellow-900 border-yellow-200";
+    case "platinum":
+      return "bg-indigo-100 text-indigo-900 border-indigo-200";
+    default:
+      return "bg-gray-100 text-gray-700 border-gray-200";
   }
 }
 function formatOffice(p, revealed) {
@@ -372,7 +440,7 @@ export default function Home() {
   const swipeBg = useTransform(
     x,
     [-150, 0, 150],
-    ["rgba(59, 130, 246, 0.15)", "rgba(255,255,255,0)", "rgba(239, 68, 68, 0.15)"]
+    ["rgba(59, 130, 246, 0.15)", "rgba(255,255,255,0)", "rgba(239, 68, 68, 0.15)"],
   );
   const demStampOpacity = useTransform(x, [0, -60], [0, 1]);
   const demStampScale = useTransform(x, [0, -60], [2, 1]);
@@ -382,16 +450,13 @@ export default function Home() {
   const unlockedSet = useMemo(() => new Set(trophies.unlocked || []), [trophies.unlocked]);
   const accuracy = useMemo(
     () => (stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100)),
-    [stats]
+    [stats],
   );
   const rank = useMemo(() => {
     if (stats.total < 20) {
       return { title: "Unranked", score: 0, nextGoal: 20 - stats.total };
     }
-    const rawScore =
-      (accuracy * 1000) +
-      (stats.bestStreak * 40) +
-      (Math.log1p(stats.total) * 200);
+    const rawScore = accuracy * 1000 + stats.bestStreak * 40 + Math.log1p(stats.total) * 200;
     const score = Math.round(rawScore);
     let title = "Intern";
     if (score >= 110000) title = "Speaker";
@@ -403,21 +468,21 @@ export default function Home() {
   }, [stats.total, accuracy, stats.bestStreak]);
 
   const bestGuessedParty = useMemo(() => {
-    const demAcc = stats.demGuesses > 0 ? (stats.demCorrect / stats.demGuesses) : 0;
-    const repAcc = stats.repGuesses > 0 ? (stats.repCorrect / stats.repGuesses) : 0;
+    const demAcc = stats.demGuesses > 0 ? stats.demCorrect / stats.demGuesses : 0;
+    const repAcc = stats.repGuesses > 0 ? stats.repCorrect / stats.repGuesses : 0;
     if (demAcc >= repAcc) {
       return {
         name: "Democrats",
         img: "https://www.stickylife.com/media/catalog/product/cache/cae11d3eb59b15e233305252c507fc33/d/o/donkey-decal-front.png",
         color: "text-blue-500",
-        value: Math.round(demAcc * 100)
+        value: Math.round(demAcc * 100),
       };
     } else {
       return {
         name: "Republicans",
         img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Republicanlogo.svg/1163px-Republicanlogo.svg.png",
         color: "text-red-500",
-        value: Math.round(repAcc * 100)
+        value: Math.round(repAcc * 100),
       };
     }
   }, [stats]);
@@ -546,10 +611,10 @@ export default function Home() {
         else navigator.vibrate([30, 50, 30]);
       }
       if (!isCorrect) {
-          shakeControls.start({
-              x: [0, -10, 10, -10, 10, 0],
-              transition: { duration: 0.4 }
-          });
+        shakeControls.start({
+          x: [0, -10, 10, -10, 10, 0],
+          transition: { duration: 0.4 },
+        });
       }
       if (isCorrect && newStreak > 0 && newStreak % 10 === 0) {
         await fireConfettiSafe();
@@ -565,9 +630,13 @@ export default function Home() {
         demCorrect: actualParty === "Democrat" && isCorrect ? stats.demCorrect + 1 : stats.demCorrect,
         repCorrect: actualParty === "Republican" && isCorrect ? stats.repCorrect + 1 : stats.repCorrect,
         guessedDemActualRep:
-          guessedParty === "Democrat" && !isCorrect ? stats.guessedDemActualRep + 1 : stats.guessedDemActualRep,
+          guessedParty === "Democrat" && !isCorrect
+            ? stats.guessedDemActualRep + 1
+            : stats.guessedDemActualRep,
         guessedRepActualDem:
-          guessedParty === "Republican" && !isCorrect ? stats.guessedRepActualDem + 1 : stats.guessedRepActualDem,
+          guessedParty === "Republican" && !isCorrect
+            ? stats.guessedRepActualDem + 1
+            : stats.guessedRepActualDem,
         totalTime: stats.totalTime + (validTime || 0),
         responseTimes: validTime ? [...stats.responseTimes, validTime] : stats.responseTimes,
       };
@@ -594,7 +663,7 @@ export default function Home() {
       const delay = isCorrect ? 2000 : 3000;
       setTimeout(advanceToNext, delay);
     },
-    [gameState, current, stats, trophies, advanceToNext, shakeControls]
+    [gameState, current, stats, trophies, advanceToNext, shakeControls],
   );
 
   useEffect(() => {
@@ -665,7 +734,6 @@ export default function Home() {
       />
       <AnimatePresence>{toast && <Toast message={toast} />}</AnimatePresence>
       <div className="mx-auto max-w-2xl px-4 md:px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] h-full flex flex-col relative z-20">
-
         {/* Header */}
         <header className="mb-4 mt-4 shrink-0 flex justify-center relative z-50">
           <Glass className="px-5 py-3 rounded-full flex items-center justify-between w-full max-w-lg">
@@ -740,7 +808,10 @@ export default function Home() {
                   }}
                   className="absolute inset-0 rounded-[2.5rem] overflow-hidden border-[6px] border-white bg-white shadow-2xl cursor-grab active:cursor-grabbing flex flex-col"
                 >
-                  <motion.div className="absolute inset-0 z-10 pointer-events-none" style={{ backgroundColor: swipeBg }} />
+                  <motion.div
+                    className="absolute inset-0 z-10 pointer-events-none"
+                    style={{ backgroundColor: swipeBg }}
+                  />
                   {!revealed && (
                     <>
                       <motion.div
@@ -784,15 +855,23 @@ export default function Home() {
                             lastResult?.isCorrect ? "bg-emerald-500" : "bg-rose-500"
                           }`}
                         >
-                          {lastResult?.isCorrect ? <Check size={32} strokeWidth={4} /> : <XCircle size={32} strokeWidth={3} />}
+                          {lastResult?.isCorrect ? (
+                            <Check size={32} strokeWidth={4} />
+                          ) : (
+                            <XCircle size={32} strokeWidth={3} />
+                          )}
                         </div>
                         <div className="space-y-1">
                           <div className="text-white/70 text-[10px] font-black uppercase tracking-[0.25em]">
                             {formatOffice(current, true)}
                           </div>
-                          <h2 className="text-3xl font-black uppercase tracking-tighter leading-none px-4">{current.name}</h2>
+                          <h2 className="text-3xl font-black uppercase tracking-tighter leading-none px-4">
+                            {current.name}
+                          </h2>
                           <div className="flex items-center justify-center gap-2 pt-2">
-                            <Pill className={`${current.party === "Democrat" ? "bg-blue-500" : "bg-red-500"} text-white border-none`}>
+                            <Pill
+                              className={`${current.party === "Democrat" ? "bg-blue-500" : "bg-red-500"} text-white border-none`}
+                            >
                               {current.party}
                             </Pill>
                             {lastResult?.isFast && lastResult?.isCorrect && (
@@ -862,7 +941,6 @@ export default function Home() {
         </main>
       </div>
       <AnimatePresence>
-
         {/* Intro Modal (WIDER on Desktop) */}
         {showInfo && (
           <Modal onClose={closeInfoModal} className="max-w-md md:max-w-xl">
@@ -871,35 +949,33 @@ export default function Home() {
                 <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight leading-none text-balance md:whitespace-nowrap">
                   Does appearance predict ideology?
                 </h3>
-                <p className="text-lg font-serif italic text-gray-500">
-                  Test your political intuition
-                </p>
+                <p className="text-lg font-serif italic text-gray-500">Test your political intuition</p>
               </div>
               <p className="text-sm font-medium text-gray-600 max-w-[260px] mx-auto leading-relaxed">
                 Swipe or use arrow keys to guess.
                 <br />
               </p>
               <div className="grid grid-cols-2 gap-4">
-                 {/* Left Tile */}
-                 <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex flex-col items-center gap-2">
-                    <div className="h-8 w-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-sm">
-                      <ArrowLeft size={16} strokeWidth={3} />
-                    </div>
-                    <div className="leading-none">
-                      <div className="text-[10px] font-black uppercase tracking-widest text-blue-300">Left</div>
-                      <div className="text-sm font-black uppercase text-blue-600">Democrat</div>
-                    </div>
-                 </div>
-                 {/* Right Tile */}
-                 <div className="bg-red-50/50 border border-red-100 rounded-2xl p-4 flex flex-col items-center gap-2">
-                    <div className="h-8 w-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-sm">
-                      <ArrowRight size={16} strokeWidth={3} />
-                    </div>
-                    <div className="leading-none">
-                      <div className="text-[10px] font-black uppercase tracking-widest text-red-300">Right</div>
-                      <div className="text-sm font-black uppercase text-red-600">Republican</div>
-                    </div>
-                 </div>
+                {/* Left Tile */}
+                <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex flex-col items-center gap-2">
+                  <div className="h-8 w-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                    <ArrowLeft size={16} strokeWidth={3} />
+                  </div>
+                  <div className="leading-none">
+                    <div className="text-[10px] font-black uppercase tracking-widest text-blue-300">Left</div>
+                    <div className="text-sm font-black uppercase text-blue-600">Democrat</div>
+                  </div>
+                </div>
+                {/* Right Tile */}
+                <div className="bg-red-50/50 border border-red-100 rounded-2xl p-4 flex flex-col items-center gap-2">
+                  <div className="h-8 w-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-sm">
+                    <ArrowRight size={16} strokeWidth={3} />
+                  </div>
+                  <div className="leading-none">
+                    <div className="text-[10px] font-black uppercase tracking-widest text-red-300">Right</div>
+                    <div className="text-sm font-black uppercase text-red-600">Republican</div>
+                  </div>
+                </div>
               </div>
               <button
                 onClick={closeInfoModal}
@@ -920,9 +996,9 @@ export default function Home() {
                 <div className="flex items-center gap-2 mt-1">
                   <Pill className={`bg-black text-white`}>{rank.title}</Pill>
                   {rank.title === "Unranked" && (
-                     <span className="text-[9px] font-bold text-gray-400 tracking-widest uppercase">
-                       {rank.nextGoal} more to rank
-                     </span>
+                    <span className="text-[9px] font-bold text-gray-400 tracking-widest uppercase">
+                      {rank.nextGoal} more to rank
+                    </span>
                   )}
                 </div>
               </div>
@@ -931,73 +1007,103 @@ export default function Home() {
               </IconButton>
             </div>
             {/* Political Capital Score Section */}
-             <div className="mb-4 bg-gradient-to-br from-gray-900 to-black rounded-3xl p-5 text-white relative overflow-hidden">
-                <div className="relative z-10 flex justify-between items-start">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                       <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Political Capital</span>
-                       <button onClick={() => setShowScoreDetails(!showScoreDetails)} className="opacity-50 hover:opacity-100 transition-opacity">
-                          <HelpCircle size={12} />
-                       </button>
-                    </div>
-                    <div className="text-4xl font-black tracking-tighter tabular-nums">
-                      {rank.score.toLocaleString()}
-                    </div>
+            <div className="mb-4 bg-gradient-to-br from-gray-900 to-black rounded-3xl p-5 text-white relative overflow-hidden">
+              <div className="relative z-10 flex justify-between items-start">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[9px] font-black uppercase tracking-widest opacity-60">
+                      Political Capital
+                    </span>
+                    <button
+                      onClick={() => setShowScoreDetails(!showScoreDetails)}
+                      className="opacity-50 hover:opacity-100 transition-opacity"
+                    >
+                      <HelpCircle size={12} />
+                    </button>
                   </div>
-                  <div className="h-10 w-10 bg-white/10 rounded-full flex items-center justify-center">
-                    <TrendingUp size={20} />
+                  <div className="text-4xl font-black tracking-tighter tabular-nums">
+                    {rank.score.toLocaleString()}
                   </div>
                 </div>
-                {/* Conditional Info Section */}
-                <AnimatePresence>
-                  {showScoreDetails && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="relative z-10 mt-3 pt-3 border-t border-white/10 text-xs text-white/70 space-y-1"
-                    >
-                      <p>Score = Accuracy + Streak + Experience.</p>
-                      <ul className="list-disc pl-4 space-y-0.5 opacity-80 text-[10px]">
-                        <li><b>Accuracy</b> gives the most points.</li>
-                        <li><b>Streaks</b> provide bonus multipliers.</li>
-                        <li><b>Total Games</b> adds a loyalty bonus.</li>
-                      </ul>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                {/* Background decoration */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-             </div>
+                <div className="h-10 w-10 bg-white/10 rounded-full flex items-center justify-center">
+                  <TrendingUp size={20} />
+                </div>
+              </div>
+              {/* Conditional Info Section */}
+              <AnimatePresence>
+                {showScoreDetails && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="relative z-10 mt-3 pt-3 border-t border-white/10 text-xs text-white/70 space-y-1"
+                  >
+                    <p>Score = Accuracy + Streak + Experience.</p>
+                    <ul className="list-disc pl-4 space-y-0.5 opacity-80 text-[10px]">
+                      <li>
+                        <b>Accuracy</b> gives the most points.
+                      </li>
+                      <li>
+                        <b>Streaks</b> provide bonus multipliers.
+                      </li>
+                      <li>
+                        <b>Total Games</b> adds a loyalty bonus.
+                      </li>
+                    </ul>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              {/* Background decoration */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            </div>
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="col-span-2 bg-white rounded-3xl border border-gray-100 p-5 shadow-sm">
-                <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Total Accuracy</div>
+                <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                  Total Accuracy
+                </div>
                 <div className="text-5xl font-black tracking-tighter text-gray-900">{accuracy}%</div>
                 <div className="mt-4 space-y-2">
-                  <ProgressBar label="Democrat" value={stats.demCorrect} total={stats.demGuesses} color="bg-blue-500" />
-                  <ProgressBar label="Republican" value={stats.repCorrect} total={stats.repGuesses} color="bg-red-500" />
+                  <ProgressBar
+                    label="Democrat"
+                    value={stats.demCorrect}
+                    total={stats.demGuesses}
+                    color="bg-blue-500"
+                  />
+                  <ProgressBar
+                    label="Republican"
+                    value={stats.repCorrect}
+                    total={stats.repGuesses}
+                    color="bg-red-500"
+                  />
                 </div>
               </div>
             </div>
             <Histogram userAccuracy={accuracy} totalGamesPlayed={stats.total} />
             {/* Career Ladder Legend */}
             <div className="mt-6 pt-6 border-t border-gray-100">
-               <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Career Ladder</h3>
-               <div className="space-y-2">
-                  {RANK_TIERS.map((tier) => {
-                    const isCurrent = rank.title === tier.title;
-                    const isPassed = rank.score >= tier.min;
-                    return (
-                      <div key={tier.title} className={`flex items-center justify-between text-xs ${isCurrent ? 'opacity-100' : 'opacity-40'}`}>
-                         <div className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${isPassed ? 'bg-black' : 'bg-gray-200'}`} />
-                            <span className="font-bold uppercase tracking-wide">{tier.title}</span>
-                         </div>
-                         <span className="font-mono text-[10px]">{tier.min > 0 ? `${(tier.min / 1000)}k+` : '0+'}</span>
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
+                Career Ladder
+              </h3>
+              <div className="space-y-2">
+                {RANK_TIERS.map((tier) => {
+                  const isCurrent = rank.title === tier.title;
+                  const isPassed = rank.score >= tier.min;
+                  return (
+                    <div
+                      key={tier.title}
+                      className={`flex items-center justify-between text-xs ${isCurrent ? "opacity-100" : "opacity-40"}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${isPassed ? "bg-black" : "bg-gray-200"}`} />
+                        <span className="font-bold uppercase tracking-wide">{tier.title}</span>
                       </div>
-                    )
-                  })}
-               </div>
+                      <span className="font-mono text-[10px]">
+                        {tier.min > 0 ? `${tier.min / 1000}k+` : "0+"}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
             <button
               onClick={() => {
@@ -1041,7 +1147,9 @@ export default function Home() {
                   <div
                     key={t.id}
                     className={`p-4 rounded-2xl border flex items-center gap-4 ${
-                      unlocked ? "bg-white border-gray-100 shadow-sm" : "bg-gray-50 border-transparent opacity-60 grayscale"
+                      unlocked
+                        ? "bg-white border-gray-100 shadow-sm"
+                        : "bg-gray-50 border-transparent opacity-60 grayscale"
                     }`}
                   >
                     <div
@@ -1074,76 +1182,87 @@ export default function Home() {
               className="relative w-full max-w-sm overflow-hidden bg-white/5 rounded-[2.5rem] p-4 flex flex-col gap-4"
               onClick={(e) => e.stopPropagation()}
             >
-                {/* --- WRAPPED CARD (Captured) --- */}
-                <div
-                    className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-[2rem] border border-white/10 p-6 text-white shadow-2xl flex flex-col justify-between aspect-[9/14]"
-                >
-                    {/* Header */}
-                    <div className="flex justify-between items-start border-b border-white/10 pb-4">
-                        <div>
-                             <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-50 mb-1">Rank</div>
-                             <div className="text-2xl font-black uppercase text-blue-400 leading-none">{rank.title}</div>
-                             <div className="text-[10px] font-mono opacity-50 mt-1">Score: {rank.score.toLocaleString()}</div>
-                        </div>
-                        <div className="text-right">
-                            <div className="text-3xl font-black leading-none">{calculatePercentile(accuracy, FAKE_DISTRIBUTION)}%</div>
-                            <div className="text-[9px] font-black uppercase tracking-widest opacity-50 mt-1">Top Percentile</div>
-                        </div>
+              {/* --- WRAPPED CARD (Captured) --- */}
+              <div className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-[2rem] border border-white/10 p-6 text-white shadow-2xl flex flex-col justify-between aspect-[9/14]">
+                {/* Header */}
+                <div className="flex justify-between items-start border-b border-white/10 pb-4">
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-50 mb-1">
+                      Rank
                     </div>
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 gap-2 my-2">
-                        <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-                            <div className="text-[8px] uppercase tracking-widest opacity-50 mb-1">Accuracy</div>
-                            <div className="text-xl font-black">{accuracy}%</div>
-                        </div>
-                        <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-                            <div className="text-[8px] uppercase tracking-widest opacity-50 mb-1">Streak</div>
-                            <div className="text-xl font-black text-amber-400">{stats.bestStreak}</div>
-                        </div>
+                    <div className="text-2xl font-black uppercase text-blue-400 leading-none">
+                      {rank.title}
                     </div>
-
-                    {/* Best Party - UPDATED with specific wrapped image URL */}
-                    <div className="bg-white/5 rounded-xl p-3 border border-white/5 flex items-center gap-3">
-                        <div className="relative h-10 w-10 shrink-0 bg-white rounded-full p-2 flex items-center justify-center">
-                           <img
-                             src={bestGuessedParty.img}
-                             alt={bestGuessedParty.name}
-                             className="w-full h-full object-contain"
-                           />
-                        </div>
-                        <div>
-                            <div className="text-[8px] uppercase tracking-widest opacity-50">Best Read</div>
-                            <div className={`text-xs font-bold ${bestGuessedParty.color}`}>
-                                {bestGuessedParty.name} <span className="opacity-50 text-white font-normal">({bestGuessedParty.value || 0}%)</span>
-                            </div>
-                        </div>
+                    <div className="text-[10px] font-mono opacity-50 mt-1">
+                      Score: {rank.score.toLocaleString()}
                     </div>
-
-                    {/* Histogram (Compact) */}
-                    <Histogram
-                        userAccuracy={accuracy}
-                        totalGamesPlayed={stats.total}
-                        isDark={true}
-                        disableSubmit={true}
-                        compact={true}
-                    />
-                    {/* Footer */}
-                    <div className="pt-4 border-t border-white/10 flex justify-between items-end opacity-50">
-                         <div>
-                            <div className="text-[8px] font-black uppercase tracking-widest">Guess The Party</div>
-                            <div className="text-[8px]">2025 Review</div>
-                         </div>
-                         <div className="text-[8px] font-mono">guesstheparty.vercel.app</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-3xl font-black leading-none">
+                      {calculatePercentile(accuracy, FAKE_DISTRIBUTION)}%
                     </div>
+                    <div className="text-[9px] font-black uppercase tracking-widest opacity-50 mt-1">
+                      Top Percentile
+                    </div>
+                  </div>
                 </div>
-                {/* --- END CAPTURED AREA --- */}
+                {/* Stats Grid */}
+                <div className="grid grid-cols-2 gap-2 my-2">
+                  <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                    <div className="text-[8px] uppercase tracking-widest opacity-50 mb-1">Accuracy</div>
+                    <div className="text-xl font-black">{accuracy}%</div>
+                  </div>
+                  <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                    <div className="text-[8px] uppercase tracking-widest opacity-50 mb-1">Streak</div>
+                    <div className="text-xl font-black text-amber-400">{stats.bestStreak}</div>
+                  </div>
+                </div>
 
-                <button
-                    onClick={() => setShowWrapped(false)}
-                    className="w-full h-12 bg-black/40 text-white/50 hover:text-white rounded-2xl flex items-center justify-center font-black text-xs uppercase tracking-widest transition-colors"
-                >
-                    Close
-                </button>
+                {/* Best Party - UPDATED with specific wrapped image URL */}
+                <div className="bg-white/5 rounded-xl p-3 border border-white/5 flex items-center gap-3">
+                  <div className="relative h-10 w-10 shrink-0 bg-white rounded-full p-2 flex items-center justify-center">
+                    <img
+                      src={bestGuessedParty.img}
+                      alt={bestGuessedParty.name}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div>
+                    <div className="text-[8px] uppercase tracking-widest opacity-50">Best Read</div>
+                    <div className={`text-xs font-bold ${bestGuessedParty.color}`}>
+                      {bestGuessedParty.name}{" "}
+                      <span className="opacity-50 text-white font-normal">
+                        ({bestGuessedParty.value || 0}%)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Histogram (Compact) */}
+                <Histogram
+                  userAccuracy={accuracy}
+                  totalGamesPlayed={stats.total}
+                  isDark={true}
+                  disableSubmit={true}
+                  compact={true}
+                />
+                {/* Footer */}
+                <div className="pt-4 border-t border-white/10 flex justify-between items-end opacity-50">
+                  <div>
+                    <div className="text-[8px] font-black uppercase tracking-widest">Guess The Party</div>
+                    <div className="text-[8px]">2025 Review</div>
+                  </div>
+                  <div className="text-[8px] font-mono">guesstheparty.vercel.app</div>
+                </div>
+              </div>
+              {/* --- END CAPTURED AREA --- */}
+
+              <button
+                onClick={() => setShowWrapped(false)}
+                className="w-full h-12 bg-black/40 text-white/50 hover:text-white rounded-2xl flex items-center justify-center font-black text-xs uppercase tracking-widest transition-colors"
+              >
+                Close
+              </button>
             </motion.div>
           </div>
         )}
