@@ -77,3 +77,15 @@ describe("guessing", () => {
     expect(shownCard()).toBe(card);
   });
 });
+
+describe("load failure", () => {
+  // Players cannot fix a server file; they get a plain retry message and the detail goes to the console.
+  it("shows a refresh message without internal file paths", async () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    globalThis.fetch = vi.fn(async () => new Response("not json", { status: 500 }));
+    render(<Home />);
+    expect(await screen.findByText("Couldn't load the game. Refresh to try again.")).toBeTruthy();
+    expect(screen.queryByText(/politicians\.json/)).toBeNull();
+    expect(consoleError).toHaveBeenCalled();
+  });
+});

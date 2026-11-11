@@ -219,16 +219,14 @@ function LoadingScreen({ message }) {
     </div>
   );
 }
-function ErrorScreen({ title, detail }) {
+function ErrorScreen() {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F5F5F7] px-6 text-center gap-3">
       <div className="h-14 w-14 rounded-2xl bg-white border border-black/5 flex items-center justify-center shadow-sm">
         <AlertCircle />
       </div>
-      <div className="text-lg font-black tracking-tight">{title}</div>
-      {detail && <div className="text-sm text-gray-500 max-w-lg">{detail}</div>}
-      <div className="text-xs text-gray-400 mt-2">
-        Check that <span className="font-mono">/public/politicians.json</span> is valid JSON (an array).
+      <div className="text-lg font-black tracking-tight">
+        Couldn&apos;t load the game. Refresh to try again.
       </div>
     </div>
   );
@@ -389,7 +387,7 @@ async function fireConfettiSafe() {
 export default function Home() {
   const [{ current, queue: loadingQueue }, dispatchQueue] = useReducer(queueReducer, initialQueueState);
   const [hasMounted, setHasMounted] = useState(false);
-  const [fatalError, setFatalError] = useState(null);
+  const [loadFailed, setLoadFailed] = useState(false);
   const containerRef = useRef(null);
 
   // Logic Refs
@@ -527,7 +525,8 @@ export default function Home() {
         if (bad) throw new Error("Every entry must include name, party, and img.");
         dispatchQueue({ type: "start", pool: normalized, shuffled: shuffle(normalized) });
       } catch (e) {
-        setFatalError(e?.message || "Failed to load politicians.");
+        console.error("Failed to load politicians.json", e);
+        setLoadFailed(true);
       }
     })();
     if (containerRef.current) containerRef.current.focus();
@@ -662,7 +661,7 @@ export default function Home() {
     }
   };
 
-  if (fatalError) return <ErrorScreen title="App failed to start" detail={fatalError} />;
+  if (loadFailed) return <ErrorScreen />;
   if (!hasMounted || !current) return <LoadingScreen message="Loading..." />;
 
   return (
