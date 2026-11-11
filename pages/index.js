@@ -24,40 +24,9 @@ import {
   HelpCircle,
   BarChart2,
 } from "lucide-react";
-
-/* ----------------------------- Static Data ---------------------------- */
-const FAKE_DISTRIBUTION = [
-  { range: "0-10", count: 2, percentOfPlayers: 1 },
-  { range: "10-20", count: 5, percentOfPlayers: 2 },
-  { range: "20-30", count: 15, percentOfPlayers: 6 },
-  { range: "30-40", count: 30, percentOfPlayers: 12 },
-  { range: "40-50", count: 60, percentOfPlayers: 24 },
-  { range: "50-60", count: 70, percentOfPlayers: 28 },
-  { range: "60-70", count: 40, percentOfPlayers: 16 },
-  { range: "70-80", count: 20, percentOfPlayers: 8 },
-  { range: "80-90", count: 5, percentOfPlayers: 2 },
-  { range: "90-100", count: 1, percentOfPlayers: 1 },
-];
-
-/* ----------------------------- Utility Helper ---------------------------- */
-function calculatePercentile(userAcc, data) {
-  if (!data || data.length === 0) return 0;
-  let totalPlayers = 0;
-  let playersStrictlyBelow = 0;
-  let playersInSameBucket = 0;
-  data.forEach((d) => (totalPlayers += d.count));
-  const userBucketIndex = Math.min(Math.floor(userAcc / 10), 9);
-  data.forEach((d, i) => {
-    if (i < userBucketIndex) {
-      playersStrictlyBelow += d.count;
-    } else if (i === userBucketIndex) {
-      playersInSameBucket += d.count;
-    }
-  });
-  if (totalPlayers === 0) return 0;
-  const weightedScore = playersStrictlyBelow + playersInSameBucket * 0.5;
-  return Math.round((weightedScore / totalPlayers) * 100);
-}
+import { bucketCounts, bucketIndex, MIN_RUNS_TO_SHOW } from "../lib/buckets";
+import { betterThanPercent } from "../lib/percentile";
+import { shouldSubmitRun } from "../lib/submission";
 
 /* ----------------------------- Utility Components ---------------------------- */
 const Glass = ({ children, className = "" }) => (
@@ -120,44 +89,70 @@ const Toast = ({ message }) => (
 );
 
 /* ----------------------------- Histogram Component ---------------------------- */
-const Histogram = ({
-  userAccuracy,
-  totalGamesPlayed,
-  isDark = false,
-  disableSubmit = false,
-  compact = false,
-}) => {
-  const [data, setData] = useState(FAKE_DISTRIBUTION);
-  useEffect(() => {
-    let isMounted = true;
-    const syncStats = async () => {
-      try {
-        if (!disableSubmit && totalGamesPlayed > 0) {
-          await fetch("/api/submit-score", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ accuracy: userAccuracy }),
-          });
-        }
-        const response = await fetch("/api/get-distribution");
-        const result = await response.json();
-        if (isMounted && result.distribution) {
-          const totalRealPlayers = result.distribution.reduce((acc, curr) => acc + curr.count, 0);
-          if (totalRealPlayers > 0) {
-            setData(result.distribution);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to sync stats", error);
-      }
-    };
-    syncStats();
-    return () => {
-      isMounted = false;
-    };
-  }, [userAccuracy, totalGamesPlayed, disableSubmit]);
-  const maxCount = Math.max(...data.map((d) => d.count), 0);
+const Histogram = ({ distribution, userAccuracy, isDark = false, compact = false }) => {
   const containerHeight = compact ? "h-20" : "h-32";
+  const mutedText = isDark ? "text-white/60" : "text-gray-500";
+  const counts = bucketCounts(distribution.buckets?.map((b) => b.count));
+  const maxCount = Math.max(...counts);
+  const userBucket = bucketIndex(userAccuracy);
+  const betterThan = betterThanPercent(userAccuracy, counts);
+  let body;
+  if (distribution.status === "loading") {
+    body = (
+      <div className={`${containerHeight} flex items-center justify-center text-xs ${mutedText}`}>
+        Loading...
+      </div>
+    );
+  } else if (distribution.status === "error") {
+    body = (
+      <div className={`${containerHeight} flex items-center justify-center text-xs ${mutedText}`}>
+        Stats are unavailable right now.
+      </div>
+    );
+  } else if (distribution.total < MIN_RUNS_TO_SHOW) {
+    body = (
+      <div className={`${containerHeight} flex items-center justify-center text-xs ${mutedText}`}>
+        Not enough games yet ({distribution.total} of {MIN_RUNS_TO_SHOW})
+      </div>
+    );
+  } else {
+    body = (
+      <>
+        <div className={`flex items-end justify-between ${containerHeight} gap-1 mb-2`}>
+          {counts.map((count, i) => {
+            const isActive = i === userBucket;
+            const barHeight = maxCount > 0 ? (count / maxCount) * 100 : 0;
+            return (
+              <div key={i} className="h-full flex flex-col justify-end items-center gap-1 flex-1 relative">
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: `${barHeight}%` }}
+                  transition={{ duration: 0.5, delay: i * 0.05 }}
+                  className={`w-full rounded-t-sm relative ${
+                    isActive ? "bg-blue-500" : isDark ? "bg-white/10" : "bg-gray-200"
+                  }`}
+                />
+                <span
+                  className={`text-[7px] font-bold ${
+                    isActive ? "text-blue-500" : isDark ? "text-white/20" : "text-gray-300"
+                  }`}
+                >
+                  {i === 0 ? "0" : i === counts.length - 1 ? "100" : ""}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+        {!compact && (
+          <div className={`mt-3 text-center text-xs ${mutedText}`}>
+            You performed better than{" "}
+            <span className={`font-bold ${isDark ? "text-white" : "text-black"}`}>{betterThan}%</span> of{" "}
+            {distribution.total} players.
+          </div>
+        )}
+      </>
+    );
+  }
   return (
     <div className={`w-full mt-4 pt-4 border-t ${isDark ? "border-white/10" : "border-gray-100"}`}>
       <h3
@@ -165,46 +160,44 @@ const Histogram = ({
       >
         Global Player Distribution
       </h3>
-      <div className={`flex items-end justify-between ${containerHeight} gap-1 mb-2`}>
-        {data.map((bucket, i) => {
-          const rangeStart = i * 10;
-          const isUserBucket = userAccuracy >= rangeStart && userAccuracy < rangeStart + 10;
-          const isUser100 = userAccuracy === 100 && i === 9;
-          const isActive = isUserBucket || isUser100;
-          const barHeight = maxCount > 0 ? (bucket.count / maxCount) * 100 : 0;
-          return (
-            <div key={i} className="h-full flex flex-col justify-end items-center gap-1 flex-1 relative">
-              <motion.div
-                initial={{ height: 0 }}
-                animate={{ height: `${barHeight}%` }}
-                transition={{ duration: 0.5, delay: i * 0.05 }}
-                className={`w-full rounded-t-sm relative ${
-                  isActive ? "bg-blue-500" : isDark ? "bg-white/10" : "bg-gray-200"
-                }`}
-              />
-              <span
-                className={`text-[7px] font-bold ${
-                  isActive ? "text-blue-500" : isDark ? "text-white/20" : "text-gray-300"
-                }`}
-              >
-                {i === 0 ? "0" : i === 9 ? "100" : ""}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-      {!compact && (
-        <div className={`mt-3 text-center text-xs ${isDark ? "text-white/60" : "text-gray-500"}`}>
-          You performed better than{" "}
-          <span className={`font-bold ${isDark ? "text-white" : "text-black"}`}>
-            {calculatePercentile(userAccuracy, data)}%
-          </span>{" "}
-          of players.
-        </div>
-      )}
+      {body}
     </div>
   );
 };
+
+const LOADING_DISTRIBUTION = { status: "loading", total: 0, buckets: [] };
+
+function useDistribution(enabled) {
+  const [distribution, setDistribution] = useState(LOADING_DISTRIBUTION);
+  useEffect(() => {
+    if (!enabled) return undefined;
+    let isMounted = true;
+    (async () => {
+      try {
+        const response = await fetch("/api/get-distribution");
+        if (!response.ok) throw new Error(`get-distribution returned ${response.status}`);
+        const result = await response.json();
+        if (isMounted) setDistribution({ status: "ready", total: result.total, buckets: result.buckets });
+      } catch (error) {
+        console.error("Failed to load the score distribution", error);
+        if (isMounted) setDistribution({ status: "error", total: 0, buckets: [] });
+      }
+    })();
+    return () => {
+      isMounted = false;
+      setDistribution(LOADING_DISTRIBUTION);
+    };
+  }, [enabled]);
+  return distribution;
+}
+
+function submitRun(runId, correct, total) {
+  fetch("/api/submit-score", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ runId, correct, total }),
+  }).catch((error) => console.error("Failed to submit the run", error));
+}
 
 /* ----------------------------- Helper Screens ---------------------------- */
 function LoadingScreen({ message }) {
@@ -433,6 +426,14 @@ export default function Home() {
     repTime: 0,
   });
   const [trophies, setTrophies] = useState({ unlocked: [], firstUnlockedAt: {} });
+  const distribution = useDistribution(showStats || showWrapped);
+  const wrappedBetterThan =
+    distribution.status === "ready" && distribution.total >= MIN_RUNS_TO_SHOW
+      ? betterThanPercent(
+          stats.total === 0 ? 0 : (stats.correct / stats.total) * 100,
+          bucketCounts(distribution.buckets.map((b) => b.count)),
+        )
+      : null;
 
   // Motion
   const x = useMotionValue(0);
@@ -621,6 +622,7 @@ export default function Home() {
       }
       const nextStats = {
         ...stats,
+        runId: stats.runId || crypto.randomUUID(),
         total: stats.total + 1,
         correct: isCorrect ? stats.correct + 1 : stats.correct,
         streak: newStreak,
@@ -658,6 +660,7 @@ export default function Home() {
         showToast("Trophy Unlocked!");
       }
       setStats(nextStats);
+      if (shouldSubmitRun(nextStats.total)) submitRun(nextStats.runId, nextStats.correct, nextStats.total);
       setLastResult(resultObj);
       setGameState("revealed");
       const delay = isCorrect ? 2000 : 3000;
@@ -688,6 +691,7 @@ export default function Home() {
   const handleReset = () => {
     if (typeof window !== "undefined" && confirm("Reset run stats? (Trophies will persist)")) {
       setStats({
+        runId: crypto.randomUUID(),
         correct: 0,
         total: 0,
         streak: 0,
@@ -1078,7 +1082,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <Histogram userAccuracy={accuracy} totalGamesPlayed={stats.total} />
+            <Histogram distribution={distribution} userAccuracy={accuracy} />
             {/* Career Ladder Legend */}
             <div className="mt-6 pt-6 border-t border-gray-100">
               <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
@@ -1197,14 +1201,14 @@ export default function Home() {
                       Score: {rank.score.toLocaleString()}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-3xl font-black leading-none">
-                      {calculatePercentile(accuracy, FAKE_DISTRIBUTION)}%
+                  {wrappedBetterThan !== null && (
+                    <div className="text-right">
+                      <div className="text-3xl font-black leading-none">{wrappedBetterThan}%</div>
+                      <div className="text-[9px] font-black uppercase tracking-widest opacity-50 mt-1">
+                        Better than
+                      </div>
                     </div>
-                    <div className="text-[9px] font-black uppercase tracking-widest opacity-50 mt-1">
-                      Top Percentile
-                    </div>
-                  </div>
+                  )}
                 </div>
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-2 my-2">
@@ -1239,13 +1243,7 @@ export default function Home() {
                 </div>
 
                 {/* Histogram (Compact) */}
-                <Histogram
-                  userAccuracy={accuracy}
-                  totalGamesPlayed={stats.total}
-                  isDark={true}
-                  disableSubmit={true}
-                  compact={true}
-                />
+                <Histogram distribution={distribution} userAccuracy={accuracy} isDark={true} compact={true} />
                 {/* Footer */}
                 <div className="pt-4 border-t border-white/10 flex justify-between items-end opacity-50">
                   <div>
