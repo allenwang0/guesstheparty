@@ -392,6 +392,7 @@ export default function Home() {
   // Logic Refs
   const recentIds = useRef(new Set());
   const startTimeRef = useRef(null);
+  const guessLockRef = useRef(false);
 
   // UX State
   const [toast, setToast] = useState(null);
@@ -589,6 +590,7 @@ export default function Home() {
       setCurrent(nextCard);
       return [...prev.slice(1), candidate].filter(Boolean);
     });
+    guessLockRef.current = false;
     setGameState("guessing");
     setImgLoading(true);
     startTimeRef.current = Date.now();
@@ -597,8 +599,9 @@ export default function Home() {
   }, [allPoliticians, x]);
 
   const handleGuess = useCallback(
-    async (guessedParty) => {
-      if (gameState !== "guessing" || !current) return;
+    (guessedParty) => {
+      if (gameState !== "guessing" || !current || guessLockRef.current) return;
+      guessLockRef.current = true;
       const actualParty = current.party;
       const isCorrect = guessedParty === actualParty;
       const now = Date.now();
@@ -618,7 +621,7 @@ export default function Home() {
         });
       }
       if (isCorrect && newStreak > 0 && newStreak % 10 === 0) {
-        await fireConfettiSafe();
+        fireConfettiSafe().catch((error) => console.error("Confetti failed", error));
       }
       const nextStats = {
         ...stats,
@@ -707,6 +710,7 @@ export default function Home() {
         demTime: 0,
         repTime: 0,
       });
+      guessLockRef.current = false;
       setGameState("guessing");
       x.set(0);
     }

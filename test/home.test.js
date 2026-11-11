@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import Home from "../pages/index";
 import { installFetch, posts } from "./home-harness";
 
@@ -35,5 +35,30 @@ describe("Stats modal", () => {
     }
     await act(async () => {});
     expect(posts(fetchMock, "/api/submit-score")).toHaveLength(0);
+  });
+});
+
+describe("guessing", () => {
+  afterEach(() => vi.useRealTimers());
+
+  function shownCard() {
+    return screen.getByAltText("Politician").getAttribute("src");
+  }
+
+  // On a 9-streak the 10th correct guess fires confetti. Two quick key presses used to both count, and
+  // each scheduled its own advance, so the card after this one was skipped without being shown.
+  it("counts one guess when the right arrow is pressed twice in one tick on a 9-streak", async () => {
+    localStorage.setItem("partyStats_v3", JSON.stringify({ correct: 9, total: 9, streak: 9, bestStreak: 9 }));
+    await renderGame();
+    const nextCard = screen.getByAltText("preload").getAttribute("src");
+    expect(nextCard).not.toBe(shownCard());
+
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+    await act(async () => {});
+    await act(async () => vi.advanceTimersByTime(3000));
+
+    expect(shownCard()).toBe(nextCard);
   });
 });
