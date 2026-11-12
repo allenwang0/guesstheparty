@@ -6,6 +6,10 @@ export function createResponse() {
   return {
     statusCode: 200,
     body: undefined,
+    headers: {},
+    setHeader(name, value) {
+      this.headers[name] = value;
+    },
     status(code) {
       this.statusCode = code;
       return this;

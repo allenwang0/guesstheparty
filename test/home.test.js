@@ -78,6 +78,31 @@ describe("guessing", () => {
   });
 });
 
+describe("per-member guesses", () => {
+  afterEach(() => vi.useRealTimers());
+
+  // Per-member difficulty needs every guess, but one request per guess would hit the rate limit fast.
+  it("sends guesses in one batch of 10, with member ids and no correctness flag", async () => {
+    const fetchMock = await renderGame();
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    for (let i = 0; i < 10; i++) {
+      expect(posts(fetchMock, "/api/guesses")).toHaveLength(0);
+      fireEvent.keyDown(window, { key: i % 2 ? "ArrowLeft" : "ArrowRight" });
+      await act(async () => vi.advanceTimersByTime(3000));
+    }
+    const sent = posts(fetchMock, "/api/guesses");
+    expect(sent).toHaveLength(1);
+    const { guesses } = JSON.parse(sent[0][1].body);
+    expect(guesses).toHaveLength(10);
+    expect(guesses[0]).toEqual({
+      bioguideId: expect.stringMatching(/^T0/),
+      guessedParty: "Republican",
+      responseMs: null,
+    });
+    expect(guesses.some((g) => "correct" in g)).toBe(false);
+  });
+});
+
 describe("load failure", () => {
   // Players cannot fix a server file; they get a plain retry message and the detail goes to the console.
   it("shows a refresh message without internal file paths", async () => {

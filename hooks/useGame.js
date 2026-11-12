@@ -10,6 +10,7 @@ import {
 import { normalizePoliticians } from "../lib/politicians";
 import { addResponse, MAX_COUNTED_RESPONSE_MS } from "../lib/response-stats";
 import { shuffle } from "../lib/shuffle";
+import { MAX_GUESS_BATCH } from "../lib/stats-store";
 import { shouldSubmitRun } from "../lib/submission";
 import { newlyUnlocked } from "../lib/trophies";
 import { parseJson, readStorage, usePersistentState } from "./usePersistentState";
@@ -45,6 +46,15 @@ function submitRun(runId, correct, total) {
   }).catch((error) => console.error("Failed to submit the run", error));
 }
 
+function sendGuesses(guesses) {
+  fetch("/api/guesses", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ guesses }),
+    keepalive: true,
+  }).catch((error) => console.error("Failed to send guesses", error));
+}
+
 function nextStatsAfter(stats, { guessedParty, actualParty, isCorrect, responseMs }) {
   const streak = isCorrect ? stats.streak + 1 : 0;
   return {
@@ -76,6 +86,7 @@ export function useGame({ onWrongGuess, onAdvance, onTrophyUnlocked } = {}) {
   const startTimeRef = useRef(null);
   const advanceTimerRef = useRef(null);
   const guessLockRef = useRef(false);
+  const pendingGuessesRef = useRef([]);
   const callbacksRef = useRef({});
   useEffect(() => {
     callbacksRef.current = { onWrongGuess, onAdvance, onTrophyUnlocked };
@@ -94,7 +105,16 @@ export function useGame({ onWrongGuess, onAdvance, onTrophyUnlocked } = {}) {
         setStatus("error");
       }
     })();
-    return () => clearTimeout(advanceTimerRef.current);
+    const flush = () => {
+      if (pendingGuessesRef.current.length === 0) return;
+      sendGuesses(pendingGuessesRef.current);
+      pendingGuessesRef.current = [];
+    };
+    window.addEventListener("pagehide", flush);
+    return () => {
+      clearTimeout(advanceTimerRef.current);
+      window.removeEventListener("pagehide", flush);
+    };
   }, []);
 
   const advance = useCallback(() => {
@@ -139,6 +159,11 @@ export function useGame({ onWrongGuess, onAdvance, onTrophyUnlocked } = {}) {
         callbacksRef.current.onTrophyUnlocked?.();
       }
       setStats(nextStats);
+      pendingGuessesRef.current.push({ bioguideId: current.id, guessedParty, responseMs });
+      if (pendingGuessesRef.current.length >= MAX_GUESS_BATCH) {
+        sendGuesses(pendingGuessesRef.current);
+        pendingGuessesRef.current = [];
+      }
       if (shouldSubmitRun(nextStats.total)) submitRun(nextStats.runId, nextStats.correct, nextStats.total);
       setLastResult(result);
       setRevealed(true);
