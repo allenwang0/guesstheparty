@@ -1,0 +1,45 @@
+name: Weekly dataset refresh
+
+on:
+  schedule:
+    - cron: "0 14 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: pip install -r requirements.txt
+      - run: npm ci
+      - run: python scripts/build_dataset.py
+      - run: node scripts/optimize-images.mjs
+      - name: Ignore a run where only generated_at changed
+        run: |
+          if git diff --quiet -- public/politicians.json public/images && [ -z "$(git status --porcelain public/images)" ]; then
+            git checkout -- public/meta.json
+          fi
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: dataset/weekly-refresh
+          base: main
+          commit-message: Refresh the congressional roster and portraits
+          title: Refresh the congressional roster and portraits
+          body: |
+            Automated weekly run of `scripts/build_dataset.py` and `scripts/optimize-images.mjs`.
+            Check the skipped-member log in the workflow run before merging.
+          add-paths: |
+            public/politicians.json
+            public/meta.json
+            public/images/politicians
