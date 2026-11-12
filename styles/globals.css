@@ -13,3 +13,39 @@ body {
     Arial,
     sans-serif;
 }
+
+.insights {
+  --surface: #fcfcfb;
+  --card: #ffffff;
+  --ink: #1d1d1f;
+  --ink-muted: #5f5f66;
+  --rule: #e4e4e7;
+  --party-d: #0072b2;
+  --party-r: #d55e00;
+  --neutral-mark: #a1a1aa;
+  --seq-0: #f3effe;
+  --seq-1: #d9cdfb;
+  --seq-2: #b29bf5;
+  --seq-3: #8b67e6;
+  --seq-4: #6236c4;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  .insights {
+    --surface: #1a1a19;
+    --card: #232322;
+    --ink: #f4f4f5;
+    --ink-muted: #a1a1aa;
+    --rule: #3f3f46;
+    --party-d: #2f8fd0;
+    --party-r: #dd6a2c;
+    --neutral-mark: #71717a;
+    --seq-0: #2a2440;
+    --seq-1: #3f3270;
+    --seq-2: #5b45a3;
+    --seq-3: #8466d6;
+    --seq-4: #b9a3f5;
+  }
+}
