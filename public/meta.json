@@ -1,0 +1,20 @@
+{
+  "generated_at": "2025-12-19T17:20:19+00:00",
+  "generated_at_note": "Date of the commit that added this snapshot; the original scraper did not record when it ran.",
+  "sources": {
+    "legislators": "https://unitedstates.github.io/congress-legislators/legislators-current.json",
+    "portraits": "https://unitedstates.github.io/images/congress/450x550/{bioguide}.jpg"
+  },
+  "total": 450,
+  "counts": {
+    "Democrat": {
+      "house": 177,
+      "senate": 44
+    },
+    "Republican": {
+      "house": 183,
+      "senate": 46
+    }
+  },
+  "skipped": null
+}
