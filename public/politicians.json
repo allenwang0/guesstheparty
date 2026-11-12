@@ -5,7 +5,7 @@
     "party": "Democrat",
     "state": "WA",
     "category": "senate",
-    "img": "/images/politicians/maria-cantwell-C000127.jpg"
+    "img": "/images/politicians/maria-cantwell-C000127.webp"
   },
   {
     "id": "K000367",
@@ -13,7 +13,7 @@
     "party": "Democrat",
     "state": "MN",
     "category": "senate",
-    "img": "/images/politicians/amy-klobuchar-K000367.jpg"
+    "img": "/images/politicians/amy-klobuchar-K000367.webp"
   },
   {
     "id": "W000802",
@@ -21,7 +21,7 @@
     "party": "Democrat",
     "state": "RI",
     "category": "senate",
-    "img": "/images/politicians/sheldon-whitehouse-W000802.jpg"
+    "img": "/images/politicians/sheldon-whitehouse-W000802.webp"
   },
   {
     "id": "B001261",
@@ -29,7 +29,7 @@
     "party": "Republican",
     "state": "WY",
     "category": "senate",
-    "img": "/images/politicians/john-barrasso-B001261.jpg"
+    "img": "/images/politicians/john-barrasso-B001261.webp"
   },
   {
     "id": "W000437",
@@ -37,7 +37,7 @@
     "party": "Republican",
     "state": "MS",
     "category": "senate",
-    "img": "/images/politicians/roger-wicker-W000437.jpg"
+    "img": "/images/politicians/roger-wicker-W000437.webp"
   },
   {
     "id": "C001035",
@@ -45,7 +45,7 @@
     "party": "Republican",
     "state": "ME",
     "category": "senate",
-    "img": "/images/politicians/susan-collins-C001035.jpg"
+    "img": "/images/politicians/susan-collins-C001035.webp"
   },
   {
     "id": "C001056",
@@ -53,7 +53,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "senate",
-    "img": "/images/politicians/john-cornyn-C001056.jpg"
+    "img": "/images/politicians/john-cornyn-C001056.webp"
   },
   {
     "id": "D000563",
@@ -61,7 +61,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "senate",
-    "img": "/images/politicians/richard-durbin-D000563.jpg"
+    "img": "/images/politicians/richard-durbin-D000563.webp"
   },
   {
     "id": "G000359",
@@ -69,7 +69,7 @@
     "party": "Republican",
     "state": "SC",
     "category": "senate",
-    "img": "/images/politicians/lindsey-graham-G000359.jpg"
+    "img": "/images/politicians/lindsey-graham-G000359.webp"
   },
   {
     "id": "M000355",
@@ -77,7 +77,7 @@
     "party": "Republican",
     "state": "KY",
     "category": "senate",
-    "img": "/images/politicians/mitch-mcconnell-M000355.jpg"
+    "img": "/images/politicians/mitch-mcconnell-M000355.webp"
   },
   {
     "id": "M001176",
@@ -85,7 +85,7 @@
     "party": "Democrat",
     "state": "OR",
     "category": "senate",
-    "img": "/images/politicians/jeff-merkley-M001176.jpg"
+    "img": "/images/politicians/jeff-merkley-M001176.webp"
   },
   {
     "id": "R000122",
@@ -93,7 +93,7 @@
     "party": "Democrat",
     "state": "RI",
     "category": "senate",
-    "img": "/images/politicians/john-reed-R000122.jpg"
+    "img": "/images/politicians/john-reed-R000122.webp"
   },
   {
     "id": "R000584",
@@ -101,7 +101,7 @@
     "party": "Republican",
     "state": "ID",
     "category": "senate",
-    "img": "/images/politicians/james-risch-R000584.jpg"
+    "img": "/images/politicians/james-risch-R000584.webp"
   },
   {
     "id": "S001181",
@@ -109,7 +109,7 @@
     "party": "Democrat",
     "state": "NH",
     "category": "senate",
-    "img": "/images/politicians/jeanne-shaheen-S001181.jpg"
+    "img": "/images/politicians/jeanne-shaheen-S001181.webp"
   },
   {
     "id": "W000805",
@@ -117,7 +117,7 @@
     "party": "Democrat",
     "state": "VA",
     "category": "senate",
-    "img": "/images/politicians/mark-warner-W000805.jpg"
+    "img": "/images/politicians/mark-warner-W000805.webp"
   },
   {
     "id": "G000555",
@@ -125,7 +125,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "senate",
-    "img": "/images/politicians/kirsten-gillibrand-G000555.jpg"
+    "img": "/images/politicians/kirsten-gillibrand-G000555.webp"
   },
   {
     "id": "C001088",
@@ -133,7 +133,7 @@
     "party": "Democrat",
     "state": "DE",
     "category": "senate",
-    "img": "/images/politicians/christopher-coons-C001088.jpg"
+    "img": "/images/politicians/christopher-coons-C001088.webp"
   },
   {
     "id": "A000055",
@@ -141,7 +141,7 @@
     "party": "Republican",
     "state": "AL",
     "category": "house",
-    "img": "/images/politicians/robert-aderholt-A000055.jpg"
+    "img": "/images/politicians/robert-aderholt-A000055.webp"
   },
   {
     "id": "B001230",
@@ -149,7 +149,7 @@
     "party": "Democrat",
     "state": "WI",
     "category": "senate",
-    "img": "/images/politicians/tammy-baldwin-B001230.jpg"
+    "img": "/images/politicians/tammy-baldwin-B001230.webp"
   },
   {
     "id": "B001267",
@@ -157,7 +157,7 @@
     "party": "Democrat",
     "state": "CO",
     "category": "senate",
-    "img": "/images/politicians/michael-bennet-B001267.jpg"
+    "img": "/images/politicians/michael-bennet-B001267.webp"
   },
   {
     "id": "B001257",
@@ -165,7 +165,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/gus-bilirakis-B001257.jpg"
+    "img": "/images/politicians/gus-bilirakis-B001257.webp"
   },
   {
     "id": "B000490",
@@ -173,7 +173,7 @@
     "party": "Democrat",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/sanford-bishop-B000490.jpg"
+    "img": "/images/politicians/sanford-bishop-B000490.webp"
   },
   {
     "id": "B001243",
@@ -181,7 +181,7 @@
     "party": "Republican",
     "state": "TN",
     "category": "senate",
-    "img": "/images/politicians/marsha-blackburn-B001243.jpg"
+    "img": "/images/politicians/marsha-blackburn-B001243.webp"
   },
   {
     "id": "B001277",
@@ -189,7 +189,7 @@
     "party": "Democrat",
     "state": "CT",
     "category": "senate",
-    "img": "/images/politicians/richard-blumenthal-B001277.jpg"
+    "img": "/images/politicians/richard-blumenthal-B001277.webp"
   },
   {
     "id": "B001236",
@@ -197,7 +197,7 @@
     "party": "Republican",
     "state": "AR",
     "category": "senate",
-    "img": "/images/politicians/john-boozman-B001236.jpg"
+    "img": "/images/politicians/john-boozman-B001236.webp"
   },
   {
     "id": "B001260",
@@ -205,7 +205,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/vern-buchanan-B001260.jpg"
+    "img": "/images/politicians/vern-buchanan-B001260.webp"
   },
   {
     "id": "C000059",
@@ -213,7 +213,7 @@
     "party": "Republican",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/ken-calvert-C000059.jpg"
+    "img": "/images/politicians/ken-calvert-C000059.webp"
   },
   {
     "id": "C001047",
@@ -221,7 +221,7 @@
     "party": "Republican",
     "state": "WV",
     "category": "senate",
-    "img": "/images/politicians/shelley-capito-C001047.jpg"
+    "img": "/images/politicians/shelley-capito-C001047.webp"
   },
   {
     "id": "C001072",
@@ -229,7 +229,7 @@
     "party": "Democrat",
     "state": "IN",
     "category": "house",
-    "img": "/images/politicians/andré-carson-C001072.jpg"
+    "img": "/images/politicians/andré-carson-C001072.webp"
   },
   {
     "id": "C001051",
@@ -237,7 +237,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/john-carter-C001051.jpg"
+    "img": "/images/politicians/john-carter-C001051.webp"
   },
   {
     "id": "C001075",
@@ -245,7 +245,7 @@
     "party": "Republican",
     "state": "LA",
     "category": "senate",
-    "img": "/images/politicians/bill-cassidy-C001075.jpg"
+    "img": "/images/politicians/bill-cassidy-C001075.webp"
   },
   {
     "id": "C001066",
@@ -253,7 +253,7 @@
     "party": "Democrat",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/kathy-castor-C001066.jpg"
+    "img": "/images/politicians/kathy-castor-C001066.webp"
   },
   {
     "id": "C001080",
@@ -261,7 +261,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/judy-chu-C001080.jpg"
+    "img": "/images/politicians/judy-chu-C001080.webp"
   },
   {
     "id": "C001067",
@@ -269,7 +269,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/yvette-clarke-C001067.jpg"
+    "img": "/images/politicians/yvette-clarke-C001067.webp"
   },
   {
     "id": "C001061",
@@ -277,7 +277,7 @@
     "party": "Democrat",
     "state": "MO",
     "category": "house",
-    "img": "/images/politicians/emanuel-cleaver-C001061.jpg"
+    "img": "/images/politicians/emanuel-cleaver-C001061.webp"
   },
   {
     "id": "C000537",
@@ -285,7 +285,7 @@
     "party": "Democrat",
     "state": "SC",
     "category": "house",
-    "img": "/images/politicians/james-clyburn-C000537.jpg"
+    "img": "/images/politicians/james-clyburn-C000537.webp"
   },
   {
     "id": "C001068",
@@ -293,7 +293,7 @@
     "party": "Democrat",
     "state": "TN",
     "category": "house",
-    "img": "/images/politicians/steve-cohen-C001068.jpg"
+    "img": "/images/politicians/steve-cohen-C001068.webp"
   },
   {
     "id": "C001053",
@@ -301,7 +301,7 @@
     "party": "Republican",
     "state": "OK",
     "category": "house",
-    "img": "/images/politicians/tom-cole-C001053.jpg"
+    "img": "/images/politicians/tom-cole-C001053.webp"
   },
   {
     "id": "C001059",
@@ -309,7 +309,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/jim-costa-C001059.jpg"
+    "img": "/images/politicians/jim-costa-C001059.webp"
   },
   {
     "id": "C001069",
@@ -317,7 +317,7 @@
     "party": "Democrat",
     "state": "CT",
     "category": "house",
-    "img": "/images/politicians/joe-courtney-C001069.jpg"
+    "img": "/images/politicians/joe-courtney-C001069.webp"
   },
   {
     "id": "C000880",
@@ -325,7 +325,7 @@
     "party": "Republican",
     "state": "ID",
     "category": "senate",
-    "img": "/images/politicians/michael-crapo-C000880.jpg"
+    "img": "/images/politicians/michael-crapo-C000880.webp"
   },
   {
     "id": "C001087",
@@ -333,7 +333,7 @@
     "party": "Republican",
     "state": "AR",
     "category": "house",
-    "img": "/images/politicians/eric-crawford-C001087.jpg"
+    "img": "/images/politicians/eric-crawford-C001087.webp"
   },
   {
     "id": "C001063",
@@ -341,7 +341,7 @@
     "party": "Democrat",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/henry-cuellar-C001063.jpg"
+    "img": "/images/politicians/henry-cuellar-C001063.webp"
   },
   {
     "id": "D000096",
@@ -349,7 +349,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/danny-davis-D000096.jpg"
+    "img": "/images/politicians/danny-davis-D000096.webp"
   },
   {
     "id": "D000197",
@@ -357,7 +357,7 @@
     "party": "Democrat",
     "state": "CO",
     "category": "house",
-    "img": "/images/politicians/diana-degette-D000197.jpg"
+    "img": "/images/politicians/diana-degette-D000197.webp"
   },
   {
     "id": "D000216",
@@ -365,7 +365,7 @@
     "party": "Democrat",
     "state": "CT",
     "category": "house",
-    "img": "/images/politicians/rosa-delauro-D000216.jpg"
+    "img": "/images/politicians/rosa-delauro-D000216.webp"
   },
   {
     "id": "D000616",
@@ -373,7 +373,7 @@
     "party": "Republican",
     "state": "TN",
     "category": "house",
-    "img": "/images/politicians/scott-desjarlais-D000616.jpg"
+    "img": "/images/politicians/scott-desjarlais-D000616.webp"
   },
   {
     "id": "D000600",
@@ -381,7 +381,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/mario-diaz-balart-D000600.jpg"
+    "img": "/images/politicians/mario-diaz-balart-D000600.webp"
   },
   {
     "id": "D000399",
@@ -389,7 +389,7 @@
     "party": "Democrat",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/lloyd-doggett-D000399.jpg"
+    "img": "/images/politicians/lloyd-doggett-D000399.webp"
   },
   {
     "id": "F000459",
@@ -397,7 +397,7 @@
     "party": "Republican",
     "state": "TN",
     "category": "house",
-    "img": "/images/politicians/charles-fleischmann-F000459.jpg"
+    "img": "/images/politicians/charles-fleischmann-F000459.webp"
   },
   {
     "id": "F000450",
@@ -405,7 +405,7 @@
     "party": "Republican",
     "state": "NC",
     "category": "house",
-    "img": "/images/politicians/virginia-foxx-F000450.jpg"
+    "img": "/images/politicians/virginia-foxx-F000450.webp"
   },
   {
     "id": "G000559",
@@ -413,7 +413,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/john-garamendi-G000559.jpg"
+    "img": "/images/politicians/john-garamendi-G000559.webp"
   },
   {
     "id": "G000565",
@@ -421,7 +421,7 @@
     "party": "Republican",
     "state": "AZ",
     "category": "house",
-    "img": "/images/politicians/paul-gosar-G000565.jpg"
+    "img": "/images/politicians/paul-gosar-G000565.webp"
   },
   {
     "id": "G000386",
@@ -429,7 +429,7 @@
     "party": "Republican",
     "state": "IA",
     "category": "senate",
-    "img": "/images/politicians/charles-grassley-G000386.jpg"
+    "img": "/images/politicians/charles-grassley-G000386.webp"
   },
   {
     "id": "G000546",
@@ -437,7 +437,7 @@
     "party": "Republican",
     "state": "MO",
     "category": "house",
-    "img": "/images/politicians/sam-graves-G000546.jpg"
+    "img": "/images/politicians/sam-graves-G000546.webp"
   },
   {
     "id": "G000553",
@@ -445,7 +445,7 @@
     "party": "Democrat",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/al-green-G000553.jpg"
+    "img": "/images/politicians/al-green-G000553.webp"
   },
   {
     "id": "G000568",
@@ -453,7 +453,7 @@
     "party": "Republican",
     "state": "VA",
     "category": "house",
-    "img": "/images/politicians/h-griffith-G000568.jpg"
+    "img": "/images/politicians/h-griffith-G000568.webp"
   },
   {
     "id": "G000558",
@@ -461,7 +461,7 @@
     "party": "Republican",
     "state": "KY",
     "category": "house",
-    "img": "/images/politicians/brett-guthrie-G000558.jpg"
+    "img": "/images/politicians/brett-guthrie-G000558.webp"
   },
   {
     "id": "H001052",
@@ -469,7 +469,7 @@
     "party": "Republican",
     "state": "MD",
     "category": "house",
-    "img": "/images/politicians/andy-harris-H001052.jpg"
+    "img": "/images/politicians/andy-harris-H001052.webp"
   },
   {
     "id": "H001046",
@@ -477,7 +477,7 @@
     "party": "Democrat",
     "state": "NM",
     "category": "senate",
-    "img": "/images/politicians/martin-heinrich-H001046.jpg"
+    "img": "/images/politicians/martin-heinrich-H001046.webp"
   },
   {
     "id": "H001047",
@@ -485,7 +485,7 @@
     "party": "Democrat",
     "state": "CT",
     "category": "house",
-    "img": "/images/politicians/james-himes-H001047.jpg"
+    "img": "/images/politicians/james-himes-H001047.webp"
   },
   {
     "id": "H001042",
@@ -493,7 +493,7 @@
     "party": "Democrat",
     "state": "HI",
     "category": "senate",
-    "img": "/images/politicians/mazie-hirono-H001042.jpg"
+    "img": "/images/politicians/mazie-hirono-H001042.webp"
   },
   {
     "id": "H001061",
@@ -501,7 +501,7 @@
     "party": "Republican",
     "state": "ND",
     "category": "senate",
-    "img": "/images/politicians/john-hoeven-H001061.jpg"
+    "img": "/images/politicians/john-hoeven-H001061.webp"
   },
   {
     "id": "H000874",
@@ -509,7 +509,7 @@
     "party": "Democrat",
     "state": "MD",
     "category": "house",
-    "img": "/images/politicians/steny-hoyer-H000874.jpg"
+    "img": "/images/politicians/steny-hoyer-H000874.webp"
   },
   {
     "id": "H001058",
@@ -517,7 +517,7 @@
     "party": "Republican",
     "state": "MI",
     "category": "house",
-    "img": "/images/politicians/bill-huizenga-H001058.jpg"
+    "img": "/images/politicians/bill-huizenga-H001058.webp"
   },
   {
     "id": "J000288",
@@ -525,7 +525,7 @@
     "party": "Democrat",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/henry-johnson-J000288.jpg"
+    "img": "/images/politicians/henry-johnson-J000288.webp"
   },
   {
     "id": "J000293",
@@ -533,7 +533,7 @@
     "party": "Republican",
     "state": "WI",
     "category": "senate",
-    "img": "/images/politicians/ron-johnson-J000293.jpg"
+    "img": "/images/politicians/ron-johnson-J000293.webp"
   },
   {
     "id": "J000289",
@@ -541,7 +541,7 @@
     "party": "Republican",
     "state": "OH",
     "category": "house",
-    "img": "/images/politicians/jim-jordan-J000289.jpg"
+    "img": "/images/politicians/jim-jordan-J000289.webp"
   },
   {
     "id": "K000009",
@@ -549,7 +549,7 @@
     "party": "Democrat",
     "state": "OH",
     "category": "house",
-    "img": "/images/politicians/marcy-kaptur-K000009.jpg"
+    "img": "/images/politicians/marcy-kaptur-K000009.webp"
   },
   {
     "id": "K000375",
@@ -557,7 +557,7 @@
     "party": "Democrat",
     "state": "MA",
     "category": "house",
-    "img": "/images/politicians/william-keating-K000375.jpg"
+    "img": "/images/politicians/william-keating-K000375.webp"
   },
   {
     "id": "K000376",
@@ -565,7 +565,7 @@
     "party": "Republican",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/mike-kelly-K000376.jpg"
+    "img": "/images/politicians/mike-kelly-K000376.webp"
   },
   {
     "id": "L000575",
@@ -573,7 +573,7 @@
     "party": "Republican",
     "state": "OK",
     "category": "senate",
-    "img": "/images/politicians/james-lankford-L000575.jpg"
+    "img": "/images/politicians/james-lankford-L000575.webp"
   },
   {
     "id": "L000560",
@@ -581,7 +581,7 @@
     "party": "Democrat",
     "state": "WA",
     "category": "house",
-    "img": "/images/politicians/rick-larsen-L000560.jpg"
+    "img": "/images/politicians/rick-larsen-L000560.webp"
   },
   {
     "id": "L000557",
@@ -589,7 +589,7 @@
     "party": "Democrat",
     "state": "CT",
     "category": "house",
-    "img": "/images/politicians/john-larson-L000557.jpg"
+    "img": "/images/politicians/john-larson-L000557.webp"
   },
   {
     "id": "L000566",
@@ -597,7 +597,7 @@
     "party": "Republican",
     "state": "OH",
     "category": "house",
-    "img": "/images/politicians/robert-latta-L000566.jpg"
+    "img": "/images/politicians/robert-latta-L000566.webp"
   },
   {
     "id": "L000577",
@@ -605,7 +605,7 @@
     "party": "Republican",
     "state": "UT",
     "category": "senate",
-    "img": "/images/politicians/mike-lee-L000577.jpg"
+    "img": "/images/politicians/mike-lee-L000577.webp"
   },
   {
     "id": "L000397",
@@ -613,7 +613,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/zoe-lofgren-L000397.jpg"
+    "img": "/images/politicians/zoe-lofgren-L000397.webp"
   },
   {
     "id": "L000491",
@@ -621,7 +621,7 @@
     "party": "Republican",
     "state": "OK",
     "category": "house",
-    "img": "/images/politicians/frank-lucas-L000491.jpg"
+    "img": "/images/politicians/frank-lucas-L000491.webp"
   },
   {
     "id": "L000570",
@@ -629,7 +629,7 @@
     "party": "Democrat",
     "state": "NM",
     "category": "senate",
-    "img": "/images/politicians/ben-luján-L000570.jpg"
+    "img": "/images/politicians/ben-luján-L000570.webp"
   },
   {
     "id": "L000562",
@@ -637,7 +637,7 @@
     "party": "Democrat",
     "state": "MA",
     "category": "house",
-    "img": "/images/politicians/stephen-lynch-L000562.jpg"
+    "img": "/images/politicians/stephen-lynch-L000562.webp"
   },
   {
     "id": "M000133",
@@ -645,7 +645,7 @@
     "party": "Democrat",
     "state": "MA",
     "category": "senate",
-    "img": "/images/politicians/edward-markey-M000133.jpg"
+    "img": "/images/politicians/edward-markey-M000133.webp"
   },
   {
     "id": "M001163",
@@ -653,7 +653,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/doris-matsui-M001163.jpg"
+    "img": "/images/politicians/doris-matsui-M001163.webp"
   },
   {
     "id": "M001157",
@@ -661,7 +661,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/michael-mccaul-M001157.jpg"
+    "img": "/images/politicians/michael-mccaul-M001157.webp"
   },
   {
     "id": "M001177",
@@ -669,7 +669,7 @@
     "party": "Republican",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/tom-mcclintock-M001177.jpg"
+    "img": "/images/politicians/tom-mcclintock-M001177.webp"
   },
   {
     "id": "M001143",
@@ -677,7 +677,7 @@
     "party": "Democrat",
     "state": "MN",
     "category": "house",
-    "img": "/images/politicians/betty-mccollum-M001143.jpg"
+    "img": "/images/politicians/betty-mccollum-M001143.webp"
   },
   {
     "id": "M000312",
@@ -685,7 +685,7 @@
     "party": "Democrat",
     "state": "MA",
     "category": "house",
-    "img": "/images/politicians/james-mcgovern-M000312.jpg"
+    "img": "/images/politicians/james-mcgovern-M000312.webp"
   },
   {
     "id": "M001137",
@@ -693,7 +693,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/gregory-meeks-M001137.jpg"
+    "img": "/images/politicians/gregory-meeks-M001137.webp"
   },
   {
     "id": "M001160",
@@ -701,7 +701,7 @@
     "party": "Democrat",
     "state": "WI",
     "category": "house",
-    "img": "/images/politicians/gwen-moore-M001160.jpg"
+    "img": "/images/politicians/gwen-moore-M001160.webp"
   },
   {
     "id": "M000934",
@@ -709,7 +709,7 @@
     "party": "Republican",
     "state": "KS",
     "category": "senate",
-    "img": "/images/politicians/jerry-moran-M000934.jpg"
+    "img": "/images/politicians/jerry-moran-M000934.webp"
   },
   {
     "id": "M001153",
@@ -717,7 +717,7 @@
     "party": "Republican",
     "state": "AK",
     "category": "senate",
-    "img": "/images/politicians/lisa-murkowski-M001153.jpg"
+    "img": "/images/politicians/lisa-murkowski-M001153.webp"
   },
   {
     "id": "M001169",
@@ -725,7 +725,7 @@
     "party": "Democrat",
     "state": "CT",
     "category": "senate",
-    "img": "/images/politicians/christopher-murphy-M001169.jpg"
+    "img": "/images/politicians/christopher-murphy-M001169.webp"
   },
   {
     "id": "M001111",
@@ -733,7 +733,7 @@
     "party": "Democrat",
     "state": "WA",
     "category": "senate",
-    "img": "/images/politicians/patty-murray-M001111.jpg"
+    "img": "/images/politicians/patty-murray-M001111.webp"
   },
   {
     "id": "N000002",
@@ -741,7 +741,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/jerrold-nadler-N000002.jpg"
+    "img": "/images/politicians/jerrold-nadler-N000002.webp"
   },
   {
     "id": "N000015",
@@ -749,7 +749,7 @@
     "party": "Democrat",
     "state": "MA",
     "category": "house",
-    "img": "/images/politicians/richard-neal-N000015.jpg"
+    "img": "/images/politicians/richard-neal-N000015.webp"
   },
   {
     "id": "N000147",
@@ -757,7 +757,7 @@
     "party": "Democrat",
     "state": "DC",
     "category": "house",
-    "img": "/images/politicians/eleanor-norton-N000147.jpg"
+    "img": "/images/politicians/eleanor-norton-N000147.webp"
   },
   {
     "id": "P000034",
@@ -765,7 +765,7 @@
     "party": "Democrat",
     "state": "NJ",
     "category": "house",
-    "img": "/images/politicians/frank-pallone-P000034.jpg"
+    "img": "/images/politicians/frank-pallone-P000034.webp"
   },
   {
     "id": "P000603",
@@ -773,7 +773,7 @@
     "party": "Republican",
     "state": "KY",
     "category": "senate",
-    "img": "/images/politicians/rand-paul-P000603.jpg"
+    "img": "/images/politicians/rand-paul-P000603.webp"
   },
   {
     "id": "P000197",
@@ -781,7 +781,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/nancy-pelosi-P000197.jpg"
+    "img": "/images/politicians/nancy-pelosi-P000197.webp"
   },
   {
     "id": "P000595",
@@ -789,7 +789,7 @@
     "party": "Democrat",
     "state": "MI",
     "category": "senate",
-    "img": "/images/politicians/gary-peters-P000595.jpg"
+    "img": "/images/politicians/gary-peters-P000595.webp"
   },
   {
     "id": "P000597",
@@ -797,7 +797,7 @@
     "party": "Democrat",
     "state": "ME",
     "category": "house",
-    "img": "/images/politicians/chellie-pingree-P000597.jpg"
+    "img": "/images/politicians/chellie-pingree-P000597.webp"
   },
   {
     "id": "Q000023",
@@ -805,7 +805,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/mike-quigley-Q000023.jpg"
+    "img": "/images/politicians/mike-quigley-Q000023.webp"
   },
   {
     "id": "R000395",
@@ -813,7 +813,7 @@
     "party": "Republican",
     "state": "KY",
     "category": "house",
-    "img": "/images/politicians/harold-rogers-R000395.jpg"
+    "img": "/images/politicians/harold-rogers-R000395.webp"
   },
   {
     "id": "R000575",
@@ -821,7 +821,7 @@
     "party": "Republican",
     "state": "AL",
     "category": "house",
-    "img": "/images/politicians/mike-rogers-R000575.jpg"
+    "img": "/images/politicians/mike-rogers-R000575.webp"
   },
   {
     "id": "S001176",
@@ -829,7 +829,7 @@
     "party": "Republican",
     "state": "LA",
     "category": "house",
-    "img": "/images/politicians/steve-scalise-S001176.jpg"
+    "img": "/images/politicians/steve-scalise-S001176.webp"
   },
   {
     "id": "S001145",
@@ -837,7 +837,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/janice-schakowsky-S001145.jpg"
+    "img": "/images/politicians/janice-schakowsky-S001145.webp"
   },
   {
     "id": "S001150",
@@ -845,7 +845,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "senate",
-    "img": "/images/politicians/adam-schiff-S001150.jpg"
+    "img": "/images/politicians/adam-schiff-S001150.webp"
   },
   {
     "id": "S000148",
@@ -853,7 +853,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "senate",
-    "img": "/images/politicians/charles-schumer-S000148.jpg"
+    "img": "/images/politicians/charles-schumer-S000148.webp"
   },
   {
     "id": "S001183",
@@ -861,7 +861,7 @@
     "party": "Republican",
     "state": "AZ",
     "category": "house",
-    "img": "/images/politicians/david-schweikert-S001183.jpg"
+    "img": "/images/politicians/david-schweikert-S001183.webp"
   },
   {
     "id": "S001189",
@@ -869,7 +869,7 @@
     "party": "Republican",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/austin-scott-S001189.jpg"
+    "img": "/images/politicians/austin-scott-S001189.webp"
   },
   {
     "id": "S001157",
@@ -877,7 +877,7 @@
     "party": "Democrat",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/david-scott-S001157.jpg"
+    "img": "/images/politicians/david-scott-S001157.webp"
   },
   {
     "id": "S000185",
@@ -885,7 +885,7 @@
     "party": "Democrat",
     "state": "VA",
     "category": "house",
-    "img": "/images/politicians/robert-scott-S000185.jpg"
+    "img": "/images/politicians/robert-scott-S000185.webp"
   },
   {
     "id": "S001184",
@@ -893,7 +893,7 @@
     "party": "Republican",
     "state": "SC",
     "category": "senate",
-    "img": "/images/politicians/tim-scott-S001184.jpg"
+    "img": "/images/politicians/tim-scott-S001184.webp"
   },
   {
     "id": "S001185",
@@ -901,7 +901,7 @@
     "party": "Democrat",
     "state": "AL",
     "category": "house",
-    "img": "/images/politicians/terri-sewell-S001185.jpg"
+    "img": "/images/politicians/terri-sewell-S001185.webp"
   },
   {
     "id": "S000344",
@@ -909,7 +909,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/brad-sherman-S000344.jpg"
+    "img": "/images/politicians/brad-sherman-S000344.webp"
   },
   {
     "id": "S001148",
@@ -917,7 +917,7 @@
     "party": "Republican",
     "state": "ID",
     "category": "house",
-    "img": "/images/politicians/michael-simpson-S001148.jpg"
+    "img": "/images/politicians/michael-simpson-S001148.webp"
   },
   {
     "id": "S000510",
@@ -925,7 +925,7 @@
     "party": "Democrat",
     "state": "WA",
     "category": "house",
-    "img": "/images/politicians/adam-smith-S000510.jpg"
+    "img": "/images/politicians/adam-smith-S000510.webp"
   },
   {
     "id": "S001172",
@@ -933,7 +933,7 @@
     "party": "Republican",
     "state": "NE",
     "category": "house",
-    "img": "/images/politicians/adrian-smith-S001172.jpg"
+    "img": "/images/politicians/adrian-smith-S001172.webp"
   },
   {
     "id": "S000522",
@@ -941,7 +941,7 @@
     "party": "Republican",
     "state": "NJ",
     "category": "house",
-    "img": "/images/politicians/christopher-smith-S000522.jpg"
+    "img": "/images/politicians/christopher-smith-S000522.webp"
   },
   {
     "id": "S001156",
@@ -949,7 +949,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/linda-sánchez-S001156.jpg"
+    "img": "/images/politicians/linda-sánchez-S001156.webp"
   },
   {
     "id": "T000193",
@@ -957,7 +957,7 @@
     "party": "Democrat",
     "state": "MS",
     "category": "house",
-    "img": "/images/politicians/bennie-thompson-T000193.jpg"
+    "img": "/images/politicians/bennie-thompson-T000193.webp"
   },
   {
     "id": "T000460",
@@ -965,7 +965,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/mike-thompson-T000460.jpg"
+    "img": "/images/politicians/mike-thompson-T000460.webp"
   },
   {
     "id": "T000467",
@@ -973,7 +973,7 @@
     "party": "Republican",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/glenn-thompson-T000467.jpg"
+    "img": "/images/politicians/glenn-thompson-T000467.webp"
   },
   {
     "id": "T000250",
@@ -981,7 +981,7 @@
     "party": "Republican",
     "state": "SD",
     "category": "senate",
-    "img": "/images/politicians/john-thune-T000250.jpg"
+    "img": "/images/politicians/john-thune-T000250.webp"
   },
   {
     "id": "T000469",
@@ -989,7 +989,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/paul-tonko-T000469.jpg"
+    "img": "/images/politicians/paul-tonko-T000469.webp"
   },
   {
     "id": "T000463",
@@ -997,7 +997,7 @@
     "party": "Republican",
     "state": "OH",
     "category": "house",
-    "img": "/images/politicians/michael-turner-T000463.jpg"
+    "img": "/images/politicians/michael-turner-T000463.webp"
   },
   {
     "id": "V000128",
@@ -1005,7 +1005,7 @@
     "party": "Democrat",
     "state": "MD",
     "category": "senate",
-    "img": "/images/politicians/chris-van-hollen-V000128.jpg"
+    "img": "/images/politicians/chris-van-hollen-V000128.webp"
   },
   {
     "id": "V000081",
@@ -1013,7 +1013,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/nydia-velázquez-V000081.jpg"
+    "img": "/images/politicians/nydia-velázquez-V000081.webp"
   },
   {
     "id": "W000798",
@@ -1021,7 +1021,7 @@
     "party": "Republican",
     "state": "MI",
     "category": "house",
-    "img": "/images/politicians/tim-walberg-W000798.jpg"
+    "img": "/images/politicians/tim-walberg-W000798.webp"
   },
   {
     "id": "W000797",
@@ -1029,7 +1029,7 @@
     "party": "Democrat",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/debbie-wasserman-schultz-W000797.jpg"
+    "img": "/images/politicians/debbie-wasserman-schultz-W000797.webp"
   },
   {
     "id": "W000187",
@@ -1037,7 +1037,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/maxine-waters-W000187.jpg"
+    "img": "/images/politicians/maxine-waters-W000187.webp"
   },
   {
     "id": "W000806",
@@ -1045,7 +1045,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/daniel-webster-W000806.jpg"
+    "img": "/images/politicians/daniel-webster-W000806.webp"
   },
   {
     "id": "W000800",
@@ -1053,7 +1053,7 @@
     "party": "Democrat",
     "state": "VT",
     "category": "senate",
-    "img": "/images/politicians/peter-welch-W000800.jpg"
+    "img": "/images/politicians/peter-welch-W000800.webp"
   },
   {
     "id": "W000795",
@@ -1061,7 +1061,7 @@
     "party": "Republican",
     "state": "SC",
     "category": "house",
-    "img": "/images/politicians/joe-wilson-W000795.jpg"
+    "img": "/images/politicians/joe-wilson-W000795.webp"
   },
   {
     "id": "W000808",
@@ -1069,7 +1069,7 @@
     "party": "Democrat",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/frederica-wilson-W000808.jpg"
+    "img": "/images/politicians/frederica-wilson-W000808.webp"
   },
   {
     "id": "W000804",
@@ -1077,7 +1077,7 @@
     "party": "Republican",
     "state": "VA",
     "category": "house",
-    "img": "/images/politicians/robert-wittman-W000804.jpg"
+    "img": "/images/politicians/robert-wittman-W000804.webp"
   },
   {
     "id": "W000809",
@@ -1085,7 +1085,7 @@
     "party": "Republican",
     "state": "AR",
     "category": "house",
-    "img": "/images/politicians/steve-womack-W000809.jpg"
+    "img": "/images/politicians/steve-womack-W000809.webp"
   },
   {
     "id": "W000779",
@@ -1093,7 +1093,7 @@
     "party": "Democrat",
     "state": "OR",
     "category": "senate",
-    "img": "/images/politicians/ron-wyden-W000779.jpg"
+    "img": "/images/politicians/ron-wyden-W000779.webp"
   },
   {
     "id": "Y000064",
@@ -1101,7 +1101,7 @@
     "party": "Republican",
     "state": "IN",
     "category": "senate",
-    "img": "/images/politicians/todd-young-Y000064.jpg"
+    "img": "/images/politicians/todd-young-Y000064.webp"
   },
   {
     "id": "A000369",
@@ -1109,7 +1109,7 @@
     "party": "Republican",
     "state": "NV",
     "category": "house",
-    "img": "/images/politicians/mark-amodei-A000369.jpg"
+    "img": "/images/politicians/mark-amodei-A000369.webp"
   },
   {
     "id": "B001278",
@@ -1117,7 +1117,7 @@
     "party": "Democrat",
     "state": "OR",
     "category": "house",
-    "img": "/images/politicians/suzanne-bonamici-B001278.jpg"
+    "img": "/images/politicians/suzanne-bonamici-B001278.webp"
   },
   {
     "id": "D000617",
@@ -1125,7 +1125,7 @@
     "party": "Democrat",
     "state": "WA",
     "category": "house",
-    "img": "/images/politicians/suzan-delbene-D000617.jpg"
+    "img": "/images/politicians/suzan-delbene-D000617.webp"
   },
   {
     "id": "M001184",
@@ -1133,7 +1133,7 @@
     "party": "Republican",
     "state": "KY",
     "category": "house",
-    "img": "/images/politicians/thomas-massie-M001184.jpg"
+    "img": "/images/politicians/thomas-massie-M001184.webp"
   },
   {
     "id": "S001194",
@@ -1141,7 +1141,7 @@
     "party": "Democrat",
     "state": "HI",
     "category": "senate",
-    "img": "/images/politicians/brian-schatz-S001194.jpg"
+    "img": "/images/politicians/brian-schatz-S001194.webp"
   },
   {
     "id": "F000454",
@@ -1149,7 +1149,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/bill-foster-F000454.jpg"
+    "img": "/images/politicians/bill-foster-F000454.webp"
   },
   {
     "id": "T000468",
@@ -1157,7 +1157,7 @@
     "party": "Democrat",
     "state": "NV",
     "category": "house",
-    "img": "/images/politicians/dina-titus-T000468.jpg"
+    "img": "/images/politicians/dina-titus-T000468.webp"
   },
   {
     "id": "C001095",
@@ -1165,7 +1165,7 @@
     "party": "Republican",
     "state": "AR",
     "category": "senate",
-    "img": "/images/politicians/tom-cotton-C001095.jpg"
+    "img": "/images/politicians/tom-cotton-C001095.webp"
   },
   {
     "id": "L000578",
@@ -1173,7 +1173,7 @@
     "party": "Republican",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/doug-lamalfa-L000578.jpg"
+    "img": "/images/politicians/doug-lamalfa-L000578.webp"
   },
   {
     "id": "H001068",
@@ -1181,7 +1181,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/jared-huffman-H001068.jpg"
+    "img": "/images/politicians/jared-huffman-H001068.webp"
   },
   {
     "id": "B001287",
@@ -1189,7 +1189,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/ami-bera-B001287.jpg"
+    "img": "/images/politicians/ami-bera-B001287.webp"
   },
   {
     "id": "S001193",
@@ -1197,7 +1197,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/eric-swalwell-S001193.jpg"
+    "img": "/images/politicians/eric-swalwell-S001193.webp"
   },
   {
     "id": "B001285",
@@ -1205,7 +1205,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/julia-brownley-B001285.jpg"
+    "img": "/images/politicians/julia-brownley-B001285.webp"
   },
   {
     "id": "R000599",
@@ -1213,7 +1213,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/raul-ruiz-R000599.jpg"
+    "img": "/images/politicians/raul-ruiz-R000599.webp"
   },
   {
     "id": "T000472",
@@ -1221,7 +1221,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/mark-takano-T000472.jpg"
+    "img": "/images/politicians/mark-takano-T000472.webp"
   },
   {
     "id": "V000130",
@@ -1229,7 +1229,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/juan-vargas-V000130.jpg"
+    "img": "/images/politicians/juan-vargas-V000130.webp"
   },
   {
     "id": "P000608",
@@ -1237,7 +1237,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/scott-peters-P000608.jpg"
+    "img": "/images/politicians/scott-peters-P000608.webp"
   },
   {
     "id": "F000462",
@@ -1245,7 +1245,7 @@
     "party": "Democrat",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/lois-frankel-F000462.jpg"
+    "img": "/images/politicians/lois-frankel-F000462.webp"
   },
   {
     "id": "D000622",
@@ -1253,7 +1253,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "senate",
-    "img": "/images/politicians/tammy-duckworth-D000622.jpg"
+    "img": "/images/politicians/tammy-duckworth-D000622.webp"
   },
   {
     "id": "B001282",
@@ -1261,7 +1261,7 @@
     "party": "Republican",
     "state": "KY",
     "category": "house",
-    "img": "/images/politicians/garland-barr-B001282.jpg"
+    "img": "/images/politicians/garland-barr-B001282.webp"
   },
   {
     "id": "W000817",
@@ -1269,7 +1269,7 @@
     "party": "Democrat",
     "state": "MA",
     "category": "senate",
-    "img": "/images/politicians/elizabeth-warren-W000817.jpg"
+    "img": "/images/politicians/elizabeth-warren-W000817.webp"
   },
   {
     "id": "W000812",
@@ -1277,7 +1277,7 @@
     "party": "Republican",
     "state": "MO",
     "category": "house",
-    "img": "/images/politicians/ann-wagner-W000812.jpg"
+    "img": "/images/politicians/ann-wagner-W000812.webp"
   },
   {
     "id": "D000618",
@@ -1285,7 +1285,7 @@
     "party": "Republican",
     "state": "MT",
     "category": "senate",
-    "img": "/images/politicians/steve-daines-D000618.jpg"
+    "img": "/images/politicians/steve-daines-D000618.webp"
   },
   {
     "id": "H001067",
@@ -1293,7 +1293,7 @@
     "party": "Republican",
     "state": "NC",
     "category": "house",
-    "img": "/images/politicians/richard-hudson-H001067.jpg"
+    "img": "/images/politicians/richard-hudson-H001067.webp"
   },
   {
     "id": "C001096",
@@ -1301,7 +1301,7 @@
     "party": "Republican",
     "state": "ND",
     "category": "senate",
-    "img": "/images/politicians/kevin-cramer-C001096.jpg"
+    "img": "/images/politicians/kevin-cramer-C001096.webp"
   },
   {
     "id": "F000463",
@@ -1309,7 +1309,7 @@
     "party": "Republican",
     "state": "NE",
     "category": "senate",
-    "img": "/images/politicians/deb-fischer-F000463.jpg"
+    "img": "/images/politicians/deb-fischer-F000463.webp"
   },
   {
     "id": "M001188",
@@ -1317,7 +1317,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/grace-meng-M001188.jpg"
+    "img": "/images/politicians/grace-meng-M001188.webp"
   },
   {
     "id": "J000294",
@@ -1325,7 +1325,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/hakeem-jeffries-J000294.jpg"
+    "img": "/images/politicians/hakeem-jeffries-J000294.webp"
   },
   {
     "id": "B001281",
@@ -1333,7 +1333,7 @@
     "party": "Democrat",
     "state": "OH",
     "category": "house",
-    "img": "/images/politicians/joyce-beatty-B001281.jpg"
+    "img": "/images/politicians/joyce-beatty-B001281.webp"
   },
   {
     "id": "J000295",
@@ -1341,7 +1341,7 @@
     "party": "Republican",
     "state": "OH",
     "category": "house",
-    "img": "/images/politicians/david-joyce-J000295.jpg"
+    "img": "/images/politicians/david-joyce-J000295.webp"
   },
   {
     "id": "M001190",
@@ -1349,7 +1349,7 @@
     "party": "Republican",
     "state": "OK",
     "category": "senate",
-    "img": "/images/politicians/markwayne-mullin-M001190.jpg"
+    "img": "/images/politicians/markwayne-mullin-M001190.webp"
   },
   {
     "id": "P000605",
@@ -1357,7 +1357,7 @@
     "party": "Republican",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/scott-perry-P000605.jpg"
+    "img": "/images/politicians/scott-perry-P000605.webp"
   },
   {
     "id": "C001098",
@@ -1365,7 +1365,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "senate",
-    "img": "/images/politicians/ted-cruz-C001098.jpg"
+    "img": "/images/politicians/ted-cruz-C001098.webp"
   },
   {
     "id": "W000814",
@@ -1373,7 +1373,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/randy-weber-W000814.jpg"
+    "img": "/images/politicians/randy-weber-W000814.webp"
   },
   {
     "id": "C001091",
@@ -1381,7 +1381,7 @@
     "party": "Democrat",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/joaquin-castro-C001091.jpg"
+    "img": "/images/politicians/joaquin-castro-C001091.webp"
   },
   {
     "id": "W000816",
@@ -1389,7 +1389,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/roger-williams-W000816.jpg"
+    "img": "/images/politicians/roger-williams-W000816.webp"
   },
   {
     "id": "V000131",
@@ -1397,7 +1397,7 @@
     "party": "Democrat",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/marc-veasey-V000131.jpg"
+    "img": "/images/politicians/marc-veasey-V000131.webp"
   },
   {
     "id": "K000384",
@@ -1405,7 +1405,7 @@
     "party": "Democrat",
     "state": "VA",
     "category": "senate",
-    "img": "/images/politicians/timothy-kaine-K000384.jpg"
+    "img": "/images/politicians/timothy-kaine-K000384.webp"
   },
   {
     "id": "P000607",
@@ -1413,7 +1413,7 @@
     "party": "Democrat",
     "state": "WI",
     "category": "house",
-    "img": "/images/politicians/mark-pocan-P000607.jpg"
+    "img": "/images/politicians/mark-pocan-P000607.webp"
   },
   {
     "id": "K000385",
@@ -1421,7 +1421,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/robin-kelly-K000385.jpg"
+    "img": "/images/politicians/robin-kelly-K000385.webp"
   },
   {
     "id": "S001195",
@@ -1429,7 +1429,7 @@
     "party": "Republican",
     "state": "MO",
     "category": "house",
-    "img": "/images/politicians/jason-smith-S001195.jpg"
+    "img": "/images/politicians/jason-smith-S001195.webp"
   },
   {
     "id": "B001288",
@@ -1437,7 +1437,7 @@
     "party": "Democrat",
     "state": "NJ",
     "category": "senate",
-    "img": "/images/politicians/cory-booker-B001288.jpg"
+    "img": "/images/politicians/cory-booker-B001288.webp"
   },
   {
     "id": "C001101",
@@ -1445,7 +1445,7 @@
     "party": "Democrat",
     "state": "MA",
     "category": "house",
-    "img": "/images/politicians/katherine-clark-C001101.jpg"
+    "img": "/images/politicians/katherine-clark-C001101.webp"
   },
   {
     "id": "N000188",
@@ -1453,7 +1453,7 @@
     "party": "Democrat",
     "state": "NJ",
     "category": "house",
-    "img": "/images/politicians/donald-norcross-N000188.jpg"
+    "img": "/images/politicians/donald-norcross-N000188.webp"
   },
   {
     "id": "A000370",
@@ -1461,7 +1461,7 @@
     "party": "Democrat",
     "state": "NC",
     "category": "house",
-    "img": "/images/politicians/alma-adams-A000370.jpg"
+    "img": "/images/politicians/alma-adams-A000370.webp"
   },
   {
     "id": "P000609",
@@ -1469,7 +1469,7 @@
     "party": "Republican",
     "state": "AL",
     "category": "house",
-    "img": "/images/politicians/gary-palmer-P000609.jpg"
+    "img": "/images/politicians/gary-palmer-P000609.webp"
   },
   {
     "id": "H001072",
@@ -1477,7 +1477,7 @@
     "party": "Republican",
     "state": "AR",
     "category": "house",
-    "img": "/images/politicians/j-hill-H001072.jpg"
+    "img": "/images/politicians/j-hill-H001072.webp"
   },
   {
     "id": "W000821",
@@ -1485,7 +1485,7 @@
     "party": "Republican",
     "state": "AR",
     "category": "house",
-    "img": "/images/politicians/bruce-westerman-W000821.jpg"
+    "img": "/images/politicians/bruce-westerman-W000821.webp"
   },
   {
     "id": "G000574",
@@ -1493,7 +1493,7 @@
     "party": "Democrat",
     "state": "AZ",
     "category": "senate",
-    "img": "/images/politicians/ruben-gallego-G000574.jpg"
+    "img": "/images/politicians/ruben-gallego-G000574.webp"
   },
   {
     "id": "D000623",
@@ -1501,7 +1501,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/mark-desaulnier-D000623.jpg"
+    "img": "/images/politicians/mark-desaulnier-D000623.webp"
   },
   {
     "id": "A000371",
@@ -1509,7 +1509,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/pete-aguilar-A000371.jpg"
+    "img": "/images/politicians/pete-aguilar-A000371.webp"
   },
   {
     "id": "L000582",
@@ -1517,7 +1517,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/ted-lieu-L000582.jpg"
+    "img": "/images/politicians/ted-lieu-L000582.webp"
   },
   {
     "id": "T000474",
@@ -1525,7 +1525,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/norma-torres-T000474.jpg"
+    "img": "/images/politicians/norma-torres-T000474.webp"
   },
   {
     "id": "C001103",
@@ -1533,7 +1533,7 @@
     "party": "Republican",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/earl-carter-C001103.jpg"
+    "img": "/images/politicians/earl-carter-C001103.webp"
   },
   {
     "id": "L000583",
@@ -1541,7 +1541,7 @@
     "party": "Republican",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/barry-loudermilk-L000583.jpg"
+    "img": "/images/politicians/barry-loudermilk-L000583.webp"
   },
   {
     "id": "A000372",
@@ -1549,7 +1549,7 @@
     "party": "Republican",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/rick-allen-A000372.jpg"
+    "img": "/images/politicians/rick-allen-A000372.webp"
   },
   {
     "id": "B001295",
@@ -1557,7 +1557,7 @@
     "party": "Republican",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/mike-bost-B001295.jpg"
+    "img": "/images/politicians/mike-bost-B001295.webp"
   },
   {
     "id": "M001196",
@@ -1565,7 +1565,7 @@
     "party": "Democrat",
     "state": "MA",
     "category": "house",
-    "img": "/images/politicians/seth-moulton-M001196.jpg"
+    "img": "/images/politicians/seth-moulton-M001196.webp"
   },
   {
     "id": "M001194",
@@ -1573,7 +1573,7 @@
     "party": "Republican",
     "state": "MI",
     "category": "house",
-    "img": "/images/politicians/john-moolenaar-M001194.jpg"
+    "img": "/images/politicians/john-moolenaar-M001194.webp"
   },
   {
     "id": "D000624",
@@ -1581,7 +1581,7 @@
     "party": "Democrat",
     "state": "MI",
     "category": "house",
-    "img": "/images/politicians/debbie-dingell-D000624.jpg"
+    "img": "/images/politicians/debbie-dingell-D000624.webp"
   },
   {
     "id": "E000294",
@@ -1589,7 +1589,7 @@
     "party": "Republican",
     "state": "MN",
     "category": "house",
-    "img": "/images/politicians/tom-emmer-E000294.jpg"
+    "img": "/images/politicians/tom-emmer-E000294.webp"
   },
   {
     "id": "R000603",
@@ -1597,7 +1597,7 @@
     "party": "Republican",
     "state": "NC",
     "category": "house",
-    "img": "/images/politicians/david-rouzer-R000603.jpg"
+    "img": "/images/politicians/david-rouzer-R000603.webp"
   },
   {
     "id": "W000822",
@@ -1605,7 +1605,7 @@
     "party": "Democrat",
     "state": "NJ",
     "category": "house",
-    "img": "/images/politicians/bonnie-watson-coleman-W000822.jpg"
+    "img": "/images/politicians/bonnie-watson-coleman-W000822.webp"
   },
   {
     "id": "S001196",
@@ -1613,7 +1613,7 @@
     "party": "Republican",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/elise-stefanik-S001196.jpg"
+    "img": "/images/politicians/elise-stefanik-S001196.webp"
   },
   {
     "id": "B001296",
@@ -1621,7 +1621,7 @@
     "party": "Democrat",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/brendan-boyle-B001296.jpg"
+    "img": "/images/politicians/brendan-boyle-B001296.webp"
   },
   {
     "id": "B001291",
@@ -1629,7 +1629,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/brian-babin-B001291.jpg"
+    "img": "/images/politicians/brian-babin-B001291.webp"
   },
   {
     "id": "B001292",
@@ -1637,7 +1637,7 @@
     "party": "Democrat",
     "state": "VA",
     "category": "house",
-    "img": "/images/politicians/donald-beyer-B001292.jpg"
+    "img": "/images/politicians/donald-beyer-B001292.webp"
   },
   {
     "id": "P000610",
@@ -1645,7 +1645,7 @@
     "party": "Democrat",
     "state": "VI",
     "category": "house",
-    "img": "/images/politicians/stacey-plaskett-P000610.jpg"
+    "img": "/images/politicians/stacey-plaskett-P000610.webp"
   },
   {
     "id": "N000189",
@@ -1653,7 +1653,7 @@
     "party": "Republican",
     "state": "WA",
     "category": "house",
-    "img": "/images/politicians/dan-newhouse-N000189.jpg"
+    "img": "/images/politicians/dan-newhouse-N000189.webp"
   },
   {
     "id": "G000576",
@@ -1661,7 +1661,7 @@
     "party": "Republican",
     "state": "WI",
     "category": "house",
-    "img": "/images/politicians/glenn-grothman-G000576.jpg"
+    "img": "/images/politicians/glenn-grothman-G000576.webp"
   },
   {
     "id": "R000600",
@@ -1669,7 +1669,7 @@
     "party": "Republican",
     "state": "AS",
     "category": "house",
-    "img": "/images/politicians/aumua-amata-radewagen-R000600.jpg"
+    "img": "/images/politicians/aumua-amata-radewagen-R000600.webp"
   },
   {
     "id": "S001198",
@@ -1677,7 +1677,7 @@
     "party": "Republican",
     "state": "AK",
     "category": "senate",
-    "img": "/images/politicians/dan-sullivan-S001198.jpg"
+    "img": "/images/politicians/dan-sullivan-S001198.webp"
   },
   {
     "id": "E000295",
@@ -1685,7 +1685,7 @@
     "party": "Republican",
     "state": "IA",
     "category": "senate",
-    "img": "/images/politicians/joni-ernst-E000295.jpg"
+    "img": "/images/politicians/joni-ernst-E000295.webp"
   },
   {
     "id": "T000476",
@@ -1693,7 +1693,7 @@
     "party": "Republican",
     "state": "NC",
     "category": "senate",
-    "img": "/images/politicians/thom-tillis-T000476.jpg"
+    "img": "/images/politicians/thom-tillis-T000476.webp"
   },
   {
     "id": "R000605",
@@ -1701,7 +1701,7 @@
     "party": "Republican",
     "state": "SD",
     "category": "senate",
-    "img": "/images/politicians/mike-rounds-R000605.jpg"
+    "img": "/images/politicians/mike-rounds-R000605.webp"
   },
   {
     "id": "K000388",
@@ -1709,7 +1709,7 @@
     "party": "Republican",
     "state": "MS",
     "category": "house",
-    "img": "/images/politicians/trent-kelly-K000388.jpg"
+    "img": "/images/politicians/trent-kelly-K000388.webp"
   },
   {
     "id": "L000585",
@@ -1717,7 +1717,7 @@
     "party": "Republican",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/darin-lahood-L000585.jpg"
+    "img": "/images/politicians/darin-lahood-L000585.webp"
   },
   {
     "id": "D000626",
@@ -1725,7 +1725,7 @@
     "party": "Republican",
     "state": "OH",
     "category": "house",
-    "img": "/images/politicians/warren-davidson-D000626.jpg"
+    "img": "/images/politicians/warren-davidson-D000626.webp"
   },
   {
     "id": "C001108",
@@ -1733,7 +1733,7 @@
     "party": "Republican",
     "state": "KY",
     "category": "house",
-    "img": "/images/politicians/james-comer-C001108.jpg"
+    "img": "/images/politicians/james-comer-C001108.webp"
   },
   {
     "id": "E000296",
@@ -1741,7 +1741,7 @@
     "party": "Democrat",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/dwight-evans-E000296.jpg"
+    "img": "/images/politicians/dwight-evans-E000296.webp"
   },
   {
     "id": "K000393",
@@ -1749,7 +1749,7 @@
     "party": "Republican",
     "state": "LA",
     "category": "senate",
-    "img": "/images/politicians/john-kennedy-K000393.jpg"
+    "img": "/images/politicians/john-kennedy-K000393.webp"
   },
   {
     "id": "H001076",
@@ -1757,7 +1757,7 @@
     "party": "Democrat",
     "state": "NH",
     "category": "senate",
-    "img": "/images/politicians/margaret-hassan-H001076.jpg"
+    "img": "/images/politicians/margaret-hassan-H001076.webp"
   },
   {
     "id": "C001113",
@@ -1765,7 +1765,7 @@
     "party": "Democrat",
     "state": "NV",
     "category": "senate",
-    "img": "/images/politicians/catherine-cortez-masto-C001113.jpg"
+    "img": "/images/politicians/catherine-cortez-masto-C001113.webp"
   },
   {
     "id": "S001190",
@@ -1773,7 +1773,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/bradley-schneider-S001190.jpg"
+    "img": "/images/politicians/bradley-schneider-S001190.webp"
   },
   {
     "id": "B001302",
@@ -1781,7 +1781,7 @@
     "party": "Republican",
     "state": "AZ",
     "category": "house",
-    "img": "/images/politicians/andy-biggs-B001302.jpg"
+    "img": "/images/politicians/andy-biggs-B001302.webp"
   },
   {
     "id": "K000389",
@@ -1789,7 +1789,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/ro-khanna-K000389.jpg"
+    "img": "/images/politicians/ro-khanna-K000389.webp"
   },
   {
     "id": "P000613",
@@ -1797,7 +1797,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/jimmy-panetta-P000613.jpg"
+    "img": "/images/politicians/jimmy-panetta-P000613.webp"
   },
   {
     "id": "C001112",
@@ -1805,7 +1805,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/salud-carbajal-C001112.jpg"
+    "img": "/images/politicians/salud-carbajal-C001112.webp"
   },
   {
     "id": "B001300",
@@ -1813,7 +1813,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/nanette-barragán-B001300.jpg"
+    "img": "/images/politicians/nanette-barragán-B001300.webp"
   },
   {
     "id": "C001110",
@@ -1821,7 +1821,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/j-correa-C001110.jpg"
+    "img": "/images/politicians/j-correa-C001110.webp"
   },
   {
     "id": "B001303",
@@ -1829,7 +1829,7 @@
     "party": "Democrat",
     "state": "DE",
     "category": "senate",
-    "img": "/images/politicians/lisa-blunt-rochester-B001303.jpg"
+    "img": "/images/politicians/lisa-blunt-rochester-B001303.webp"
   },
   {
     "id": "D000628",
@@ -1837,7 +1837,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/neal-dunn-D000628.jpg"
+    "img": "/images/politicians/neal-dunn-D000628.webp"
   },
   {
     "id": "R000609",
@@ -1845,7 +1845,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/john-rutherford-R000609.jpg"
+    "img": "/images/politicians/john-rutherford-R000609.webp"
   },
   {
     "id": "S001200",
@@ -1853,7 +1853,7 @@
     "party": "Democrat",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/darren-soto-S001200.jpg"
+    "img": "/images/politicians/darren-soto-S001200.webp"
   },
   {
     "id": "M001199",
@@ -1861,7 +1861,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/brian-mast-M001199.jpg"
+    "img": "/images/politicians/brian-mast-M001199.webp"
   },
   {
     "id": "K000391",
@@ -1869,7 +1869,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/raja-krishnamoorthi-K000391.jpg"
+    "img": "/images/politicians/raja-krishnamoorthi-K000391.webp"
   },
   {
     "id": "B001299",
@@ -1877,7 +1877,7 @@
     "party": "Republican",
     "state": "IN",
     "category": "senate",
-    "img": "/images/politicians/jim-banks-B001299.jpg"
+    "img": "/images/politicians/jim-banks-B001299.webp"
   },
   {
     "id": "M001198",
@@ -1885,7 +1885,7 @@
     "party": "Republican",
     "state": "KS",
     "category": "senate",
-    "img": "/images/politicians/roger-marshall-M001198.jpg"
+    "img": "/images/politicians/roger-marshall-M001198.webp"
   },
   {
     "id": "H001077",
@@ -1893,7 +1893,7 @@
     "party": "Republican",
     "state": "LA",
     "category": "house",
-    "img": "/images/politicians/clay-higgins-H001077.jpg"
+    "img": "/images/politicians/clay-higgins-H001077.webp"
   },
   {
     "id": "J000299",
@@ -1901,7 +1901,7 @@
     "party": "Republican",
     "state": "LA",
     "category": "house",
-    "img": "/images/politicians/mike-johnson-J000299.jpg"
+    "img": "/images/politicians/mike-johnson-J000299.webp"
   },
   {
     "id": "R000606",
@@ -1909,7 +1909,7 @@
     "party": "Democrat",
     "state": "MD",
     "category": "house",
-    "img": "/images/politicians/jamie-raskin-R000606.jpg"
+    "img": "/images/politicians/jamie-raskin-R000606.webp"
   },
   {
     "id": "B001301",
@@ -1917,7 +1917,7 @@
     "party": "Republican",
     "state": "MI",
     "category": "house",
-    "img": "/images/politicians/jack-bergman-B001301.jpg"
+    "img": "/images/politicians/jack-bergman-B001301.webp"
   },
   {
     "id": "B001305",
@@ -1925,7 +1925,7 @@
     "party": "Republican",
     "state": "NC",
     "category": "senate",
-    "img": "/images/politicians/ted-budd-B001305.jpg"
+    "img": "/images/politicians/ted-budd-B001305.webp"
   },
   {
     "id": "B001298",
@@ -1933,7 +1933,7 @@
     "party": "Republican",
     "state": "NE",
     "category": "house",
-    "img": "/images/politicians/don-bacon-B001298.jpg"
+    "img": "/images/politicians/don-bacon-B001298.webp"
   },
   {
     "id": "G000583",
@@ -1941,7 +1941,7 @@
     "party": "Democrat",
     "state": "NJ",
     "category": "house",
-    "img": "/images/politicians/josh-gottheimer-G000583.jpg"
+    "img": "/images/politicians/josh-gottheimer-G000583.webp"
   },
   {
     "id": "R000608",
@@ -1949,7 +1949,7 @@
     "party": "Democrat",
     "state": "NV",
     "category": "senate",
-    "img": "/images/politicians/jacky-rosen-R000608.jpg"
+    "img": "/images/politicians/jacky-rosen-R000608.webp"
   },
   {
     "id": "E000297",
@@ -1957,7 +1957,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/adriano-espaillat-E000297.jpg"
+    "img": "/images/politicians/adriano-espaillat-E000297.webp"
   },
   {
     "id": "F000466",
@@ -1965,7 +1965,7 @@
     "party": "Republican",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/brian-fitzpatrick-F000466.jpg"
+    "img": "/images/politicians/brian-fitzpatrick-F000466.webp"
   },
   {
     "id": "S001199",
@@ -1973,7 +1973,7 @@
     "party": "Republican",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/lloyd-smucker-S001199.jpg"
+    "img": "/images/politicians/lloyd-smucker-S001199.webp"
   },
   {
     "id": "K000392",
@@ -1981,7 +1981,7 @@
     "party": "Republican",
     "state": "TN",
     "category": "house",
-    "img": "/images/politicians/david-kustoff-K000392.jpg"
+    "img": "/images/politicians/david-kustoff-K000392.webp"
   },
   {
     "id": "G000581",
@@ -1989,7 +1989,7 @@
     "party": "Democrat",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/vicente-gonzalez-G000581.jpg"
+    "img": "/images/politicians/vicente-gonzalez-G000581.webp"
   },
   {
     "id": "A000375",
@@ -1997,7 +1997,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/jodey-arrington-A000375.jpg"
+    "img": "/images/politicians/jodey-arrington-A000375.webp"
   },
   {
     "id": "J000298",
@@ -2005,7 +2005,7 @@
     "party": "Democrat",
     "state": "WA",
     "category": "house",
-    "img": "/images/politicians/pramila-jayapal-J000298.jpg"
+    "img": "/images/politicians/pramila-jayapal-J000298.webp"
   },
   {
     "id": "E000298",
@@ -2013,7 +2013,7 @@
     "party": "Republican",
     "state": "KS",
     "category": "house",
-    "img": "/images/politicians/ron-estes-E000298.jpg"
+    "img": "/images/politicians/ron-estes-E000298.webp"
   },
   {
     "id": "N000190",
@@ -2021,7 +2021,7 @@
     "party": "Republican",
     "state": "SC",
     "category": "house",
-    "img": "/images/politicians/ralph-norman-N000190.jpg"
+    "img": "/images/politicians/ralph-norman-N000190.webp"
   },
   {
     "id": "G000585",
@@ -2029,7 +2029,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/jimmy-gomez-G000585.jpg"
+    "img": "/images/politicians/jimmy-gomez-G000585.webp"
   },
   {
     "id": "C001114",
@@ -2037,7 +2037,7 @@
     "party": "Republican",
     "state": "UT",
     "category": "senate",
-    "img": "/images/politicians/john-curtis-C001114.jpg"
+    "img": "/images/politicians/john-curtis-C001114.webp"
   },
   {
     "id": "S001203",
@@ -2045,7 +2045,7 @@
     "party": "Democrat",
     "state": "MN",
     "category": "senate",
-    "img": "/images/politicians/tina-smith-S001203.jpg"
+    "img": "/images/politicians/tina-smith-S001203.webp"
   },
   {
     "id": "H001079",
@@ -2053,7 +2053,7 @@
     "party": "Republican",
     "state": "MS",
     "category": "senate",
-    "img": "/images/politicians/cindy-hyde-smith-H001079.jpg"
+    "img": "/images/politicians/cindy-hyde-smith-H001079.webp"
   },
   {
     "id": "C001115",
@@ -2061,7 +2061,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/michael-cloud-C001115.jpg"
+    "img": "/images/politicians/michael-cloud-C001115.webp"
   },
   {
     "id": "B001306",
@@ -2069,7 +2069,7 @@
     "party": "Republican",
     "state": "OH",
     "category": "house",
-    "img": "/images/politicians/troy-balderson-B001306.jpg"
+    "img": "/images/politicians/troy-balderson-B001306.webp"
   },
   {
     "id": "H001082",
@@ -2077,7 +2077,7 @@
     "party": "Republican",
     "state": "OK",
     "category": "house",
-    "img": "/images/politicians/kevin-hern-H001082.jpg"
+    "img": "/images/politicians/kevin-hern-H001082.webp"
   },
   {
     "id": "M001206",
@@ -2085,7 +2085,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/joseph-morelle-M001206.jpg"
+    "img": "/images/politicians/joseph-morelle-M001206.webp"
   },
   {
     "id": "S001205",
@@ -2093,7 +2093,7 @@
     "party": "Democrat",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/mary-scanlon-S001205.jpg"
+    "img": "/images/politicians/mary-scanlon-S001205.webp"
   },
   {
     "id": "C001055",
@@ -2101,7 +2101,7 @@
     "party": "Democrat",
     "state": "HI",
     "category": "house",
-    "img": "/images/politicians/ed-case-C001055.jpg"
+    "img": "/images/politicians/ed-case-C001055.webp"
   },
   {
     "id": "H001066",
@@ -2109,7 +2109,7 @@
     "party": "Democrat",
     "state": "NV",
     "category": "house",
-    "img": "/images/politicians/steven-horsford-H001066.jpg"
+    "img": "/images/politicians/steven-horsford-H001066.webp"
   },
   {
     "id": "S001211",
@@ -2117,7 +2117,7 @@
     "party": "Democrat",
     "state": "AZ",
     "category": "house",
-    "img": "/images/politicians/greg-stanton-S001211.jpg"
+    "img": "/images/politicians/greg-stanton-S001211.webp"
   },
   {
     "id": "H001090",
@@ -2125,7 +2125,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/josh-harder-H001090.jpg"
+    "img": "/images/politicians/josh-harder-H001090.webp"
   },
   {
     "id": "L000593",
@@ -2133,7 +2133,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/mike-levin-L000593.jpg"
+    "img": "/images/politicians/mike-levin-L000593.webp"
   },
   {
     "id": "N000191",
@@ -2141,7 +2141,7 @@
     "party": "Democrat",
     "state": "CO",
     "category": "house",
-    "img": "/images/politicians/joe-neguse-N000191.jpg"
+    "img": "/images/politicians/joe-neguse-N000191.webp"
   },
   {
     "id": "C001121",
@@ -2149,7 +2149,7 @@
     "party": "Democrat",
     "state": "CO",
     "category": "house",
-    "img": "/images/politicians/jason-crow-C001121.jpg"
+    "img": "/images/politicians/jason-crow-C001121.webp"
   },
   {
     "id": "H001081",
@@ -2157,7 +2157,7 @@
     "party": "Democrat",
     "state": "CT",
     "category": "house",
-    "img": "/images/politicians/jahana-hayes-H001081.jpg"
+    "img": "/images/politicians/jahana-hayes-H001081.webp"
   },
   {
     "id": "S001214",
@@ -2165,7 +2165,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/w-steube-S001214.jpg"
+    "img": "/images/politicians/w-steube-S001214.webp"
   },
   {
     "id": "M001208",
@@ -2173,7 +2173,7 @@
     "party": "Democrat",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/lucy-mcbath-M001208.jpg"
+    "img": "/images/politicians/lucy-mcbath-M001208.webp"
   },
   {
     "id": "F000469",
@@ -2181,7 +2181,7 @@
     "party": "Republican",
     "state": "ID",
     "category": "house",
-    "img": "/images/politicians/russ-fulcher-F000469.jpg"
+    "img": "/images/politicians/russ-fulcher-F000469.webp"
   },
   {
     "id": "G000586",
@@ -2189,7 +2189,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/jesús-garcía-G000586.jpg"
+    "img": "/images/politicians/jesús-garcía-G000586.webp"
   },
   {
     "id": "C001117",
@@ -2197,7 +2197,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/sean-casten-C001117.jpg"
+    "img": "/images/politicians/sean-casten-C001117.webp"
   },
   {
     "id": "U000040",
@@ -2205,7 +2205,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/lauren-underwood-U000040.jpg"
+    "img": "/images/politicians/lauren-underwood-U000040.webp"
   },
   {
     "id": "B001307",
@@ -2213,7 +2213,7 @@
     "party": "Republican",
     "state": "IN",
     "category": "house",
-    "img": "/images/politicians/james-baird-B001307.jpg"
+    "img": "/images/politicians/james-baird-B001307.webp"
   },
   {
     "id": "D000629",
@@ -2221,7 +2221,7 @@
     "party": "Democrat",
     "state": "KS",
     "category": "house",
-    "img": "/images/politicians/sharice-davids-D000629.jpg"
+    "img": "/images/politicians/sharice-davids-D000629.webp"
   },
   {
     "id": "T000482",
@@ -2229,7 +2229,7 @@
     "party": "Democrat",
     "state": "MA",
     "category": "house",
-    "img": "/images/politicians/lori-trahan-T000482.jpg"
+    "img": "/images/politicians/lori-trahan-T000482.webp"
   },
   {
     "id": "P000617",
@@ -2237,7 +2237,7 @@
     "party": "Democrat",
     "state": "MA",
     "category": "house",
-    "img": "/images/politicians/ayanna-pressley-P000617.jpg"
+    "img": "/images/politicians/ayanna-pressley-P000617.webp"
   },
   {
     "id": "S001208",
@@ -2245,7 +2245,7 @@
     "party": "Democrat",
     "state": "MI",
     "category": "senate",
-    "img": "/images/politicians/elissa-slotkin-S001208.jpg"
+    "img": "/images/politicians/elissa-slotkin-S001208.webp"
   },
   {
     "id": "S001215",
@@ -2253,7 +2253,7 @@
     "party": "Democrat",
     "state": "MI",
     "category": "house",
-    "img": "/images/politicians/haley-stevens-S001215.jpg"
+    "img": "/images/politicians/haley-stevens-S001215.webp"
   },
   {
     "id": "T000481",
@@ -2261,7 +2261,7 @@
     "party": "Democrat",
     "state": "MI",
     "category": "house",
-    "img": "/images/politicians/rashida-tlaib-T000481.jpg"
+    "img": "/images/politicians/rashida-tlaib-T000481.webp"
   },
   {
     "id": "C001119",
@@ -2269,7 +2269,7 @@
     "party": "Democrat",
     "state": "MN",
     "category": "house",
-    "img": "/images/politicians/angie-craig-C001119.jpg"
+    "img": "/images/politicians/angie-craig-C001119.webp"
   },
   {
     "id": "O000173",
@@ -2277,7 +2277,7 @@
     "party": "Democrat",
     "state": "MN",
     "category": "house",
-    "img": "/images/politicians/ilhan-omar-O000173.jpg"
+    "img": "/images/politicians/ilhan-omar-O000173.webp"
   },
   {
     "id": "S001212",
@@ -2285,7 +2285,7 @@
     "party": "Republican",
     "state": "MN",
     "category": "house",
-    "img": "/images/politicians/pete-stauber-S001212.jpg"
+    "img": "/images/politicians/pete-stauber-S001212.webp"
   },
   {
     "id": "G000591",
@@ -2293,7 +2293,7 @@
     "party": "Republican",
     "state": "MS",
     "category": "house",
-    "img": "/images/politicians/michael-guest-G000591.jpg"
+    "img": "/images/politicians/michael-guest-G000591.webp"
   },
   {
     "id": "P000614",
@@ -2301,7 +2301,7 @@
     "party": "Democrat",
     "state": "NH",
     "category": "house",
-    "img": "/images/politicians/chris-pappas-P000614.jpg"
+    "img": "/images/politicians/chris-pappas-P000614.webp"
   },
   {
     "id": "V000133",
@@ -2309,7 +2309,7 @@
     "party": "Republican",
     "state": "NJ",
     "category": "house",
-    "img": "/images/politicians/jefferson-van-drew-V000133.jpg"
+    "img": "/images/politicians/jefferson-van-drew-V000133.webp"
   },
   {
     "id": "K000394",
@@ -2317,7 +2317,7 @@
     "party": "Democrat",
     "state": "NJ",
     "category": "senate",
-    "img": "/images/politicians/andy-kim-K000394.jpg"
+    "img": "/images/politicians/andy-kim-K000394.webp"
   },
   {
     "id": "S001207",
@@ -2325,7 +2325,7 @@
     "party": "Democrat",
     "state": "NJ",
     "category": "house",
-    "img": "/images/politicians/mikie-sherrill-S001207.jpg"
+    "img": "/images/politicians/mikie-sherrill-S001207.webp"
   },
   {
     "id": "L000590",
@@ -2333,7 +2333,7 @@
     "party": "Democrat",
     "state": "NV",
     "category": "house",
-    "img": "/images/politicians/susie-lee-L000590.jpg"
+    "img": "/images/politicians/susie-lee-L000590.webp"
   },
   {
     "id": "O000172",
@@ -2341,7 +2341,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/alexandria-ocasio-cortez-O000172.jpg"
+    "img": "/images/politicians/alexandria-ocasio-cortez-O000172.webp"
   },
   {
     "id": "D000631",
@@ -2349,7 +2349,7 @@
     "party": "Democrat",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/madeleine-dean-D000631.jpg"
+    "img": "/images/politicians/madeleine-dean-D000631.webp"
   },
   {
     "id": "H001085",
@@ -2357,7 +2357,7 @@
     "party": "Democrat",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/chrissy-houlahan-H001085.jpg"
+    "img": "/images/politicians/chrissy-houlahan-H001085.webp"
   },
   {
     "id": "M001204",
@@ -2365,7 +2365,7 @@
     "party": "Republican",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/daniel-meuser-M001204.jpg"
+    "img": "/images/politicians/daniel-meuser-M001204.webp"
   },
   {
     "id": "J000302",
@@ -2373,7 +2373,7 @@
     "party": "Republican",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/john-joyce-J000302.jpg"
+    "img": "/images/politicians/john-joyce-J000302.webp"
   },
   {
     "id": "R000610",
@@ -2381,7 +2381,7 @@
     "party": "Republican",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/guy-reschenthaler-R000610.jpg"
+    "img": "/images/politicians/guy-reschenthaler-R000610.webp"
   },
   {
     "id": "T000480",
@@ -2389,7 +2389,7 @@
     "party": "Republican",
     "state": "SC",
     "category": "house",
-    "img": "/images/politicians/william-timmons-T000480.jpg"
+    "img": "/images/politicians/william-timmons-T000480.webp"
   },
   {
     "id": "J000301",
@@ -2397,7 +2397,7 @@
     "party": "Republican",
     "state": "SD",
     "category": "house",
-    "img": "/images/politicians/dusty-johnson-J000301.jpg"
+    "img": "/images/politicians/dusty-johnson-J000301.webp"
   },
   {
     "id": "B001309",
@@ -2405,7 +2405,7 @@
     "party": "Republican",
     "state": "TN",
     "category": "house",
-    "img": "/images/politicians/tim-burchett-B001309.jpg"
+    "img": "/images/politicians/tim-burchett-B001309.webp"
   },
   {
     "id": "R000612",
@@ -2413,7 +2413,7 @@
     "party": "Republican",
     "state": "TN",
     "category": "house",
-    "img": "/images/politicians/john-rose-R000612.jpg"
+    "img": "/images/politicians/john-rose-R000612.webp"
   },
   {
     "id": "C001120",
@@ -2421,7 +2421,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/dan-crenshaw-C001120.jpg"
+    "img": "/images/politicians/dan-crenshaw-C001120.webp"
   },
   {
     "id": "G000589",
@@ -2429,7 +2429,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/lance-gooden-G000589.jpg"
+    "img": "/images/politicians/lance-gooden-G000589.webp"
   },
   {
     "id": "F000468",
@@ -2437,7 +2437,7 @@
     "party": "Democrat",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/lizzie-fletcher-F000468.jpg"
+    "img": "/images/politicians/lizzie-fletcher-F000468.webp"
   },
   {
     "id": "E000299",
@@ -2445,7 +2445,7 @@
     "party": "Democrat",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/veronica-escobar-E000299.jpg"
+    "img": "/images/politicians/veronica-escobar-E000299.webp"
   },
   {
     "id": "R000614",
@@ -2453,7 +2453,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/chip-roy-R000614.jpg"
+    "img": "/images/politicians/chip-roy-R000614.webp"
   },
   {
     "id": "G000587",
@@ -2461,7 +2461,7 @@
     "party": "Democrat",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/sylvia-garcia-G000587.jpg"
+    "img": "/images/politicians/sylvia-garcia-G000587.webp"
   },
   {
     "id": "C001118",
@@ -2469,7 +2469,7 @@
     "party": "Republican",
     "state": "VA",
     "category": "house",
-    "img": "/images/politicians/ben-cline-C001118.jpg"
+    "img": "/images/politicians/ben-cline-C001118.webp"
   },
   {
     "id": "S001216",
@@ -2477,7 +2477,7 @@
     "party": "Democrat",
     "state": "WA",
     "category": "house",
-    "img": "/images/politicians/kim-schrier-S001216.jpg"
+    "img": "/images/politicians/kim-schrier-S001216.webp"
   },
   {
     "id": "S001213",
@@ -2485,7 +2485,7 @@
     "party": "Republican",
     "state": "WI",
     "category": "house",
-    "img": "/images/politicians/bryan-steil-S001213.jpg"
+    "img": "/images/politicians/bryan-steil-S001213.webp"
   },
   {
     "id": "M001205",
@@ -2493,7 +2493,7 @@
     "party": "Republican",
     "state": "WV",
     "category": "house",
-    "img": "/images/politicians/carol-miller-M001205.jpg"
+    "img": "/images/politicians/carol-miller-M001205.webp"
   },
   {
     "id": "S001217",
@@ -2501,7 +2501,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "senate",
-    "img": "/images/politicians/rick-scott-S001217.jpg"
+    "img": "/images/politicians/rick-scott-S001217.webp"
   },
   {
     "id": "H001089",
@@ -2509,7 +2509,7 @@
     "party": "Republican",
     "state": "MO",
     "category": "senate",
-    "img": "/images/politicians/joshua-hawley-H001089.jpg"
+    "img": "/images/politicians/joshua-hawley-H001089.webp"
   },
   {
     "id": "G000592",
@@ -2517,7 +2517,7 @@
     "party": "Democrat",
     "state": "ME",
     "category": "house",
-    "img": "/images/politicians/jared-golden-G000592.jpg"
+    "img": "/images/politicians/jared-golden-G000592.webp"
   },
   {
     "id": "M001210",
@@ -2525,7 +2525,7 @@
     "party": "Republican",
     "state": "NC",
     "category": "house",
-    "img": "/images/politicians/gregory-murphy-M001210.jpg"
+    "img": "/images/politicians/gregory-murphy-M001210.webp"
   },
   {
     "id": "M000687",
@@ -2533,7 +2533,7 @@
     "party": "Democrat",
     "state": "MD",
     "category": "house",
-    "img": "/images/politicians/kweisi-mfume-M000687.jpg"
+    "img": "/images/politicians/kweisi-mfume-M000687.webp"
   },
   {
     "id": "T000165",
@@ -2541,7 +2541,7 @@
     "party": "Republican",
     "state": "WI",
     "category": "house",
-    "img": "/images/politicians/thomas-tiffany-T000165.jpg"
+    "img": "/images/politicians/thomas-tiffany-T000165.webp"
   },
   {
     "id": "K000377",
@@ -2549,7 +2549,7 @@
     "party": "Democrat",
     "state": "AZ",
     "category": "senate",
-    "img": "/images/politicians/mark-kelly-K000377.jpg"
+    "img": "/images/politicians/mark-kelly-K000377.webp"
   },
   {
     "id": "L000571",
@@ -2557,7 +2557,7 @@
     "party": "Republican",
     "state": "WY",
     "category": "senate",
-    "img": "/images/politicians/cynthia-lummis-L000571.jpg"
+    "img": "/images/politicians/cynthia-lummis-L000571.webp"
   },
   {
     "id": "I000056",
@@ -2565,7 +2565,7 @@
     "party": "Republican",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/darrell-issa-I000056.jpg"
+    "img": "/images/politicians/darrell-issa-I000056.webp"
   },
   {
     "id": "S000250",
@@ -2573,7 +2573,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/pete-sessions-S000250.jpg"
+    "img": "/images/politicians/pete-sessions-S000250.webp"
   },
   {
     "id": "V000129",
@@ -2581,7 +2581,7 @@
     "party": "Republican",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/david-valadao-V000129.jpg"
+    "img": "/images/politicians/david-valadao-V000129.webp"
   },
   {
     "id": "T000278",
@@ -2589,7 +2589,7 @@
     "party": "Republican",
     "state": "AL",
     "category": "senate",
-    "img": "/images/politicians/tommy-tuberville-T000278.jpg"
+    "img": "/images/politicians/tommy-tuberville-T000278.webp"
   },
   {
     "id": "H000273",
@@ -2597,7 +2597,7 @@
     "party": "Democrat",
     "state": "CO",
     "category": "senate",
-    "img": "/images/politicians/john-hickenlooper-H000273.jpg"
+    "img": "/images/politicians/john-hickenlooper-H000273.webp"
   },
   {
     "id": "H000601",
@@ -2605,7 +2605,7 @@
     "party": "Republican",
     "state": "TN",
     "category": "senate",
-    "img": "/images/politicians/bill-hagerty-H000601.jpg"
+    "img": "/images/politicians/bill-hagerty-H000601.webp"
   },
   {
     "id": "M001212",
@@ -2613,7 +2613,7 @@
     "party": "Republican",
     "state": "AL",
     "category": "house",
-    "img": "/images/politicians/barry-moore-M001212.jpg"
+    "img": "/images/politicians/barry-moore-M001212.webp"
   },
   {
     "id": "O000019",
@@ -2621,7 +2621,7 @@
     "party": "Republican",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/jay-obernolte-O000019.jpg"
+    "img": "/images/politicians/jay-obernolte-O000019.webp"
   },
   {
     "id": "K000397",
@@ -2629,7 +2629,7 @@
     "party": "Republican",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/young-kim-K000397.jpg"
+    "img": "/images/politicians/young-kim-K000397.webp"
   },
   {
     "id": "J000305",
@@ -2637,7 +2637,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/sara-jacobs-J000305.jpg"
+    "img": "/images/politicians/sara-jacobs-J000305.webp"
   },
   {
     "id": "B000825",
@@ -2645,7 +2645,7 @@
     "party": "Republican",
     "state": "CO",
     "category": "house",
-    "img": "/images/politicians/lauren-boebert-B000825.jpg"
+    "img": "/images/politicians/lauren-boebert-B000825.webp"
   },
   {
     "id": "C001039",
@@ -2653,7 +2653,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/katherine-cammack-C001039.jpg"
+    "img": "/images/politicians/katherine-cammack-C001039.webp"
   },
   {
     "id": "F000472",
@@ -2661,7 +2661,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/c-franklin-F000472.jpg"
+    "img": "/images/politicians/c-franklin-F000472.webp"
   },
   {
     "id": "D000032",
@@ -2669,7 +2669,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/byron-donalds-D000032.jpg"
+    "img": "/images/politicians/byron-donalds-D000032.webp"
   },
   {
     "id": "G000593",
@@ -2677,7 +2677,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/carlos-gimenez-G000593.jpg"
+    "img": "/images/politicians/carlos-gimenez-G000593.webp"
   },
   {
     "id": "S000168",
@@ -2685,7 +2685,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/maria-salazar-S000168.jpg"
+    "img": "/images/politicians/maria-salazar-S000168.webp"
   },
   {
     "id": "W000788",
@@ -2693,7 +2693,7 @@
     "party": "Democrat",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/nikema-williams-W000788.jpg"
+    "img": "/images/politicians/nikema-williams-W000788.webp"
   },
   {
     "id": "C001116",
@@ -2701,7 +2701,7 @@
     "party": "Republican",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/andrew-clyde-C001116.jpg"
+    "img": "/images/politicians/andrew-clyde-C001116.webp"
   },
   {
     "id": "G000596",
@@ -2709,7 +2709,7 @@
     "party": "Republican",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/marjorie-greene-G000596.jpg"
+    "img": "/images/politicians/marjorie-greene-G000596.webp"
   },
   {
     "id": "H001091",
@@ -2717,7 +2717,7 @@
     "party": "Republican",
     "state": "IA",
     "category": "house",
-    "img": "/images/politicians/ashley-hinson-H001091.jpg"
+    "img": "/images/politicians/ashley-hinson-H001091.webp"
   },
   {
     "id": "M001215",
@@ -2725,7 +2725,7 @@
     "party": "Republican",
     "state": "IA",
     "category": "house",
-    "img": "/images/politicians/mariannette-miller-meeks-M001215.jpg"
+    "img": "/images/politicians/mariannette-miller-meeks-M001215.webp"
   },
   {
     "id": "F000446",
@@ -2733,7 +2733,7 @@
     "party": "Republican",
     "state": "IA",
     "category": "house",
-    "img": "/images/politicians/randy-feenstra-F000446.jpg"
+    "img": "/images/politicians/randy-feenstra-F000446.webp"
   },
   {
     "id": "M001211",
@@ -2741,7 +2741,7 @@
     "party": "Republican",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/mary-miller-M001211.jpg"
+    "img": "/images/politicians/mary-miller-M001211.webp"
   },
   {
     "id": "M001214",
@@ -2749,7 +2749,7 @@
     "party": "Democrat",
     "state": "IN",
     "category": "house",
-    "img": "/images/politicians/frank-mrvan-M001214.jpg"
+    "img": "/images/politicians/frank-mrvan-M001214.webp"
   },
   {
     "id": "S000929",
@@ -2757,7 +2757,7 @@
     "party": "Republican",
     "state": "IN",
     "category": "house",
-    "img": "/images/politicians/victoria-spartz-S000929.jpg"
+    "img": "/images/politicians/victoria-spartz-S000929.webp"
   },
   {
     "id": "M000871",
@@ -2765,7 +2765,7 @@
     "party": "Republican",
     "state": "KS",
     "category": "house",
-    "img": "/images/politicians/tracey-mann-M000871.jpg"
+    "img": "/images/politicians/tracey-mann-M000871.webp"
   },
   {
     "id": "A000148",
@@ -2773,7 +2773,7 @@
     "party": "Democrat",
     "state": "MA",
     "category": "house",
-    "img": "/images/politicians/jake-auchincloss-A000148.jpg"
+    "img": "/images/politicians/jake-auchincloss-A000148.webp"
   },
   {
     "id": "M001136",
@@ -2781,7 +2781,7 @@
     "party": "Republican",
     "state": "MI",
     "category": "house",
-    "img": "/images/politicians/lisa-mcclain-M001136.jpg"
+    "img": "/images/politicians/lisa-mcclain-M001136.webp"
   },
   {
     "id": "F000470",
@@ -2789,7 +2789,7 @@
     "party": "Republican",
     "state": "MN",
     "category": "house",
-    "img": "/images/politicians/michelle-fischbach-F000470.jpg"
+    "img": "/images/politicians/michelle-fischbach-F000470.webp"
   },
   {
     "id": "R000305",
@@ -2797,7 +2797,7 @@
     "party": "Democrat",
     "state": "NC",
     "category": "house",
-    "img": "/images/politicians/deborah-ross-R000305.jpg"
+    "img": "/images/politicians/deborah-ross-R000305.webp"
   },
   {
     "id": "L000273",
@@ -2805,7 +2805,7 @@
     "party": "Democrat",
     "state": "NM",
     "category": "house",
-    "img": "/images/politicians/teresa-leger-fernandez-L000273.jpg"
+    "img": "/images/politicians/teresa-leger-fernandez-L000273.webp"
   },
   {
     "id": "G000597",
@@ -2813,7 +2813,7 @@
     "party": "Republican",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/andrew-garbarino-G000597.jpg"
+    "img": "/images/politicians/andrew-garbarino-G000597.webp"
   },
   {
     "id": "M000317",
@@ -2821,7 +2821,7 @@
     "party": "Republican",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/nicole-malliotakis-M000317.jpg"
+    "img": "/images/politicians/nicole-malliotakis-M000317.webp"
   },
   {
     "id": "T000486",
@@ -2829,7 +2829,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/ritchie-torres-T000486.jpg"
+    "img": "/images/politicians/ritchie-torres-T000486.webp"
   },
   {
     "id": "B000740",
@@ -2837,7 +2837,7 @@
     "party": "Republican",
     "state": "OK",
     "category": "house",
-    "img": "/images/politicians/stephanie-bice-B000740.jpg"
+    "img": "/images/politicians/stephanie-bice-B000740.webp"
   },
   {
     "id": "B000668",
@@ -2845,7 +2845,7 @@
     "party": "Republican",
     "state": "OR",
     "category": "house",
-    "img": "/images/politicians/cliff-bentz-B000668.jpg"
+    "img": "/images/politicians/cliff-bentz-B000668.webp"
   },
   {
     "id": "M000194",
@@ -2853,7 +2853,7 @@
     "party": "Republican",
     "state": "SC",
     "category": "house",
-    "img": "/images/politicians/nancy-mace-M000194.jpg"
+    "img": "/images/politicians/nancy-mace-M000194.webp"
   },
   {
     "id": "H001086",
@@ -2861,7 +2861,7 @@
     "party": "Republican",
     "state": "TN",
     "category": "house",
-    "img": "/images/politicians/diana-harshbarger-H001086.jpg"
+    "img": "/images/politicians/diana-harshbarger-H001086.webp"
   },
   {
     "id": "F000246",
@@ -2869,7 +2869,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/patrick-fallon-F000246.jpg"
+    "img": "/images/politicians/patrick-fallon-F000246.webp"
   },
   {
     "id": "P000048",
@@ -2877,7 +2877,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/august-pfluger-P000048.jpg"
+    "img": "/images/politicians/august-pfluger-P000048.webp"
   },
   {
     "id": "J000304",
@@ -2885,7 +2885,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/ronny-jackson-J000304.jpg"
+    "img": "/images/politicians/ronny-jackson-J000304.webp"
   },
   {
     "id": "N000026",
@@ -2893,7 +2893,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/troy-nehls-N000026.jpg"
+    "img": "/images/politicians/troy-nehls-N000026.webp"
   },
   {
     "id": "G000594",
@@ -2901,7 +2901,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/ernest-gonzales-G000594.jpg"
+    "img": "/images/politicians/ernest-gonzales-G000594.webp"
   },
   {
     "id": "V000134",
@@ -2909,7 +2909,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/beth-van-duyne-V000134.jpg"
+    "img": "/images/politicians/beth-van-duyne-V000134.webp"
   },
   {
     "id": "M001213",
@@ -2917,7 +2917,7 @@
     "party": "Republican",
     "state": "UT",
     "category": "house",
-    "img": "/images/politicians/blake-moore-M001213.jpg"
+    "img": "/images/politicians/blake-moore-M001213.webp"
   },
   {
     "id": "O000086",
@@ -2925,7 +2925,7 @@
     "party": "Republican",
     "state": "UT",
     "category": "house",
-    "img": "/images/politicians/clarence-owens-O000086.jpg"
+    "img": "/images/politicians/clarence-owens-O000086.webp"
   },
   {
     "id": "S001159",
@@ -2933,7 +2933,7 @@
     "party": "Democrat",
     "state": "WA",
     "category": "house",
-    "img": "/images/politicians/marilyn-strickland-S001159.jpg"
+    "img": "/images/politicians/marilyn-strickland-S001159.webp"
   },
   {
     "id": "F000471",
@@ -2941,7 +2941,7 @@
     "party": "Republican",
     "state": "WI",
     "category": "house",
-    "img": "/images/politicians/scott-fitzgerald-F000471.jpg"
+    "img": "/images/politicians/scott-fitzgerald-F000471.webp"
   },
   {
     "id": "P000145",
@@ -2949,7 +2949,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "senate",
-    "img": "/images/politicians/alejandro-padilla-P000145.jpg"
+    "img": "/images/politicians/alejandro-padilla-P000145.webp"
   },
   {
     "id": "O000174",
@@ -2957,7 +2957,7 @@
     "party": "Democrat",
     "state": "GA",
     "category": "senate",
-    "img": "/images/politicians/jon-ossoff-O000174.jpg"
+    "img": "/images/politicians/jon-ossoff-O000174.webp"
   },
   {
     "id": "W000790",
@@ -2965,7 +2965,7 @@
     "party": "Democrat",
     "state": "GA",
     "category": "senate",
-    "img": "/images/politicians/raphael-warnock-W000790.jpg"
+    "img": "/images/politicians/raphael-warnock-W000790.webp"
   },
   {
     "id": "T000478",
@@ -2973,7 +2973,7 @@
     "party": "Republican",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/claudia-tenney-T000478.jpg"
+    "img": "/images/politicians/claudia-tenney-T000478.webp"
   },
   {
     "id": "L000595",
@@ -2981,7 +2981,7 @@
     "party": "Republican",
     "state": "LA",
     "category": "house",
-    "img": "/images/politicians/julia-letlow-L000595.jpg"
+    "img": "/images/politicians/julia-letlow-L000595.webp"
   },
   {
     "id": "C001125",
@@ -2989,7 +2989,7 @@
     "party": "Democrat",
     "state": "LA",
     "category": "house",
-    "img": "/images/politicians/troy-carter-C001125.jpg"
+    "img": "/images/politicians/troy-carter-C001125.webp"
   },
   {
     "id": "S001218",
@@ -2997,7 +2997,7 @@
     "party": "Democrat",
     "state": "NM",
     "category": "house",
-    "img": "/images/politicians/melanie-stansbury-S001218.jpg"
+    "img": "/images/politicians/melanie-stansbury-S001218.webp"
   },
   {
     "id": "E000071",
@@ -3005,7 +3005,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/jake-ellzey-E000071.jpg"
+    "img": "/images/politicians/jake-ellzey-E000071.webp"
   },
   {
     "id": "B001313",
@@ -3013,7 +3013,7 @@
     "party": "Democrat",
     "state": "OH",
     "category": "house",
-    "img": "/images/politicians/shontel-brown-B001313.jpg"
+    "img": "/images/politicians/shontel-brown-B001313.webp"
   },
   {
     "id": "C001126",
@@ -3021,7 +3021,7 @@
     "party": "Republican",
     "state": "OH",
     "category": "house",
-    "img": "/images/politicians/mike-carey-C001126.jpg"
+    "img": "/images/politicians/mike-carey-C001126.webp"
   },
   {
     "id": "C001127",
@@ -3029,7 +3029,7 @@
     "party": "Democrat",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/sheila-cherfilus-mccormick-C001127.jpg"
+    "img": "/images/politicians/sheila-cherfilus-mccormick-C001127.webp"
   },
   {
     "id": "F000474",
@@ -3037,7 +3037,7 @@
     "party": "Republican",
     "state": "NE",
     "category": "house",
-    "img": "/images/politicians/mike-flood-F000474.jpg"
+    "img": "/images/politicians/mike-flood-F000474.webp"
   },
   {
     "id": "F000475",
@@ -3045,7 +3045,7 @@
     "party": "Republican",
     "state": "MN",
     "category": "house",
-    "img": "/images/politicians/brad-finstad-F000475.jpg"
+    "img": "/images/politicians/brad-finstad-F000475.webp"
   },
   {
     "id": "R000579",
@@ -3053,7 +3053,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/patrick-ryan-R000579.jpg"
+    "img": "/images/politicians/patrick-ryan-R000579.webp"
   },
   {
     "id": "Y000067",
@@ -3061,7 +3061,7 @@
     "party": "Republican",
     "state": "IN",
     "category": "house",
-    "img": "/images/politicians/rudy-yakym-Y000067.jpg"
+    "img": "/images/politicians/rudy-yakym-Y000067.webp"
   },
   {
     "id": "Z000018",
@@ -3069,7 +3069,7 @@
     "party": "Republican",
     "state": "MT",
     "category": "house",
-    "img": "/images/politicians/ryan-zinke-Z000018.jpg"
+    "img": "/images/politicians/ryan-zinke-Z000018.webp"
   },
   {
     "id": "S001227",
@@ -3077,7 +3077,7 @@
     "party": "Republican",
     "state": "MO",
     "category": "senate",
-    "img": "/images/politicians/eric-schmitt-S001227.jpg"
+    "img": "/images/politicians/eric-schmitt-S001227.webp"
   },
   {
     "id": "F000479",
@@ -3085,7 +3085,7 @@
     "party": "Democrat",
     "state": "PA",
     "category": "senate",
-    "img": "/images/politicians/john-fetterman-F000479.jpg"
+    "img": "/images/politicians/john-fetterman-F000479.webp"
   },
   {
     "id": "S001220",
@@ -3093,7 +3093,7 @@
     "party": "Republican",
     "state": "AL",
     "category": "house",
-    "img": "/images/politicians/dale-strong-S001220.jpg"
+    "img": "/images/politicians/dale-strong-S001220.webp"
   },
   {
     "id": "C001132",
@@ -3101,7 +3101,7 @@
     "party": "Republican",
     "state": "AZ",
     "category": "house",
-    "img": "/images/politicians/eli-crane-C001132.jpg"
+    "img": "/images/politicians/eli-crane-C001132.webp"
   },
   {
     "id": "C001133",
@@ -3109,7 +3109,7 @@
     "party": "Republican",
     "state": "AZ",
     "category": "house",
-    "img": "/images/politicians/juan-ciscomani-C001133.jpg"
+    "img": "/images/politicians/juan-ciscomani-C001133.webp"
   },
   {
     "id": "K000401",
@@ -3117,7 +3117,7 @@
     "party": "Republican",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/kevin-kiley-K000401.jpg"
+    "img": "/images/politicians/kevin-kiley-K000401.webp"
   },
   {
     "id": "M001225",
@@ -3125,7 +3125,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/kevin-mullin-M001225.jpg"
+    "img": "/images/politicians/kevin-mullin-M001225.webp"
   },
   {
     "id": "K000400",
@@ -3133,7 +3133,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/sydney-kamlager-dove-K000400.jpg"
+    "img": "/images/politicians/sydney-kamlager-dove-K000400.webp"
   },
   {
     "id": "G000598",
@@ -3141,7 +3141,7 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/robert-garcia-G000598.jpg"
+    "img": "/images/politicians/robert-garcia-G000598.webp"
   },
   {
     "id": "P000620",
@@ -3149,7 +3149,7 @@
     "party": "Democrat",
     "state": "CO",
     "category": "house",
-    "img": "/images/politicians/brittany-pettersen-P000620.jpg"
+    "img": "/images/politicians/brittany-pettersen-P000620.webp"
   },
   {
     "id": "B001314",
@@ -3157,7 +3157,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/aaron-bean-B001314.jpg"
+    "img": "/images/politicians/aaron-bean-B001314.webp"
   },
   {
     "id": "M001216",
@@ -3165,7 +3165,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/cory-mills-M001216.jpg"
+    "img": "/images/politicians/cory-mills-M001216.webp"
   },
   {
     "id": "F000476",
@@ -3173,7 +3173,7 @@
     "party": "Democrat",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/maxwell-frost-F000476.jpg"
+    "img": "/images/politicians/maxwell-frost-F000476.webp"
   },
   {
     "id": "L000597",
@@ -3181,7 +3181,7 @@
     "party": "Republican",
     "state": "FL",
     "category": "house",
-    "img": "/images/politicians/laurel-lee-L000597.jpg"
+    "img": "/images/politicians/laurel-lee-L000597.webp"
   },
   {
     "id": "M001218",
@@ -3189,7 +3189,7 @@
     "party": "Republican",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/rich-mccormick-M001218.jpg"
+    "img": "/images/politicians/rich-mccormick-M001218.webp"
   },
   {
     "id": "C001129",
@@ -3197,7 +3197,7 @@
     "party": "Republican",
     "state": "GA",
     "category": "house",
-    "img": "/images/politicians/mike-collins-C001129.jpg"
+    "img": "/images/politicians/mike-collins-C001129.webp"
   },
   {
     "id": "M001219",
@@ -3205,7 +3205,7 @@
     "party": "Republican",
     "state": "GU",
     "category": "house",
-    "img": "/images/politicians/james-(jim)-moylan-M001219.jpg"
+    "img": "/images/politicians/james-(jim)-moylan-M001219.webp"
   },
   {
     "id": "T000487",
@@ -3213,7 +3213,7 @@
     "party": "Democrat",
     "state": "HI",
     "category": "house",
-    "img": "/images/politicians/jill-tokuda-T000487.jpg"
+    "img": "/images/politicians/jill-tokuda-T000487.webp"
   },
   {
     "id": "N000193",
@@ -3221,7 +3221,7 @@
     "party": "Republican",
     "state": "IA",
     "category": "house",
-    "img": "/images/politicians/zachary-(zach)-nunn-N000193.jpg"
+    "img": "/images/politicians/zachary-(zach)-nunn-N000193.webp"
   },
   {
     "id": "R000617",
@@ -3229,7 +3229,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/delia-ramirez-R000617.jpg"
+    "img": "/images/politicians/delia-ramirez-R000617.webp"
   },
   {
     "id": "B001315",
@@ -3237,7 +3237,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/nicole-(nikki)-budzinski-B001315.jpg"
+    "img": "/images/politicians/nicole-(nikki)-budzinski-B001315.webp"
   },
   {
     "id": "S001225",
@@ -3245,7 +3245,7 @@
     "party": "Democrat",
     "state": "IL",
     "category": "house",
-    "img": "/images/politicians/eric-sorensen-S001225.jpg"
+    "img": "/images/politicians/eric-sorensen-S001225.webp"
   },
   {
     "id": "H001093",
@@ -3253,7 +3253,7 @@
     "party": "Republican",
     "state": "IN",
     "category": "house",
-    "img": "/images/politicians/erin-houchin-H001093.jpg"
+    "img": "/images/politicians/erin-houchin-H001093.webp"
   },
   {
     "id": "M001220",
@@ -3261,7 +3261,7 @@
     "party": "Democrat",
     "state": "KY",
     "category": "house",
-    "img": "/images/politicians/morgan-mcgarvey-M001220.jpg"
+    "img": "/images/politicians/morgan-mcgarvey-M001220.webp"
   },
   {
     "id": "I000058",
@@ -3269,7 +3269,7 @@
     "party": "Democrat",
     "state": "MD",
     "category": "house",
-    "img": "/images/politicians/glenn-ivey-I000058.jpg"
+    "img": "/images/politicians/glenn-ivey-I000058.webp"
   },
   {
     "id": "S001221",
@@ -3277,7 +3277,7 @@
     "party": "Democrat",
     "state": "MI",
     "category": "house",
-    "img": "/images/politicians/hillary-scholten-S001221.jpg"
+    "img": "/images/politicians/hillary-scholten-S001221.webp"
   },
   {
     "id": "T000488",
@@ -3285,7 +3285,7 @@
     "party": "Democrat",
     "state": "MI",
     "category": "house",
-    "img": "/images/politicians/shri-thanedar-T000488.jpg"
+    "img": "/images/politicians/shri-thanedar-T000488.webp"
   },
   {
     "id": "A000379",
@@ -3293,7 +3293,7 @@
     "party": "Republican",
     "state": "MO",
     "category": "house",
-    "img": "/images/politicians/mark-alford-A000379.jpg"
+    "img": "/images/politicians/mark-alford-A000379.webp"
   },
   {
     "id": "B001316",
@@ -3301,7 +3301,7 @@
     "party": "Republican",
     "state": "MO",
     "category": "house",
-    "img": "/images/politicians/eric-burlison-B001316.jpg"
+    "img": "/images/politicians/eric-burlison-B001316.webp"
   },
   {
     "id": "E000235",
@@ -3309,7 +3309,7 @@
     "party": "Republican",
     "state": "MS",
     "category": "house",
-    "img": "/images/politicians/mike-ezell-E000235.jpg"
+    "img": "/images/politicians/mike-ezell-E000235.webp"
   },
   {
     "id": "D000230",
@@ -3317,7 +3317,7 @@
     "party": "Democrat",
     "state": "NC",
     "category": "house",
-    "img": "/images/politicians/donald-davis-D000230.jpg"
+    "img": "/images/politicians/donald-davis-D000230.webp"
   },
   {
     "id": "F000477",
@@ -3325,7 +3325,7 @@
     "party": "Democrat",
     "state": "NC",
     "category": "house",
-    "img": "/images/politicians/valerie-foushee-F000477.jpg"
+    "img": "/images/politicians/valerie-foushee-F000477.webp"
   },
   {
     "id": "E000246",
@@ -3333,7 +3333,7 @@
     "party": "Republican",
     "state": "NC",
     "category": "house",
-    "img": "/images/politicians/charles-(chuck)-edwards-E000246.jpg"
+    "img": "/images/politicians/charles-(chuck)-edwards-E000246.webp"
   },
   {
     "id": "K000398",
@@ -3341,7 +3341,7 @@
     "party": "Republican",
     "state": "NJ",
     "category": "house",
-    "img": "/images/politicians/thomas-kean-K000398.jpg"
+    "img": "/images/politicians/thomas-kean-K000398.webp"
   },
   {
     "id": "M001226",
@@ -3349,7 +3349,7 @@
     "party": "Democrat",
     "state": "NJ",
     "category": "house",
-    "img": "/images/politicians/robert-menendez-M001226.jpg"
+    "img": "/images/politicians/robert-menendez-M001226.webp"
   },
   {
     "id": "V000136",
@@ -3357,7 +3357,7 @@
     "party": "Democrat",
     "state": "NM",
     "category": "house",
-    "img": "/images/politicians/gabriel-(gabe)-vasquez-V000136.jpg"
+    "img": "/images/politicians/gabriel-(gabe)-vasquez-V000136.webp"
   },
   {
     "id": "L000598",
@@ -3365,7 +3365,7 @@
     "party": "Republican",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/nicolas-lalota-L000598.jpg"
+    "img": "/images/politicians/nicolas-lalota-L000598.webp"
   },
   {
     "id": "G000599",
@@ -3373,7 +3373,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/dan-goldman-G000599.jpg"
+    "img": "/images/politicians/dan-goldman-G000599.webp"
   },
   {
     "id": "L000600",
@@ -3381,7 +3381,7 @@
     "party": "Republican",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/nicholas-langworthy-L000600.jpg"
+    "img": "/images/politicians/nicholas-langworthy-L000600.webp"
   },
   {
     "id": "S001223",
@@ -3389,7 +3389,7 @@
     "party": "Democrat",
     "state": "OH",
     "category": "house",
-    "img": "/images/politicians/emilia-sykes-S001223.jpg"
+    "img": "/images/politicians/emilia-sykes-S001223.webp"
   },
   {
     "id": "B001317",
@@ -3397,7 +3397,7 @@
     "party": "Republican",
     "state": "OK",
     "category": "house",
-    "img": "/images/politicians/josh-brecheen-B001317.jpg"
+    "img": "/images/politicians/josh-brecheen-B001317.webp"
   },
   {
     "id": "H001094",
@@ -3405,7 +3405,7 @@
     "party": "Democrat",
     "state": "OR",
     "category": "house",
-    "img": "/images/politicians/valerie-hoyle-H001094.jpg"
+    "img": "/images/politicians/valerie-hoyle-H001094.webp"
   },
   {
     "id": "S001226",
@@ -3413,7 +3413,7 @@
     "party": "Democrat",
     "state": "OR",
     "category": "house",
-    "img": "/images/politicians/andrea-salinas-S001226.jpg"
+    "img": "/images/politicians/andrea-salinas-S001226.webp"
   },
   {
     "id": "D000530",
@@ -3421,7 +3421,7 @@
     "party": "Democrat",
     "state": "PA",
     "category": "house",
-    "img": "/images/politicians/chris-deluzio-D000530.jpg"
+    "img": "/images/politicians/chris-deluzio-D000530.webp"
   },
   {
     "id": "M001223",
@@ -3429,7 +3429,7 @@
     "party": "Democrat",
     "state": "RI",
     "category": "house",
-    "img": "/images/politicians/seth-magaziner-M001223.jpg"
+    "img": "/images/politicians/seth-magaziner-M001223.webp"
   },
   {
     "id": "F000478",
@@ -3437,7 +3437,7 @@
     "party": "Republican",
     "state": "SC",
     "category": "house",
-    "img": "/images/politicians/russell-fry-F000478.jpg"
+    "img": "/images/politicians/russell-fry-F000478.webp"
   },
   {
     "id": "O000175",
@@ -3445,7 +3445,7 @@
     "party": "Republican",
     "state": "TN",
     "category": "house",
-    "img": "/images/politicians/andrew-ogles-O000175.jpg"
+    "img": "/images/politicians/andrew-ogles-O000175.webp"
   },
   {
     "id": "M001224",
@@ -3453,7 +3453,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/nathaniel-moran-M001224.jpg"
+    "img": "/images/politicians/nathaniel-moran-M001224.webp"
   },
   {
     "id": "S001224",
@@ -3461,7 +3461,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/keith-self-S001224.jpg"
+    "img": "/images/politicians/keith-self-S001224.webp"
   },
   {
     "id": "L000603",
@@ -3469,7 +3469,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/morgan-luttrell-L000603.jpg"
+    "img": "/images/politicians/morgan-luttrell-L000603.webp"
   },
   {
     "id": "D000594",
@@ -3477,7 +3477,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/mónica-de-la-cruz-D000594.jpg"
+    "img": "/images/politicians/mónica-de-la-cruz-D000594.webp"
   },
   {
     "id": "C001130",
@@ -3485,7 +3485,7 @@
     "party": "Democrat",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/jasmine-crockett-C001130.jpg"
+    "img": "/images/politicians/jasmine-crockett-C001130.webp"
   },
   {
     "id": "C001131",
@@ -3493,7 +3493,7 @@
     "party": "Democrat",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/gregorio-casar-C001131.jpg"
+    "img": "/images/politicians/gregorio-casar-C001131.webp"
   },
   {
     "id": "H001095",
@@ -3501,7 +3501,7 @@
     "party": "Republican",
     "state": "TX",
     "category": "house",
-    "img": "/images/politicians/wesley-hunt-H001095.jpg"
+    "img": "/images/politicians/wesley-hunt-H001095.webp"
   },
   {
     "id": "K000399",
@@ -3509,7 +3509,7 @@
     "party": "Republican",
     "state": "VA",
     "category": "house",
-    "img": "/images/politicians/jennifer-kiggans-K000399.jpg"
+    "img": "/images/politicians/jennifer-kiggans-K000399.webp"
   },
   {
     "id": "B001318",
@@ -3517,7 +3517,7 @@
     "party": "Democrat",
     "state": "VT",
     "category": "house",
-    "img": "/images/politicians/becca-balint-B001318.jpg"
+    "img": "/images/politicians/becca-balint-B001318.webp"
   },
   {
     "id": "G000600",
@@ -3525,7 +3525,7 @@
     "party": "Democrat",
     "state": "WA",
     "category": "house",
-    "img": "/images/politicians/marie-gluesenkamp-perez-G000600.jpg"
+    "img": "/images/politicians/marie-gluesenkamp-perez-G000600.webp"
   },
   {
     "id": "V000135",
@@ -3533,7 +3533,7 @@
     "party": "Republican",
     "state": "WI",
     "category": "house",
-    "img": "/images/politicians/derrick-van-orden-V000135.jpg"
+    "img": "/images/politicians/derrick-van-orden-V000135.webp"
   },
   {
     "id": "H001096",
@@ -3541,7 +3541,7 @@
     "party": "Republican",
     "state": "WY",
     "category": "house",
-    "img": "/images/politicians/harriet-hageman-H001096.jpg"
+    "img": "/images/politicians/harriet-hageman-H001096.webp"
   },
   {
     "id": "R000618",
@@ -3549,7 +3549,7 @@
     "party": "Republican",
     "state": "NE",
     "category": "senate",
-    "img": "/images/politicians/pete-ricketts-R000618.jpg"
+    "img": "/images/politicians/pete-ricketts-R000618.webp"
   },
   {
     "id": "M001227",
@@ -3557,7 +3557,7 @@
     "party": "Democrat",
     "state": "VA",
     "category": "house",
-    "img": "/images/politicians/jennifer-mcclellan-M001227.jpg"
+    "img": "/images/politicians/jennifer-mcclellan-M001227.webp"
   },
   {
     "id": "A000380",
@@ -3565,7 +3565,7 @@
     "party": "Democrat",
     "state": "RI",
     "category": "house",
-    "img": "/images/politicians/gabe-amo-A000380.jpg"
+    "img": "/images/politicians/gabe-amo-A000380.webp"
   },
   {
     "id": "M001228",
@@ -3573,7 +3573,7 @@
     "party": "Republican",
     "state": "UT",
     "category": "house",
-    "img": "/images/politicians/celeste-maloy-M001228.jpg"
+    "img": "/images/politicians/celeste-maloy-M001228.webp"
   },
   {
     "id": "S001201",
@@ -3581,7 +3581,7 @@
     "party": "Democrat",
     "state": "NY",
     "category": "house",
-    "img": "/images/politicians/thomas-suozzi-S001201.jpg"
+    "img": "/images/politicians/thomas-suozzi-S001201.webp"
   },
   {
     "id": "S001188",
@@ -3589,7 +3589,7 @@
     "party": "Republican",
     "state": "IN",
     "category": "house",
-    "img": "/images/politicians/marlin-stutzman-S001188.jpg"
+    "img": "/images/politicians/marlin-stutzman-S001188.webp"
   },
   {
     "id": "C001123",
@@ -3597,6 +3597,6 @@
     "party": "Democrat",
     "state": "CA",
     "category": "house",
-    "img": "/images/politicians/gilbert-cisneros-C001123.jpg"
+    "img": "/images/politicians/gilbert-cisneros-C001123.webp"
   }
 ]
