@@ -20,10 +20,11 @@ export const Pill = ({ children, className = "" }) => (
     {children}
   </span>
 );
-export const IconButton = ({ onClick, ariaLabel, children, className = "" }) => (
+export const IconButton = ({ onClick, ariaLabel, ariaPressed, children, className = "" }) => (
   <button
     onClick={onClick}
     aria-label={ariaLabel}
+    aria-pressed={ariaPressed}
     className={[
       "h-10 w-10 rounded-2xl",
       "bg-white/60 border border-black/5 backdrop-blur shadow-sm hover:bg-white/90 active:scale-95 transition-all flex items-center justify-center",

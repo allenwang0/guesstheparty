@@ -114,3 +114,31 @@ describe("load failure", () => {
     expect(consoleError).toHaveBeenCalled();
   });
 });
+
+describe("Blue Wave theme", () => {
+  // The edition is a look, not a different game: the player's choice must stick across visits,
+  // and both party buttons must keep working exactly as in the classic theme.
+  it("persists the toggle and keeps both guess buttons working", async () => {
+    await renderGame();
+    const toggle = screen.getByRole("button", { name: "Blue Wave theme" });
+    expect(toggle.getAttribute("aria-pressed")).toBe("false");
+    fireEvent.click(toggle);
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    expect(document.querySelector('[data-theme="bluewave"]')).not.toBeNull();
+    expect(screen.getByText("BLUE WAVE EDITION")).toBeTruthy();
+    expect(localStorage.getItem("gtpTheme")).toBe("bluewave");
+    expect(screen.getByRole("button", { name: /democrat$/i }).disabled).toBe(false);
+    fireEvent.click(screen.getByRole("button", { name: /republican$/i }));
+    await waitFor(() => expect(screen.getByRole("button", { name: /democrat$/i }).disabled).toBe(true));
+  });
+
+  it("starts in Blue Wave when the player chose it last visit, and toggles back to classic", async () => {
+    localStorage.setItem("gtpTheme", "bluewave");
+    await renderGame();
+    const toggle = screen.getByRole("button", { name: "Blue Wave theme" });
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    fireEvent.click(toggle);
+    expect(document.querySelector('[data-theme="classic"]')).not.toBeNull();
+    expect(localStorage.getItem("gtpTheme")).toBe("classic");
+  });
+});

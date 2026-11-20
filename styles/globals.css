@@ -49,3 +49,48 @@ body {
     --seq-4: #b9a3f5;
   }
 }
+
+/* Blue Wave Edition: a graphic theme toggled from the header. The card and party buttons stay neutral. */
+[data-theme="bluewave"] .bw-header {
+  background: #0f1d3a;
+  border-color: #0f1d3a;
+  color: #fff;
+}
+[data-theme="bluewave"] .bw-header button[aria-label] {
+  background: rgb(255 255 255 / 0.1);
+  border-color: rgb(255 255 255 / 0.15);
+  color: #fff;
+}
+[data-theme="bluewave"] .bw-header button[aria-pressed="true"] {
+  background: #2457e6;
+  border-color: #2457e6;
+}
+[data-theme="bluewave"] .bw-stats {
+  background: #2457e6;
+}
+[data-theme="bluewave"] .bw-stats:hover {
+  background: #1d48c4;
+}
+.bw-crest {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 22vh;
+  pointer-events: none;
+  z-index: 0;
+  fill: #2457e6;
+  opacity: 0.14;
+  animation: bw-crest 1.1s ease-out both;
+}
+@keyframes bw-crest {
+  from {
+    transform: translateX(-12%);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bw-crest {
+    animation: none;
+  }
+}

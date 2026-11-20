@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import { Analytics } from "@vercel/analytics/react";
 import { AnimatePresence, useAnimation, useMotionValue } from "framer-motion";
-import { ArrowLeft, ArrowRight, BarChart2, Info } from "lucide-react";
+import { ArrowLeft, ArrowRight, BarChart2, Info, Waves } from "lucide-react";
+import { BLUE_WAVE, BLUE_WAVE_FAVICON, BlueWaveCrest, BlueWaveMark } from "../components/BlueWave";
 import Card from "../components/Card";
 import IntroModal from "../components/IntroModal";
 import { ErrorScreen, LoadingScreen } from "../components/Screens";
@@ -18,6 +19,7 @@ import { computeRank } from "../lib/rank";
 import { TROPHIES } from "../lib/trophies";
 
 const INTRO_KEY = "partyHasSeenIntro_v3";
+const THEME_KEY = "gtpTheme";
 const TOAST_MS = 2500;
 
 export default function Home() {
@@ -30,6 +32,18 @@ export default function Home() {
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
 
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") return "classic";
+    const fromUrl = new URLSearchParams(window.location.search).get("theme");
+    if (fromUrl === BLUE_WAVE || fromUrl === "classic") return fromUrl;
+    return readStorage(THEME_KEY) === BLUE_WAVE ? BLUE_WAVE : "classic";
+  });
+  const blueWave = theme === BLUE_WAVE;
+  const toggleTheme = () => {
+    const nextTheme = blueWave ? "classic" : BLUE_WAVE;
+    setTheme(nextTheme);
+    writeStorage(THEME_KEY, nextTheme);
+  };
   const [deck] = useState(() =>
     typeof window === "undefined" ? findDeck() : deckFromSearch(window.location.search),
   );
@@ -46,7 +60,7 @@ export default function Home() {
   const distribution = useDistribution(showStats || showWrapped);
   const rank = computeRank({ accuracy, bestStreak: stats.bestStreak, total: stats.total });
 
-  let bgColor = "bg-[#F5F5F7]";
+  let bgColor = blueWave ? "bg-[#F7F5EF]" : "bg-[#F5F5F7]";
   if (revealed && lastResult?.correctParty === "Democrat") bgColor = "bg-blue-50/40";
   if (revealed && lastResult?.correctParty === "Republican") bgColor = "bg-red-50/40";
 
@@ -86,14 +100,19 @@ export default function Home() {
     <div
       ref={containerRef}
       tabIndex={0}
+      data-theme={theme}
       className={`fixed inset-0 w-full h-[100dvh] ${bgColor} text-[#1D1D1F] font-sans overflow-hidden transition-colors duration-500 overscroll-none touch-none focus:outline-none`}
     >
       <Head>
-        <title>Guess The Party | Allen Wang</title>
+        <title>{blueWave ? "Guess The Party · Blue Wave Edition" : "Guess The Party | Allen Wang"}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <link
           rel="icon"
-          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇺🇸</text></svg>"
+          href={
+            blueWave
+              ? BLUE_WAVE_FAVICON
+              : "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇺🇸</text></svg>"
+          }
         />
       </Head>
       <Analytics />
@@ -103,29 +122,50 @@ export default function Home() {
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
         }}
       />
+      {blueWave && <BlueWaveCrest />}
       <AnimatePresence>{toast && <Toast message={toast} />}</AnimatePresence>
       <div className="mx-auto max-w-2xl px-4 md:px-6 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] h-full flex flex-col relative z-20">
         <header className="mb-4 mt-4 shrink-0 flex justify-center relative z-50">
-          <Glass className="px-5 py-3 rounded-full flex items-center justify-between w-full max-w-lg">
-            <div className="flex flex-col items-start pr-4">
-              <h1 className="text-sm md:text-base font-black uppercase tracking-tighter leading-none whitespace-nowrap">
-                🇺🇸 Guess the Party
-              </h1>
-              <div className="w-full flex justify-between px-[1px] mt-0.5 opacity-40">
-                {"ALLEN WANG".split("").map((char, i) => (
-                  <span key={i} className="text-[8px] font-black">
-                    {char === " " ? "\u00A0" : char}
+          <Glass className="bw-header px-3 sm:px-5 py-3 rounded-full flex items-center justify-between w-full max-w-lg">
+            {blueWave ? (
+              <div className="flex items-center gap-2.5 pr-4 min-w-0">
+                <BlueWaveMark size={30} />
+                <div className="flex flex-col leading-none min-w-0">
+                  <h1 className="text-xs sm:text-sm md:text-base font-black uppercase tracking-tighter whitespace-nowrap">
+                    Guess the Party
+                  </h1>
+                  <span className="text-[8px] font-black tracking-[0.18em] text-[#7fa6ff] mt-1 whitespace-nowrap">
+                    BLUE WAVE EDITION
                   </span>
-                ))}
+                  <span className="text-[9px] text-white/60 mt-0.5 whitespace-nowrap">
+                    120th Congress · 2027–29
+                  </span>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
+            ) : (
+              <div className="flex flex-col items-start pr-2 sm:pr-4">
+                <h1 className="text-xs sm:text-sm md:text-base font-black uppercase tracking-tighter leading-none whitespace-nowrap">
+                  🇺🇸 Guess the Party
+                </h1>
+                <div className="w-full flex justify-between px-[1px] mt-0.5 opacity-40">
+                  {"ALLEN WANG".split("").map((char, i) => (
+                    <span key={i} className="text-[8px] font-black">
+                      {char === " " ? "\u00A0" : char}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              <IconButton onClick={toggleTheme} ariaLabel="Blue Wave theme" ariaPressed={blueWave}>
+                <Waves size={18} />
+              </IconButton>
               <IconButton onClick={() => setShowInfo(true)} ariaLabel="Info">
                 <Info size={18} />
               </IconButton>
               <button
                 onClick={() => setShowStats(true)}
-                className="h-10 px-5 bg-black text-white rounded-2xl shadow-sm hover:bg-black/80 active:scale-95 transition-transform flex items-center justify-center min-w-[80px]"
+                className="bw-stats h-10 px-3 sm:px-5 bg-black text-white rounded-2xl shadow-sm hover:bg-black/80 active:scale-95 transition-transform flex items-center justify-center min-w-[64px] sm:min-w-[80px]"
               >
                 {stats.total > 0 ? (
                   <div className="flex items-center gap-1.5">
