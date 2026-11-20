@@ -35,7 +35,7 @@ describe("Stats modal", () => {
     }
     await act(async () => {});
     expect(posts(fetchMock, "/api/submit-score")).toHaveLength(0);
-  });
+  }, 15_000); // Ten modal open/close cycles take about 5 s, right at the default timeout.
 });
 
 describe("guessing", () => {
