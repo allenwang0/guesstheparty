@@ -25,6 +25,8 @@ The screenshot above shows the labeled synthetic sample, not real players.
 
 **/daily.** Ten faces chosen by a PRNG seeded with the UTC date, the same for every player that day, with a copyable result grid. A civics class can play it together and then open /insights to discuss which faces people misread.
 
+**Decks.** A picker under the header switches between the current Congress (the default), the 117th, 118th and 119th Congresses, and the Class of 2026 (new members of the 120th, both parties or Democrats only). `scripts/build_decks.py` writes them to `public/decks/`. Congress decks use each member's party in that Congress and the official portraits. Class of 2026 photos come from Wikimedia Commons, since official portraits do not exist before swearing-in, and each card credits the photo's author and license on reveal. Each deck keeps its own local stats; only the default deck reports to the global stats API and unlocks trophies.
+
 ## Quickstart
 
 Requires Node 20 or later.

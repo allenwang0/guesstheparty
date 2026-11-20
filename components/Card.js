@@ -110,6 +110,16 @@ export default function Card({
                     <h2 className="text-3xl font-black uppercase tracking-tighter leading-none px-4">
                       {current.name}
                     </h2>
+                    {current.credit && (
+                      <a
+                        href={current.credit.source}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block text-[9px] text-white/50 px-6 truncate"
+                      >
+                        Photo: {current.credit.author} ({current.credit.license})
+                      </a>
+                    )}
                     <div className="flex items-center justify-center gap-2 pt-2">
                       <Pill
                         className={`${current.party === "Democrat" ? "bg-blue-500" : "bg-red-500"} text-white border-none`}

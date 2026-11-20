@@ -1,12 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { DEFAULT_DECK_ID, statsKeyFor } from "../lib/decks";
 import { initialQueueState, queueReducer } from "../lib/game-queue";
-import {
-  emptyStats,
-  LEGACY_STATS_KEY,
-  migrateLegacyStats,
-  normalizeStats,
-  STATS_KEY,
-} from "../lib/player-stats";
+import { emptyStats, LEGACY_STATS_KEY, migrateLegacyStats, normalizeStats } from "../lib/player-stats";
 import { normalizePoliticians } from "../lib/politicians";
 import { addResponse, MAX_COUNTED_RESPONSE_MS } from "../lib/response-stats";
 import { shuffle } from "../lib/shuffle";
@@ -26,6 +21,11 @@ function loadStats(raw) {
   if (saved) return normalizeStats(saved);
   const legacy = parseJson(readStorage(LEGACY_STATS_KEY));
   return legacy ? migrateLegacyStats(legacy) : emptyStats();
+}
+
+function loadDeckStats(raw) {
+  const saved = parseJson(raw);
+  return saved ? normalizeStats(saved) : emptyStats();
 }
 
 function loadTrophies(raw) {
@@ -74,13 +74,17 @@ function nextStatsAfter(stats, { guessedParty, actualParty, isCorrect, responseM
   };
 }
 
-export function useGame({ onWrongGuess, onAdvance, onTrophyUnlocked } = {}) {
+export function useGame({ deck, onWrongGuess, onAdvance, onTrophyUnlocked }) {
+  const reportsGlobally = deck.id === DEFAULT_DECK_ID;
   const [{ current, queue }, dispatchQueue] = useReducer(queueReducer, initialQueueState);
   const [status, setStatus] = useState("loading");
   const [revealed, setRevealed] = useState(false);
   const [imgLoading, setImgLoading] = useState(true);
   const [lastResult, setLastResult] = useState(null);
-  const [stats, setStats] = usePersistentState(STATS_KEY, loadStats);
+  const [stats, setStats] = usePersistentState(
+    statsKeyFor(deck),
+    reportsGlobally ? loadStats : loadDeckStats,
+  );
   const [trophies, setTrophies] = usePersistentState(TROPHY_KEY, loadTrophies);
 
   const startTimeRef = useRef(null);
@@ -95,18 +99,18 @@ export function useGame({ onWrongGuess, onAdvance, onTrophyUnlocked } = {}) {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch("/politicians.json");
+        const res = await fetch(deck.url);
         if (!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
         const pool = normalizePoliticians(await res.json());
         dispatchQueue({ type: "start", pool, shuffled: shuffle(pool) });
         setStatus("ready");
       } catch (error) {
-        console.error("Failed to load politicians.json", error);
+        console.error(`Failed to load ${deck.url}`, error);
         setStatus("error");
       }
     })();
     const flush = () => {
-      if (pendingGuessesRef.current.length === 0) return;
+      if (!reportsGlobally || pendingGuessesRef.current.length === 0) return;
       sendGuesses(pendingGuessesRef.current);
       pendingGuessesRef.current = [];
     };
@@ -115,6 +119,8 @@ export function useGame({ onWrongGuess, onAdvance, onTrophyUnlocked } = {}) {
       clearTimeout(advanceTimerRef.current);
       window.removeEventListener("pagehide", flush);
     };
+    // The deck comes from the URL and only changes with a full page load.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const advance = useCallback(() => {
@@ -153,24 +159,29 @@ export function useGame({ onWrongGuess, onAdvance, onTrophyUnlocked } = {}) {
         fireConfetti().catch((error) => console.error("Confetti failed", error));
       }
       const result = { isCorrect, guessedParty, correctParty: actualParty, isFast };
-      const unlocked = newlyUnlocked(trophies.unlocked, { stats: nextStats, lastResult: result });
+      // Trophies come from the default deck only: a one-party deck would hand out streaks for free.
+      const unlocked = reportsGlobally
+        ? newlyUnlocked(trophies.unlocked, { stats: nextStats, lastResult: result })
+        : [];
       if (unlocked.length > 0) {
         setTrophies((prev) => ({ ...prev, unlocked: [...prev.unlocked, ...unlocked] }));
         callbacksRef.current.onTrophyUnlocked?.();
       }
       setStats(nextStats);
-      pendingGuessesRef.current.push({ bioguideId: current.id, guessedParty, responseMs });
-      if (pendingGuessesRef.current.length >= MAX_GUESS_BATCH) {
-        sendGuesses(pendingGuessesRef.current);
-        pendingGuessesRef.current = [];
+      if (reportsGlobally) {
+        pendingGuessesRef.current.push({ bioguideId: current.id, guessedParty, responseMs });
+        if (pendingGuessesRef.current.length >= MAX_GUESS_BATCH) {
+          sendGuesses(pendingGuessesRef.current);
+          pendingGuessesRef.current = [];
+        }
+        if (shouldSubmitRun(nextStats.total)) submitRun(nextStats.runId, nextStats.correct, nextStats.total);
       }
-      if (shouldSubmitRun(nextStats.total)) submitRun(nextStats.runId, nextStats.correct, nextStats.total);
       setLastResult(result);
       setRevealed(true);
       clearTimeout(advanceTimerRef.current);
       advanceTimerRef.current = setTimeout(advance, isCorrect ? REVEAL_CORRECT_MS : REVEAL_WRONG_MS);
     },
-    [revealed, current, stats, trophies, advance, setStats, setTrophies],
+    [revealed, current, stats, trophies, advance, setStats, setTrophies, reportsGlobally],
   );
 
   const reset = useCallback(() => {

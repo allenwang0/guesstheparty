@@ -12,6 +12,7 @@ import { Glass, IconButton, Toast } from "../components/ui";
 import WrappedModal from "../components/WrappedModal";
 import { useDistribution } from "../hooks/useDistribution";
 import { useGame } from "../hooks/useGame";
+import { DECKS, deckFromSearch, findDeck } from "../lib/decks";
 import { readStorage, writeStorage } from "../hooks/usePersistentState";
 import { computeRank } from "../lib/rank";
 import { TROPHIES } from "../lib/trophies";
@@ -29,7 +30,11 @@ export default function Home() {
   const [showWrapped, setShowWrapped] = useState(false);
   const [showTrophyCase, setShowTrophyCase] = useState(false);
 
+  const [deck] = useState(() =>
+    typeof window === "undefined" ? findDeck() : deckFromSearch(window.location.search),
+  );
   const game = useGame({
+    deck,
     onWrongGuess: () => shakeControls.start({ x: [0, -10, 10, -10, 10, 0], transition: { duration: 0.4 } }),
     onAdvance: () => x.set(0),
     onTrophyUnlocked: () => {
@@ -136,6 +141,24 @@ export default function Home() {
             </div>
           </Glass>
         </header>
+        <div className="mb-2 shrink-0 flex justify-center relative z-50">
+          <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] text-black/60">
+            Deck
+            <select
+              value={deck.id}
+              onChange={(e) => {
+                window.location.search = `?deck=${e.target.value}`;
+              }}
+              className="rounded-full bg-white/70 border border-black/10 px-3 py-1.5 text-[11px] font-bold normal-case tracking-normal text-black"
+            >
+              {DECKS.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
         <main className="flex-grow flex flex-col items-center justify-center relative touch-none select-none py-2">
           {stats.total === 0 && !revealed && (
             <div className="absolute inset-0 flex items-center justify-between px-2 pointer-events-none max-w-[420px] mx-auto z-0 opacity-40">
