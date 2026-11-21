@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { normalizePoliticians } from "../lib/politicians";
+import { formatOffice, normalizePoliticians } from "../lib/politicians";
 import { DECKS, DEFAULT_DECK_ID, deckFromSearch, statsKeyFor } from "../lib/decks";
 import { STATS_KEY } from "../lib/player-stats";
 
@@ -26,7 +26,8 @@ describe("deck files", () => {
   for (const deck of DECKS) {
     it(`${deck.id}: every card has a party the game can score and a portrait that exists`, () => {
       const members = normalizePoliticians(JSON.parse(readFileSync(path.join(root, deck.url), "utf8")));
-      expect(members.length).toBeGreaterThan(50);
+      // The Michigan pilot is the smallest pool: 20 legislators with verified photo rights.
+      expect(members.length).toBeGreaterThanOrEqual(20);
       for (const m of members) {
         expect(["Democrat", "Republican"]).toContain(m.party);
         expect(existsSync(path.join(root, m.img))).toBe(true);
@@ -38,5 +39,21 @@ describe("deck files", () => {
     const members = JSON.parse(readFileSync(path.join(root, "decks", "class-of-2026.json"), "utf8"));
     for (const m of members)
       expect(m.credit).toMatchObject({ author: expect.any(String), license: expect.any(String) });
+  });
+
+  it("keeps the Blue Wave and Michigan decks evenly split so always guessing one party scores 50%", () => {
+    for (const file of ["blue-wave-120.json", "michigan-legislature.json"]) {
+      const members = JSON.parse(readFileSync(path.join(root, "decks", file), "utf8"));
+      const dems = members.filter((m) => m.party === "Democrat").length;
+      expect(dems * 2).toBe(members.length);
+    }
+  });
+
+  it("labels Michigan legislators with their state office, never as members of Congress", () => {
+    const members = JSON.parse(readFileSync(path.join(root, "decks", "michigan-legislature.json"), "utf8"));
+    for (const m of members) {
+      expect(formatOffice(m, false)).toMatch(/^Michigan State (Senator|Representative)$/);
+      expect(formatOffice(m, true)).toMatch(/^Michigan State (Senator|Representative) • District \d+$/);
+    }
   });
 });

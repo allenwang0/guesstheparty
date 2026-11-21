@@ -1,0 +1,302 @@
+[
+  {
+    "id": "mi-mallory-mcmorrow",
+    "name": "Mallory McMorrow",
+    "party": "Democrat",
+    "state": "MI",
+    "category": "senate",
+    "district": 8,
+    "office": "Michigan State Senator",
+    "img": "/images/politicians/mi-mallory-mcmorrow.webp",
+    "credit": {
+      "author": "City of Detroit",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Mallory_McMorrow_in_2023_-_8R4A5252_(cropped).jpg"
+    }
+  },
+  {
+    "id": "mi-darrin-camilleri",
+    "name": "Darrin Camilleri",
+    "party": "Democrat",
+    "state": "MI",
+    "category": "senate",
+    "district": 4,
+    "office": "Michigan State Senator",
+    "img": "/images/politicians/mi-darrin-camilleri.webp",
+    "credit": {
+      "author": "Official Portrait of Michigan State Senator-elect Darrin Camilleri uploaded on his Twitter account",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Darrin_Camilleri_Portrait.jpg"
+    }
+  },
+  {
+    "id": "mi-kevin-hertel",
+    "name": "Kevin Hertel",
+    "party": "Democrat",
+    "state": "MI",
+    "category": "senate",
+    "district": 12,
+    "office": "Michigan State Senator",
+    "img": "/images/politicians/mi-kevin-hertel.webp",
+    "credit": {
+      "author": "Staff Sgt. Drake Chandler",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Veteran_Suicide_Prevention_Roundtable_Discusses_Commitment_to_Service_Members_(4)_(cropped).jpg"
+    }
+  },
+  {
+    "id": "mi-sylvia-santana",
+    "name": "Sylvia Santana",
+    "party": "Democrat",
+    "state": "MI",
+    "category": "senate",
+    "district": 2,
+    "office": "Michigan State Senator",
+    "img": "/images/politicians/mi-sylvia-santana.webp",
+    "credit": {
+      "author": "Johntheintern",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Senator_Sylvia_Santana.jpg"
+    }
+  },
+  {
+    "id": "mi-aric-nesbitt",
+    "name": "Aric Nesbitt",
+    "party": "Republican",
+    "state": "MI",
+    "category": "senate",
+    "district": 20,
+    "office": "Michigan State Senator",
+    "img": "/images/politicians/mi-aric-nesbitt.webp",
+    "credit": {
+      "author": "mihousegop",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Aric_Nesbitt_speaking_(12210193175)_(cropped).jpg"
+    }
+  },
+  {
+    "id": "mi-john-damoose",
+    "name": "John Damoose",
+    "party": "Republican",
+    "state": "MI",
+    "category": "senate",
+    "district": 37,
+    "office": "Michigan State Senator",
+    "img": "/images/politicians/mi-john-damoose.webp",
+    "credit": {
+      "author": "Ford School of Public Policy",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:John_Damoose,_February_2026.png"
+    }
+  },
+  {
+    "id": "mi-jonathan-lindsey",
+    "name": "Jonathan Lindsey",
+    "party": "Republican",
+    "state": "MI",
+    "category": "senate",
+    "district": 17,
+    "office": "Michigan State Senator",
+    "img": "/images/politicians/mi-jonathan-lindsey.webp",
+    "credit": {
+      "author": "Gage Skidmore",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Jonathan_Lindsey_by_Gage_Skidmore.jpg"
+    }
+  },
+  {
+    "id": "mi-roger-hauck",
+    "name": "Roger Hauck",
+    "party": "Republican",
+    "state": "MI",
+    "category": "senate",
+    "district": 34,
+    "office": "Michigan State Senator",
+    "img": "/images/politicians/mi-roger-hauck.webp",
+    "credit": {
+      "author": "Dan Gaken",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Sen._Roger_Hauck_Meets_with_the_Mt._Pleasant_Chamber%27s_RDLI_Group_(cropped).jpg"
+    }
+  },
+  {
+    "id": "mi-alabas-farhat",
+    "name": "Alabas Farhat",
+    "party": "Democrat",
+    "state": "MI",
+    "category": "house",
+    "district": 3,
+    "office": "Michigan State Representative",
+    "img": "/images/politicians/mi-alabas-farhat.webp",
+    "credit": {
+      "author": "Michigan House of Representatives.",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Farhat-Official-Headshot-3-scaled.jpg"
+    }
+  },
+  {
+    "id": "mi-carol-glanville",
+    "name": "Carol Glanville",
+    "party": "Democrat",
+    "state": "MI",
+    "category": "house",
+    "district": 84,
+    "office": "Michigan State Representative",
+    "img": "/images/politicians/mi-carol-glanville.webp",
+    "credit": {
+      "author": "US Department of Education",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Carol_Glanville_-_12_December_2023_-_5_(cropped).jpg"
+    }
+  },
+  {
+    "id": "mi-carrie-rheingans",
+    "name": "Carrie Rheingans",
+    "party": "Democrat",
+    "state": "MI",
+    "category": "house",
+    "district": 47,
+    "office": "Michigan State Representative",
+    "img": "/images/politicians/mi-carrie-rheingans.webp",
+    "credit": {
+      "author": "University of Michigan Gerald R. Ford School of Public Policy",
+      "license": "CC BY 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Carrie_Rheingans.png"
+    }
+  },
+  {
+    "id": "mi-joe-tate",
+    "name": "Joe Tate",
+    "party": "Democrat",
+    "state": "MI",
+    "category": "house",
+    "district": 9,
+    "office": "Michigan State Representative",
+    "img": "/images/politicians/mi-joe-tate.webp",
+    "credit": {
+      "author": "Amiwoods",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:TATE_AT_CANDIDACY_ACCOUNCEMENT_2016_(cropped).jpg"
+    }
+  },
+  {
+    "id": "mi-penelope-tsernoglou",
+    "name": "Penelope Tsernoglou",
+    "party": "Democrat",
+    "state": "MI",
+    "category": "house",
+    "district": 75,
+    "office": "Michigan State Representative",
+    "img": "/images/politicians/mi-penelope-tsernoglou.webp",
+    "credit": {
+      "author": "QueenElizabethIsMyIcon",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Rep._Penelope_Tsernoglou.jpg"
+    }
+  },
+  {
+    "id": "mi-ranjeev-puri",
+    "name": "Ranjeev Puri",
+    "party": "Democrat",
+    "state": "MI",
+    "category": "house",
+    "district": 24,
+    "office": "Michigan State Representative",
+    "img": "/images/politicians/mi-ranjeev-puri.webp",
+    "credit": {
+      "author": "MIHouse202728",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Puri-Official-Headshot-scaled.jpg"
+    }
+  },
+  {
+    "id": "mi-matt-hall",
+    "name": "Matt Hall",
+    "party": "Republican",
+    "state": "MI",
+    "category": "house",
+    "district": 42,
+    "office": "Michigan State Representative",
+    "img": "/images/politicians/mi-matt-hall.webp",
+    "credit": {
+      "author": "Esteban C-B",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Matt_Hall_in_2024_(cropped).jpg"
+    }
+  },
+  {
+    "id": "mi-angela-rigas",
+    "name": "Angela Rigas",
+    "party": "Republican",
+    "state": "MI",
+    "category": "house",
+    "district": 79,
+    "office": "Michigan State Representative",
+    "img": "/images/politicians/mi-angela-rigas.webp",
+    "credit": {
+      "author": "Gage Skidmore",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Angela_Rigas_by_Gage_Skidmore.jpg"
+    }
+  },
+  {
+    "id": "mi-bryan-posthumus",
+    "name": "Bryan Posthumus",
+    "party": "Republican",
+    "state": "MI",
+    "category": "house",
+    "district": 90,
+    "office": "Michigan State Representative",
+    "img": "/images/politicians/mi-bryan-posthumus.webp",
+    "credit": {
+      "author": "QueenElizabethIsMyIcon",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Rep._Bryan_Posthumus.jpg"
+    }
+  },
+  {
+    "id": "mi-jim-desana",
+    "name": "Jim DeSana",
+    "party": "Republican",
+    "state": "MI",
+    "category": "house",
+    "district": 29,
+    "office": "Michigan State Representative",
+    "img": "/images/politicians/mi-jim-desana.webp",
+    "credit": {
+      "author": "Gage Skidmore",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:James_DeSana_by_Gage_Skidmore_2.jpg"
+    }
+  },
+  {
+    "id": "mi-mike-hoadley",
+    "name": "Mike Hoadley",
+    "party": "Republican",
+    "state": "MI",
+    "category": "house",
+    "district": 99,
+    "office": "Michigan State Representative",
+    "img": "/images/politicians/mi-mike-hoadley.webp",
+    "credit": {
+      "author": "QueenElizabethIsMyIcon",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Rep_Mike_Hoadley,_2025.jpg"
+    }
+  },
+  {
+    "id": "mi-rachelle-smit",
+    "name": "Rachelle Smit",
+    "party": "Republican",
+    "state": "MI",
+    "category": "house",
+    "district": 43,
+    "office": "Michigan State Representative",
+    "img": "/images/politicians/mi-rachelle-smit.webp",
+    "credit": {
+      "author": "Gage Skidmore",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Rachelle_Smit_by_Gage_Skidmore.jpg"
+    }
+  }
+]

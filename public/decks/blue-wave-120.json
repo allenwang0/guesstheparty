@@ -1,0 +1,1182 @@
+[
+  {
+    "id": "W000800",
+    "name": "Peter Welch",
+    "party": "Democrat",
+    "state": "VT",
+    "category": "senate",
+    "img": "/images/politicians/peter-welch-W000800.webp"
+  },
+  {
+    "id": "K000377",
+    "name": "Mark Kelly",
+    "party": "Democrat",
+    "state": "AZ",
+    "category": "senate",
+    "img": "/images/politicians/mark-kelly-K000377.webp"
+  },
+  {
+    "id": "S001208",
+    "name": "Elissa Slotkin",
+    "party": "Democrat",
+    "state": "MI",
+    "category": "senate",
+    "img": "/images/politicians/elissa-slotkin-S001208.webp"
+  },
+  {
+    "id": "C001113",
+    "name": "Catherine Cortez Masto",
+    "party": "Democrat",
+    "state": "NV",
+    "category": "senate",
+    "img": "/images/politicians/catherine-cortez-masto-C001113.webp"
+  },
+  {
+    "id": "P000145",
+    "name": "Alex Padilla",
+    "party": "Democrat",
+    "state": "CA",
+    "category": "senate",
+    "img": "/images/politicians/alejandro-padilla-P000145.webp"
+  },
+  {
+    "id": "M001111",
+    "name": "Patty Murray",
+    "party": "Democrat",
+    "state": "WA",
+    "category": "senate",
+    "img": "/images/politicians/patty-murray-M001111.webp"
+  },
+  {
+    "id": "W000805",
+    "name": "Mark Warner",
+    "party": "Democrat",
+    "state": "VA",
+    "category": "senate",
+    "img": "/images/politicians/mark-warner-W000805.webp"
+  },
+  {
+    "id": "M001176",
+    "name": "Jeff Merkley",
+    "party": "Democrat",
+    "state": "OR",
+    "category": "senate",
+    "img": "/images/politicians/jeff-merkley-M001176.webp"
+  },
+  {
+    "id": "juliana-stratton-new2026",
+    "name": "Juliana Stratton",
+    "party": "Democrat",
+    "state": "IL",
+    "category": "senate",
+    "img": "/images/politicians/juliana-stratton-new2026.webp",
+    "credit": {
+      "author": "Sgt. Trenton Fouche",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Juliana_Stratton_2023_(cropped).jpg"
+    }
+  },
+  {
+    "id": "L000570",
+    "name": "Ben Ray Luj\u00e1n",
+    "party": "Democrat",
+    "state": "NM",
+    "category": "senate",
+    "img": "/images/politicians/ben-luj\u00e1n-L000570.webp"
+  },
+  {
+    "id": "adam-hamilton-new2026",
+    "name": "Adam Hamilton",
+    "party": "Democrat",
+    "state": "KS",
+    "category": "senate",
+    "img": "/images/politicians/adam-hamilton-new2026.webp",
+    "credit": {
+      "author": "Western Pennsylvania Conference - United Methodist Church",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Adam_Hamilton_at_podium_cropped.jpg"
+    }
+  },
+  {
+    "id": "josh-turek-new2026",
+    "name": "Josh Turek",
+    "party": "Democrat",
+    "state": "IA",
+    "category": "senate",
+    "img": "/images/politicians/josh-turek-new2026.webp",
+    "credit": {
+      "author": "Iowa General Assembly",
+      "license": "Copyrighted free use",
+      "source": "https://commons.wikimedia.org/wiki/File:Joshua_Turek.jpg"
+    }
+  },
+  {
+    "id": "eileen-laubacher-new2026",
+    "name": "Eileen Laubacher",
+    "party": "Democrat",
+    "state": "CO",
+    "category": "house",
+    "img": "/images/politicians/eileen-laubacher-new2026.webp",
+    "credit": {
+      "author": "U.S. Navy",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Eileen_H._Laubacher_(3)_(cropped).jpg"
+    }
+  },
+  {
+    "id": "ben-mcadams-new2026",
+    "name": "Ben McAdams",
+    "party": "Democrat",
+    "state": "UT",
+    "category": "house",
+    "img": "/images/politicians/ben-mcadams-new2026.webp",
+    "credit": {
+      "author": "United States Congress",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Ben_McAdams,_official_portrait,_116th_Congress_(cropped).jpg"
+    }
+  },
+  {
+    "id": "richard-pan-new2026",
+    "name": "Richard Pan",
+    "party": "Democrat",
+    "state": "CA",
+    "category": "house",
+    "img": "/images/politicians/richard-pan-new2026.webp",
+    "credit": {
+      "author": "Dr. Richard Pan",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Dr._Richard_Pan_2014_portrait.jpg"
+    }
+  },
+  {
+    "id": "bob-brooks-new2026",
+    "name": "Bob Brooks",
+    "party": "Democrat",
+    "state": "PA",
+    "category": "house",
+    "img": "/images/politicians/bob-brooks-new2026.webp",
+    "credit": {
+      "author": "Office of Congressman Brendan Boyle",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Pennsylvania_new_Democrat_house_members_2026_(Brooks-cropped).jpeg"
+    }
+  },
+  {
+    "id": "darializa-avila-chevalier-new2026",
+    "name": "Darializa Avila Chevalier",
+    "party": "Democrat",
+    "state": "NY",
+    "category": "house",
+    "img": "/images/politicians/darializa-avila-chevalier-new2026.webp",
+    "credit": {
+      "author": "A LO CLARO  and  Indhira Baez",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Darializa_Avila_Chevalier_during_interview_on_Secretos_CEO.jpg"
+    }
+  },
+  {
+    "id": "paige-cognetti-new2026",
+    "name": "Paige Cognetti",
+    "party": "Democrat",
+    "state": "PA",
+    "category": "house",
+    "img": "/images/politicians/paige-cognetti-new2026.webp",
+    "credit": {
+      "author": "Office of Congressman Brendan Boyle",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Paige_Cognetti_Pennsylvania_new_Democrat_house_members_2026_(cropped).jpeg"
+    }
+  },
+  {
+    "id": "jasmine-clark-new2026",
+    "name": "Jasmine Clark",
+    "party": "Democrat",
+    "state": "GA",
+    "category": "house",
+    "img": "/images/politicians/jasmine-clark-new2026.webp",
+    "credit": {
+      "author": "Georgia House of Representatives",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Member_of_the_Georgia_House_of_Representatives_Jasmine_Michelle_Clark.jpg"
+    }
+  },
+  {
+    "id": "chris-rabb-new2026",
+    "name": "Chris Rabb",
+    "party": "Democrat",
+    "state": "PA",
+    "category": "house",
+    "img": "/images/politicians/chris-rabb-new2026.webp",
+    "credit": {
+      "author": "Morgan.rice.bassline.design",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:ChrisRabb15May2026_(cropped).jpg"
+    }
+  },
+  {
+    "id": "leticia-gutierrez-new2026",
+    "name": "Leticia Gutierrez",
+    "party": "Democrat",
+    "state": "TX",
+    "category": "house",
+    "img": "/images/politicians/leticia-gutierrez-new2026.webp",
+    "credit": {
+      "author": "Mecpapctb",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Leticia_Gutierrez_(cropped2).jpg"
+    }
+  },
+  {
+    "id": "S001181",
+    "name": "Stefany Shaheen",
+    "party": "Democrat",
+    "state": "NH",
+    "category": "house",
+    "img": "/images/politicians/jeanne-shaheen-S001181.webp"
+  },
+  {
+    "id": "dan-koh-new2026",
+    "name": "Dan Koh",
+    "party": "Democrat",
+    "state": "MA",
+    "category": "house",
+    "img": "/images/politicians/dan-koh-new2026.webp",
+    "credit": {
+      "author": "Executive Office of the President of the United States",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Daniel_Koh,_White_House_Deputy_Cabinet_Secretary_(cropped).jpg"
+    }
+  },
+  {
+    "id": "lakesha-womack-new2026",
+    "name": "LaKesha Womack",
+    "party": "Democrat",
+    "state": "NC",
+    "category": "house",
+    "img": "/images/politicians/lakesha-womack-new2026.webp",
+    "credit": {
+      "author": "Office of Rep. Deborah Ross (D-NC)",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:NC_Democratic_House_Delegation_Nov_2026_(Womack-cropped).jpeg"
+    }
+  },
+  {
+    "id": "melissa-bean-new2026",
+    "name": "Melissa Bean",
+    "party": "Democrat",
+    "state": "IL",
+    "category": "house",
+    "img": "/images/politicians/melissa-bean-new2026.webp",
+    "credit": {
+      "author": "House of Represenatatives",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Melissa_Bean_Official_(cropped).jpg"
+    }
+  },
+  {
+    "id": "cait-conley-new2026",
+    "name": "Cait Conley",
+    "party": "Democrat",
+    "state": "NY",
+    "category": "house",
+    "img": "/images/politicians/cait-conley-new2026.webp",
+    "credit": {
+      "author": "Cybersecurity and Infrastructure Security Agency",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Cait_Conley.jpg"
+    }
+  },
+  {
+    "id": "sarah-trone-garriott-new2026",
+    "name": "Sarah Trone Garriott",
+    "party": "Democrat",
+    "state": "IA",
+    "category": "house",
+    "img": "/images/politicians/sarah-trone-garriott-new2026.webp",
+    "credit": {
+      "author": "Iowa General Assembly",
+      "license": "Copyrighted free use",
+      "source": "https://commons.wikimedia.org/wiki/File:Sarah_Trone_Garriott_2023_(cropped_2).jpg"
+    }
+  },
+  {
+    "id": "christina-hines-new2026",
+    "name": "Christina Hines",
+    "party": "Democrat",
+    "state": "MI",
+    "category": "house",
+    "img": "/images/politicians/christina-hines-new2026.webp",
+    "credit": {
+      "author": "Unknown authorUnknown author",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Christina_Hines_(cropped).jpg"
+    }
+  },
+  {
+    "id": "zack-mullock-new2026",
+    "name": "Zack Mullock",
+    "party": "Democrat",
+    "state": "NJ",
+    "category": "house",
+    "img": "/images/politicians/zack-mullock-new2026.webp",
+    "credit": {
+      "author": "Office of Congresswoman Nellie Pou",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:New_Jersey_House_Democrats_Nov_2026_(Mullock-cropped).jpeg"
+    }
+  },
+  {
+    "id": "denise-powell-new2026",
+    "name": "Denise Powell",
+    "party": "Democrat",
+    "state": "NE",
+    "category": "house",
+    "img": "/images/politicians/denise-powell-new2026.webp",
+    "credit": {
+      "author": "Anthonymigueldildine",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Denise_Powell_talking_at_Campaign_Rally_(cropped).jpg"
+    }
+  },
+  {
+    "id": "lindsay-james-new2026",
+    "name": "Lindsay James",
+    "party": "Democrat",
+    "state": "IA",
+    "category": "house",
+    "img": "/images/politicians/lindsay-james-new2026.webp",
+    "credit": {
+      "author": "Iowa Legislative Assembly",
+      "license": "Copyrighted free use",
+      "source": "https://commons.wikimedia.org/wiki/File:Member_of_the_Iowa_House_of_Representatives_Lindsay_James_(cropped).jpg"
+    }
+  },
+  {
+    "id": "randy-villegas-new2026",
+    "name": "Randy Villegas",
+    "party": "Democrat",
+    "state": "CA",
+    "category": "house",
+    "img": "/images/politicians/randy-villegas-new2026.webp",
+    "credit": {
+      "author": "Maremoto Fund",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Randy_Villegas_at_Vota_Palooza_in_2024_(cropped).jpg"
+    }
+  },
+  {
+    "id": "rebecca-bennett-new2026",
+    "name": "Rebecca Bennett",
+    "party": "Democrat",
+    "state": "NJ",
+    "category": "house",
+    "img": "/images/politicians/rebecca-bennett-new2026.webp",
+    "credit": {
+      "author": "Office of Senator Andy Kim",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Rebecca_Bennett_and_Andy_Kim_Nov_2026_(cropped1).jpeg"
+    }
+  },
+  {
+    "id": "melat-kiros-new2026",
+    "name": "Melat Kiros",
+    "party": "Democrat",
+    "state": "CO",
+    "category": "house",
+    "img": "/images/politicians/melat-kiros-new2026.webp",
+    "credit": {
+      "author": "Andra Turner",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Melat_Kiros_Portrait_(cropped).jpg"
+    }
+  },
+  {
+    "id": "amish-shah-new2026",
+    "name": "Amish Shah",
+    "party": "Democrat",
+    "state": "AZ",
+    "category": "house",
+    "img": "/images/politicians/amish-shah-new2026.webp",
+    "credit": {
+      "author": "Gage Skidmore",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Amish_Shah_by_Gage_Skidmore_2_(cropped).jpg"
+    }
+  },
+  {
+    "id": "matt-little-new2026",
+    "name": "Matt Little",
+    "party": "Democrat",
+    "state": "MN",
+    "category": "house",
+    "img": "/images/politicians/matt-little-new2026.webp",
+    "credit": {
+      "author": "Travellers & Tinkers",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:2026MattLittle_(cropped).jpg"
+    }
+  },
+  {
+    "id": "B001315",
+    "name": "Nikki Budzinski",
+    "party": "Democrat",
+    "state": "IL",
+    "category": "house",
+    "img": "/images/politicians/nicole-(nikki)-budzinski-B001315.webp"
+  },
+  {
+    "id": "J000305",
+    "name": "Sara Jacobs",
+    "party": "Democrat",
+    "state": "CA",
+    "category": "house",
+    "img": "/images/politicians/sara-jacobs-J000305.webp"
+  },
+  {
+    "id": "T000469",
+    "name": "Paul Tonko",
+    "party": "Democrat",
+    "state": "NY",
+    "category": "house",
+    "img": "/images/politicians/paul-tonko-T000469.webp"
+  },
+  {
+    "id": "D000631",
+    "name": "Madeleine Dean",
+    "party": "Democrat",
+    "state": "PA",
+    "category": "house",
+    "img": "/images/politicians/madeleine-dean-D000631.webp"
+  },
+  {
+    "id": "S000344",
+    "name": "Brad Sherman",
+    "party": "Democrat",
+    "state": "CA",
+    "category": "house",
+    "img": "/images/politicians/brad-sherman-S000344.webp"
+  },
+  {
+    "id": "G000604",
+    "name": "Maggie Goodlander",
+    "party": "Democrat",
+    "state": "NH",
+    "category": "house",
+    "img": "/images/politicians/maggie-goodlander-G000604.webp"
+  },
+  {
+    "id": "S001190",
+    "name": "Brad Schneider",
+    "party": "Democrat",
+    "state": "IL",
+    "category": "house",
+    "img": "/images/politicians/bradley-schneider-S001190.webp"
+  },
+  {
+    "id": "S001225",
+    "name": "Eric Sorensen",
+    "party": "Democrat",
+    "state": "IL",
+    "category": "house",
+    "img": "/images/politicians/eric-sorensen-S001225.webp"
+  },
+  {
+    "id": "R000599",
+    "name": "Raul Ruiz",
+    "party": "Democrat",
+    "state": "CA",
+    "category": "house",
+    "img": "/images/politicians/raul-ruiz-R000599.webp"
+  },
+  {
+    "id": "P000613",
+    "name": "Jimmy Panetta",
+    "party": "Democrat",
+    "state": "CA",
+    "category": "house",
+    "img": "/images/politicians/jimmy-panetta-P000613.webp"
+  },
+  {
+    "id": "H001068",
+    "name": "Jared Huffman",
+    "party": "Democrat",
+    "state": "CA",
+    "category": "house",
+    "img": "/images/politicians/jared-huffman-H001068.webp"
+  },
+  {
+    "id": "P000034",
+    "name": "Frank Pallone",
+    "party": "Democrat",
+    "state": "NJ",
+    "category": "house",
+    "img": "/images/politicians/frank-pallone-P000034.webp"
+  },
+  {
+    "id": "H001081",
+    "name": "Jahana Hayes",
+    "party": "Democrat",
+    "state": "CT",
+    "category": "house",
+    "img": "/images/politicians/jahana-hayes-H001081.webp"
+  },
+  {
+    "id": "D000216",
+    "name": "Rosa DeLauro",
+    "party": "Democrat",
+    "state": "CT",
+    "category": "house",
+    "img": "/images/politicians/rosa-delauro-D000216.webp"
+  },
+  {
+    "id": "G000587",
+    "name": "Sylvia Garcia",
+    "party": "Democrat",
+    "state": "TX",
+    "category": "house",
+    "img": "/images/politicians/sylvia-garcia-G000587.webp"
+  },
+  {
+    "id": "S001185",
+    "name": "Terri Sewell",
+    "party": "Democrat",
+    "state": "AL",
+    "category": "house",
+    "img": "/images/politicians/terri-sewell-S001185.webp"
+  },
+  {
+    "id": "P000607",
+    "name": "Mark Pocan",
+    "party": "Democrat",
+    "state": "WI",
+    "category": "house",
+    "img": "/images/politicians/mark-pocan-P000607.webp"
+  },
+  {
+    "id": "M001206",
+    "name": "Joseph Morelle",
+    "party": "Democrat",
+    "state": "NY",
+    "category": "house",
+    "img": "/images/politicians/joseph-morelle-M001206.webp"
+  },
+  {
+    "id": "B001300",
+    "name": "Nanette Barrag\u00e1n",
+    "party": "Democrat",
+    "state": "CA",
+    "category": "house",
+    "img": "/images/politicians/nanette-barrag\u00e1n-B001300.webp"
+  },
+  {
+    "id": "H001094",
+    "name": "Val Hoyle",
+    "party": "Democrat",
+    "state": "OR",
+    "category": "house",
+    "img": "/images/politicians/valerie-hoyle-H001094.webp"
+  },
+  {
+    "id": "G000559",
+    "name": "John Garamendi",
+    "party": "Democrat",
+    "state": "CA",
+    "category": "house",
+    "img": "/images/politicians/john-garamendi-G000559.webp"
+  },
+  {
+    "id": "N000188",
+    "name": "Donald Norcross",
+    "party": "Democrat",
+    "state": "NJ",
+    "category": "house",
+    "img": "/images/politicians/donald-norcross-N000188.webp"
+  },
+  {
+    "id": "C001066",
+    "name": "Kathy Castor",
+    "party": "Democrat",
+    "state": "FL",
+    "category": "house",
+    "img": "/images/politicians/kathy-castor-C001066.webp"
+  },
+  {
+    "id": "S001231",
+    "name": "Lateefah Simon",
+    "party": "Democrat",
+    "state": "CA",
+    "category": "house",
+    "img": "/images/politicians/lateefah-simon-S001231.webp"
+  },
+  {
+    "id": "L000575",
+    "name": "James Lankford",
+    "party": "Republican",
+    "state": "OK",
+    "category": "senate",
+    "img": "/images/politicians/james-lankford-L000575.webp"
+  },
+  {
+    "id": "S001227",
+    "name": "Eric Schmitt",
+    "party": "Republican",
+    "state": "MO",
+    "category": "senate",
+    "img": "/images/politicians/eric-schmitt-S001227.webp"
+  },
+  {
+    "id": "M001153",
+    "name": "Lisa Murkowski",
+    "party": "Republican",
+    "state": "AK",
+    "category": "senate",
+    "img": "/images/politicians/lisa-murkowski-M001153.webp"
+  },
+  {
+    "id": "B001319",
+    "name": "Katie Britt",
+    "party": "Republican",
+    "state": "AL",
+    "category": "senate",
+    "img": "/images/politicians/katie-britt-B001319.webp"
+  },
+  {
+    "id": "M001242",
+    "name": "Bernie Moreno",
+    "party": "Republican",
+    "state": "OH",
+    "category": "senate",
+    "img": "/images/politicians/bernie-moreno-M001242.webp"
+  },
+  {
+    "id": "C001098",
+    "name": "Ted Cruz",
+    "party": "Republican",
+    "state": "TX",
+    "category": "senate",
+    "img": "/images/politicians/ted-cruz-C001098.webp"
+  },
+  {
+    "id": "R000605",
+    "name": "Mike Rounds",
+    "party": "Republican",
+    "state": "SD",
+    "category": "senate",
+    "img": "/images/politicians/mike-rounds-R000605.webp"
+  },
+  {
+    "id": "B001282",
+    "name": "Andy Barr",
+    "party": "Republican",
+    "state": "KY",
+    "category": "senate",
+    "img": "/images/politicians/garland-barr-B001282.webp"
+  },
+  {
+    "id": "H001082",
+    "name": "Kevin Hern",
+    "party": "Republican",
+    "state": "OK",
+    "category": "senate",
+    "img": "/images/politicians/kevin-hern-H001082.webp"
+  },
+  {
+    "id": "R000584",
+    "name": "Jim Risch",
+    "party": "Republican",
+    "state": "ID",
+    "category": "senate",
+    "img": "/images/politicians/james-risch-R000584.webp"
+  },
+  {
+    "id": "M001212",
+    "name": "Barry Moore",
+    "party": "Republican",
+    "state": "AL",
+    "category": "senate",
+    "img": "/images/politicians/barry-moore-M001212.webp"
+  },
+  {
+    "id": "R000618",
+    "name": "Pete Ricketts",
+    "party": "Republican",
+    "state": "NE",
+    "category": "senate",
+    "img": "/images/politicians/pete-ricketts-R000618.webp"
+  },
+  {
+    "id": "chris-stigall-new2026",
+    "name": "Chris Stigall",
+    "party": "Republican",
+    "state": "MO",
+    "category": "house",
+    "img": "/images/politicians/chris-stigall-new2026.webp",
+    "credit": {
+      "author": "Jared Hart",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Chris_Stigall_2017_(headshot).jpg"
+    }
+  },
+  {
+    "id": "ed-gallrein-new2026",
+    "name": "Ed Gallrein",
+    "party": "Republican",
+    "state": "KY",
+    "category": "house",
+    "img": "/images/politicians/ed-gallrein-new2026.webp",
+    "credit": {
+      "author": "Gage Skidmore",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Ed_Gallrein_(55505179851)_(cropped_3x4).jpg"
+    }
+  },
+  {
+    "id": "jessica-steinmann-new2026",
+    "name": "Jessica Steinmann",
+    "party": "Republican",
+    "state": "TX",
+    "category": "house",
+    "img": "/images/politicians/jessica-steinmann-new2026.webp",
+    "credit": {
+      "author": "America First Policy Institute",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Jessica_Hart_Steinmann.png"
+    }
+  },
+  {
+    "id": "N000026",
+    "name": "Trever Nehls",
+    "party": "Republican",
+    "state": "TX",
+    "category": "house",
+    "img": "/images/politicians/troy-nehls-N000026.webp"
+  },
+  {
+    "id": "joe-strada-new2026",
+    "name": "Joe Strada",
+    "party": "Republican",
+    "state": "FL",
+    "category": "house",
+    "img": "/images/politicians/joe-strada-new2026.webp",
+    "credit": {
+      "author": "Rep Randy Fine",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Joe_Strada_group_photo_(cropped).jpg"
+    }
+  },
+  {
+    "id": "marty-jackley-new2026",
+    "name": "Marty Jackley",
+    "party": "Republican",
+    "state": "SD",
+    "category": "house",
+    "img": "/images/politicians/marty-jackley-new2026.webp",
+    "credit": {
+      "author": "US District of South Dakota",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:US_District_Attorney_Marty_Jackley.png"
+    }
+  },
+  {
+    "id": "chuck-gray-new2026",
+    "name": "Chuck Gray",
+    "party": "Republican",
+    "state": "WY",
+    "category": "house",
+    "img": "/images/politicians/chuck-gray-new2026.webp",
+    "credit": {
+      "author": "Gage Skidmore",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Chuck_Gray_in_2025_(cropped).jpg"
+    }
+  },
+  {
+    "id": "mark-tedford-new2026",
+    "name": "Mark Tedford",
+    "party": "Republican",
+    "state": "OK",
+    "category": "house",
+    "img": "/images/politicians/mark-tedford-new2026.webp",
+    "credit": {
+      "author": "State of Oklahoma\u2019s Legislative Service Bureau, Photo Division",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Tedford_Mark_OKHouse.jpg"
+    }
+  },
+  {
+    "id": "amanda-mckinney-new2026",
+    "name": "Amanda McKinney",
+    "party": "Republican",
+    "state": "WA",
+    "category": "house",
+    "img": "/images/politicians/amanda-mckinney-new2026.webp",
+    "credit": {
+      "author": "Gage Skidmore from Surprise, AZ, United States of America",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Amanda_McKinney_(55022651563)_(cropped).jpg"
+    }
+  },
+  {
+    "id": "steve-toth-new2026",
+    "name": "Steve Toth",
+    "party": "Republican",
+    "state": "TX",
+    "category": "house",
+    "img": "/images/politicians/steve-toth-new2026.webp",
+    "credit": {
+      "author": "LiwenAristodemos",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:SteveToth--EagleForum--TX2Debate--GraceChurch--SpringTX--08Jan2026_(cropped).jpg"
+    }
+  },
+  {
+    "id": "houston-gaines-new2026",
+    "name": "Houston Gaines",
+    "party": "Republican",
+    "state": "GA",
+    "category": "house",
+    "img": "/images/politicians/houston-gaines-new2026.webp",
+    "credit": {
+      "author": "Georgia House of Representatives",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Official_headshot_of_Houston_Gaines.jpg"
+    }
+  },
+  {
+    "id": "mark-teixeira-new2026",
+    "name": "Mark Teixeira",
+    "party": "Republican",
+    "state": "TX",
+    "category": "house",
+    "img": "/images/politicians/mark-teixeira-new2026.webp",
+    "credit": {
+      "author": "Keith Allison",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Mark_Teixeira_basepaths_2011_(cropped).jpg"
+    }
+  },
+  {
+    "id": "michael-alfonso-new2026",
+    "name": "Michael Alfonso",
+    "party": "Republican",
+    "state": "WI",
+    "category": "house",
+    "img": "/images/politicians/michael-alfonso-new2026.webp",
+    "credit": {
+      "author": "Gage Skidmore from Surprise, AZ, United States of America",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Michael_Alfonso_2025.jpg"
+    }
+  },
+  {
+    "id": "jace-yarbrough-new2026",
+    "name": "Jace Yarbrough",
+    "party": "Republican",
+    "state": "TX",
+    "category": "house",
+    "img": "/images/politicians/jace-yarbrough-new2026.webp",
+    "credit": {
+      "author": "Lt.Cmdr. Jim Remington",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Joint_Base_Commander_visits_the_US_Air_Force_Honor_Guard_-_Jace_Yarbrough_(cropped).jpg"
+    }
+  },
+  {
+    "id": "brent-taylor-new2026",
+    "name": "Brent Taylor",
+    "party": "Republican",
+    "state": "TN",
+    "category": "house",
+    "img": "/images/politicians/brent-taylor-new2026.webp",
+    "credit": {
+      "author": "GatewayPolitics",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Brent_Taylor_(Tennessee_politician).jpg"
+    }
+  },
+  {
+    "id": "paul-lepage-new2026",
+    "name": "Paul LePage",
+    "party": "Republican",
+    "state": "ME",
+    "category": "house",
+    "img": "/images/politicians/paul-lepage-new2026.webp",
+    "credit": {
+      "author": "Gage Skidmore",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Paul_LePage_by_Gage_Skidmore.jpg"
+    }
+  },
+  {
+    "id": "austin-rogers-new2026",
+    "name": "Austin Rogers",
+    "party": "Republican",
+    "state": "FL",
+    "category": "house",
+    "img": "/images/politicians/austin-rogers-new2026.webp",
+    "credit": {
+      "author": "The 850 Podcast",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Austin_Rogers_FL.png"
+    }
+  },
+  {
+    "id": "tom-sell-new2026",
+    "name": "Tom Sell",
+    "party": "Republican",
+    "state": "TX",
+    "category": "house",
+    "img": "/images/politicians/tom-sell-new2026.webp",
+    "credit": {
+      "author": "Rep. Debbie Wasserman Schultz",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Tom_Sell_119th-120th_Congress_Veterans_Day_tribute_(cropped).jpg"
+    }
+  },
+  {
+    "id": "C001054",
+    "name": "Jerry Carl",
+    "party": "Republican",
+    "state": "AL",
+    "category": "house",
+    "img": "/images/politicians/jerry-carl-C001054.webp"
+  },
+  {
+    "id": "mark-lamb-new2026",
+    "name": "Mark Lamb",
+    "party": "Republican",
+    "state": "AZ",
+    "category": "house",
+    "img": "/images/politicians/mark-lamb-new2026.webp",
+    "credit": {
+      "author": "Gage Skidmore from Surprise, AZ, United States of America",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Mark_Lamb_(55021585032)_(cropped).jpg"
+    }
+  },
+  {
+    "id": "G000597",
+    "name": "Andrew Garbarino",
+    "party": "Republican",
+    "state": "NY",
+    "category": "house",
+    "img": "/images/politicians/andrew-garbarino-G000597.webp"
+  },
+  {
+    "id": "S001176",
+    "name": "Steve Scalise",
+    "party": "Republican",
+    "state": "LA",
+    "category": "house",
+    "img": "/images/politicians/steve-scalise-S001176.webp"
+  },
+  {
+    "id": "S001214",
+    "name": "Greg Steube",
+    "party": "Republican",
+    "state": "FL",
+    "category": "house",
+    "img": "/images/politicians/w-steube-S001214.webp"
+  },
+  {
+    "id": "C001087",
+    "name": "Rick Crawford",
+    "party": "Republican",
+    "state": "AR",
+    "category": "house",
+    "img": "/images/politicians/eric-crawford-C001087.webp"
+  },
+  {
+    "id": "M001194",
+    "name": "John Moolenaar",
+    "party": "Republican",
+    "state": "MI",
+    "category": "house",
+    "img": "/images/politicians/john-moolenaar-M001194.webp"
+  },
+  {
+    "id": "D000634",
+    "name": "Troy Downing",
+    "party": "Republican",
+    "state": "MT",
+    "category": "house",
+    "img": "/images/politicians/troy-downing-D000634.webp"
+  },
+  {
+    "id": "B001295",
+    "name": "Mike Bost",
+    "party": "Republican",
+    "state": "IL",
+    "category": "house",
+    "img": "/images/politicians/mike-bost-B001295.webp"
+  },
+  {
+    "id": "Y000067",
+    "name": "Rudy Yakym",
+    "party": "Republican",
+    "state": "IN",
+    "category": "house",
+    "img": "/images/politicians/rudy-yakym-Y000067.webp"
+  },
+  {
+    "id": "P000622",
+    "name": "Jimmy Patronis",
+    "party": "Republican",
+    "state": "FL",
+    "category": "house",
+    "img": "/images/politicians/jimmy-patronis-P000622.webp"
+  },
+  {
+    "id": "L000585",
+    "name": "Darin LaHood",
+    "party": "Republican",
+    "state": "IL",
+    "category": "house",
+    "img": "/images/politicians/darin-lahood-L000585.webp"
+  },
+  {
+    "id": "M001239",
+    "name": "John McGuire",
+    "party": "Republican",
+    "state": "VA",
+    "category": "house",
+    "img": "/images/politicians/john-mcguire-M001239.webp"
+  },
+  {
+    "id": "B001317",
+    "name": "Josh Brecheen",
+    "party": "Republican",
+    "state": "OK",
+    "category": "house",
+    "img": "/images/politicians/josh-brecheen-B001317.webp"
+  },
+  {
+    "id": "F000474",
+    "name": "Mike Flood",
+    "party": "Republican",
+    "state": "NE",
+    "category": "house",
+    "img": "/images/politicians/mike-flood-F000474.webp"
+  },
+  {
+    "id": "D000600",
+    "name": "Mario D\u00edaz-Balart",
+    "party": "Republican",
+    "state": "FL",
+    "category": "house",
+    "img": "/images/politicians/mario-diaz-balart-D000600.webp"
+  },
+  {
+    "id": "J000295",
+    "name": "David Joyce",
+    "party": "Republican",
+    "state": "OH",
+    "category": "house",
+    "img": "/images/politicians/david-joyce-J000295.webp"
+  },
+  {
+    "id": "B001306",
+    "name": "Troy Balderson",
+    "party": "Republican",
+    "state": "OH",
+    "category": "house",
+    "img": "/images/politicians/troy-balderson-B001306.webp"
+  },
+  {
+    "id": "P000048",
+    "name": "August Pfluger",
+    "party": "Republican",
+    "state": "TX",
+    "category": "house",
+    "img": "/images/politicians/august-pfluger-P000048.webp"
+  },
+  {
+    "id": "O000177",
+    "name": "Bob Onder",
+    "party": "Republican",
+    "state": "MO",
+    "category": "house",
+    "img": "/images/politicians/robert-onder-O000177.webp"
+  },
+  {
+    "id": "L000491",
+    "name": "Frank Lucas",
+    "party": "Republican",
+    "state": "OK",
+    "category": "house",
+    "img": "/images/politicians/frank-lucas-L000491.webp"
+  },
+  {
+    "id": "S001195",
+    "name": "Jason Smith",
+    "party": "Republican",
+    "state": "MO",
+    "category": "house",
+    "img": "/images/politicians/jason-smith-S001195.webp"
+  },
+  {
+    "id": "T000480",
+    "name": "William Timmons",
+    "party": "Republican",
+    "state": "SC",
+    "category": "house",
+    "img": "/images/politicians/william-timmons-T000480.webp"
+  },
+  {
+    "id": "F000484",
+    "name": "Randy Fine",
+    "party": "Republican",
+    "state": "FL",
+    "category": "house",
+    "img": "/images/politicians/randall-fine-F000484.webp"
+  },
+  {
+    "id": "J000304",
+    "name": "Ronny Jackson",
+    "party": "Republican",
+    "state": "TX",
+    "category": "house",
+    "img": "/images/politicians/ronny-jackson-J000304.webp"
+  },
+  {
+    "id": "F000472",
+    "name": "Scott Franklin",
+    "party": "Republican",
+    "state": "FL",
+    "category": "house",
+    "img": "/images/politicians/c-franklin-F000472.webp"
+  },
+  {
+    "id": "S001220",
+    "name": "Dale Strong",
+    "party": "Republican",
+    "state": "AL",
+    "category": "house",
+    "img": "/images/politicians/dale-strong-S001220.webp"
+  },
+  {
+    "id": "F000246",
+    "name": "Pat Fallon",
+    "party": "Republican",
+    "state": "TX",
+    "category": "house",
+    "img": "/images/politicians/patrick-fallon-F000246.webp"
+  },
+  {
+    "id": "F000469",
+    "name": "Russ Fulcher",
+    "party": "Republican",
+    "state": "ID",
+    "category": "house",
+    "img": "/images/politicians/russ-fulcher-F000469.webp"
+  },
+  {
+    "id": "C001053",
+    "name": "Tom Cole",
+    "party": "Republican",
+    "state": "OK",
+    "category": "house",
+    "img": "/images/politicians/tom-cole-C001053.webp"
+  }
+]
